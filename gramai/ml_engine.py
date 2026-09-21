@@ -1791,6 +1791,34 @@ def forecast_market(
 # MULTI-MARKET COMPARISON
 # =========================================================
 
+COMPARE_NEAREST_MARKETS = 60
+
+
+def nearest_market_ids(market_ids, origin_lat, origin_lon, limit):
+    """Return up to `limit` of market_ids, closest to the origin first."""
+    connection = get_connection()
+    rows = connection.execute(
+        "SELECT id, lat, lon FROM markets"
+    ).fetchall()
+    connection.close()
+
+    wanted = set(market_ids)
+    lat0 = math.radians(origin_lat)
+
+    def squared_distance(row):
+        # Equirectangular approximation; only the ordering matters here.
+        dx = math.radians(row["lon"] - origin_lon) * math.cos(lat0)
+        dy = math.radians(row["lat"] - origin_lat)
+        return dx * dx + dy * dy
+
+    ranked = sorted(
+        (r for r in rows
+         if r["id"] in wanted and r["lat"] is not None and r["lon"] is not None),
+        key=squared_distance
+    )
+    return [int(r["id"]) for r in ranked[:limit]]
+
+
 def compare_markets(
 
     crop,
@@ -1834,6 +1862,15 @@ def compare_markets(
                 "market_id"
             ].unique()
         )
+    )
+
+    # Forecasting every market is slow now that Tamil Nadu alone has 300+.
+    # Far markets lose on transport cost anyway, so compare the nearest ones.
+    market_ids = nearest_market_ids(
+        market_ids,
+        origin_lat,
+        origin_lon,
+        limit=COMPARE_NEAREST_MARKETS
     )
 
     results = []

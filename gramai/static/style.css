@@ -6041,3 +6041,6 @@ header{background:#fff;border-bottom:1px solid var(--line)}
   }
 
 }
+
+/* Keep Leaflet's internal z-indexes (400+) inside the map so modals (z-index 100) stay on top. */
+.leaflet-container{z-index:0}

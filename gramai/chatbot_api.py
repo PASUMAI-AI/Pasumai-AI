@@ -14,6 +14,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from typing import Optional
 import os, sqlite3, json, time, re
+from market_infra import PRICED_SQL
 
 try:
     import requests
@@ -158,7 +159,7 @@ def t_list_crops_and_markets(u, args):
     c = conn()
     crops = [r["name"] for r in c.execute("SELECT name FROM crops ORDER BY name")]
     mk = _rows(c.execute(
-        "SELECT id,name,city,district,state,market_fee_pct FROM markets "
+        "SELECT id,name,city,district,state,market_fee_pct,market_type,facilities FROM markets "
         "WHERE state=? ORDER BY name", (state,)), 40)
     c.close()
     return {"state": state, "crops": crops, "markets": mk}
@@ -185,14 +186,15 @@ def t_get_market_prices(u, args):
 
 
 def _resolve_market(c, name, state):
+    # Forecasts need price history, so only markets that have prices qualify.
     if not name:
         return None
-    r = c.execute("SELECT id,name,state FROM markets WHERE lower(name)=lower(?) "
-                  "OR lower(city)=lower(?) LIMIT 1", (name, name)).fetchone()
+    r = c.execute("SELECT id,name,state FROM markets m WHERE (lower(name)=lower(?) "
+                  "OR lower(city)=lower(?)) AND " + PRICED_SQL + " LIMIT 1", (name, name)).fetchone()
     if r:
         return dict(r)
-    r = c.execute("SELECT id,name,state FROM markets WHERE name LIKE ? OR city LIKE ? "
-                  "LIMIT 1", ("%%%s%%" % name, "%%%s%%" % name)).fetchone()
+    r = c.execute("SELECT id,name,state FROM markets m WHERE (name LIKE ? OR city LIKE ?) AND "
+                  + PRICED_SQL + " LIMIT 1", ("%%%s%%" % name, "%%%s%%" % name)).fetchone()
     return dict(r) if r else None
 
 
@@ -205,8 +207,8 @@ def t_get_price_forecast(u, args):
     c = conn()
     mk = _resolve_market(c, market_name, state)
     if not mk:
-        r = c.execute("SELECT id,name,state FROM markets WHERE state=? ORDER BY name LIMIT 1",
-                      (state,)).fetchone()
+        r = c.execute("SELECT id,name,state FROM markets m WHERE state=? AND " + PRICED_SQL
+                      + " ORDER BY name LIMIT 1", (state,)).fetchone()
         mk = dict(r) if r else None
     c.close()
     if not mk:

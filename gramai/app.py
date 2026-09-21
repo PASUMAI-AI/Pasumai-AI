@@ -604,8 +604,11 @@ def crops(u=Depends(user)):
     c=db();rows=c.execute("select * from crops order by name").fetchall();c.close();return [dict(r) for r in rows]
 
 @app.get("/api/markets")
-def markets(state:Optional[str]=None,u=Depends(user)):
-    c=db();rows=c.execute("select * from markets where (? is null or state=?) order by state,name",(state,state)).fetchall();c.close();return [dict(r) for r in rows]
+def markets(state:Optional[str]=None,priced:bool=False,u=Depends(user)):
+    # priced=true keeps only markets with price history (needed for forecasts).
+    from market_infra import PRICED_SQL
+    sql="select m.* from markets m where (? is null or m.state=?)"+(" and "+PRICED_SQL if priced else "")+" order by m.state,m.name"
+    c=db();rows=c.execute(sql,(state,state)).fetchall();c.close();return [dict(r) for r in rows]
 
 @app.get("/api/demand")
 def demand(crop:str="Tomato",u=Depends(user)):
@@ -1283,7 +1286,7 @@ def ml_forecast(crop:str="Tomato",market_id:int=1,u=Depends(user)):
     except Exception as e:raise HTTPException(400,f"ML forecast failed: {e}")
 
 @app.get("/api/ml/compare")
-def ml_compare(crop:str="Tomato",quantity_qtl:float=10,lat:float=18.5204,lon:float=73.8567,horizon:int=7,u=Depends(user)):
+def ml_compare(crop:str="Tomato",quantity_qtl:float=10,lat:float=11.0168,lon:float=76.9558,horizon:int=7,u=Depends(user)):
     if horizon not in (1,3,7):raise HTTPException(400,"Horizon must be 1, 3 or 7")
     try:return compare_markets(crop,quantity_qtl,lat,lon,horizon)
     except Exception as e:raise HTTPException(400,f"Market comparison failed: {e}")
@@ -1328,3 +1331,7 @@ app.include_router(market_price_router)
 from whatsapp_api import router as whatsapp_router, init_whatsapp_schema
 init_whatsapp_schema()
 app.include_router(whatsapp_router)
+
+# Real Tamil Nadu Regulated Markets + Uzhavar Santhai (data/tn_markets.csv).
+from market_infra import init_market_infra
+init_market_infra()
