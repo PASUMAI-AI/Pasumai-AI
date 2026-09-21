@@ -146,7 +146,7 @@ async function whatsappInventorySection(){
 
 async function farmerDashboard(){let d=await api('/api/v2/v3/dashboard');let notes=await api('/api/notifications');$('content').innerHTML=`<div class="hero-reco"><div><small>${tr('todayRecommendation')}</small><h2>${esc(d.recommendation)}</h2><p>GRAM AI combines local price movement, demand and logistics before you commit a sale.</p></div><div>${badge(d.kyc.status==='VERIFIED'&&d.kyc.live_check)}</div></div><div class="grid stats-4">${card(tr('todayIncome'),fmt(d.today_income),'Revenue credited today','green')}${card(tr('totalIncome'),fmt(d.total_income),'Lifetime recorded sales')}${card(tr('openOffers'),d.open_offers,'Waiting for your action')}${card(tr('rewardPoints'),d.reward_points,'Redeem for transport / fee benefits')}</div>${section(tr('notification'),notes.slice(0,6).map(n=>`<div class="list-item"><div><b>${esc(n.title)}</b><small>${esc(n.message)}</small></div><span class="tag">${esc(n.severity)}</span></div>`).join('')||`<div class="empty">${tr('noData')}</div>`)} ${await whatsappInventorySection()}`}
 
-async function farmerCrops(){let hs=await api('/api/v2/v3/harvests');let crops=await api('/api/crops');let markets=await api('/api/markets?state=Tamil Nadu');$('content').innerHTML=`<div class="toolbar"><button class="primary" onclick="openVerifiedCropFlow()">＋ ${tr('addCrop')}</button><span class="soft-note">📍 Tamil Nadu is fixed for your selling portal. Use Link India to explore other states.</span></div>${section(tr('upcoming'),hs.length?`<div class="harvest-grid">${hs.map(h=>`<div class="harvest-card"><div class="harvest-top"><div><span class="crop-icon">🌾</span><b>${esc(h.crop)} • ${esc(h.variety)}</b></div><span class="tag ${h.buyer_visible?'success':''}">${h.buyer_visible?tr('openForBuyers'):tr('closed')}</span></div><div class="mini-grid"><span>${tr('quantity')}<b>${num(h.available_quantity_qtl)} qtl</b></span><span>${tr('date')}<b>${esc(h.expected_harvest_date)}</b></span><span>${tr('qualityGrade')}<b>${esc(h.grade_expected||'Pending')}</b></span><span>${tr('token')}<b>${fmt(h.token_amount)}</b></span></div>${h.certificate_url?button('📄 '+tr('certificate'),`openCertificate('${h.certificate_url}')`):''}</div>`).join('')}</div>`:`<div class="empty">No harvests yet. Add a verified crop using live GPS + live photo.</div>`)}${section(tr('priceForecast'),`<div class="forecast-form"><select id="fcrop" class="control">${crops.map(c=>`<option>${esc(c.name)}</option>`).join('')}</select><select id="fmarket" class="control">${markets.map(m=>`<option value="${m.id}">${esc(m.name)} • ${esc(m.district)}</option>`).join('')}</select><input id="fqty" class="control" type="number" value="10" min="1"><button class="primary" onclick="runFarmerForecast()">✨ ${tr('generate')}</button></div><div id="forecastResult"></div>`)} `}
+async function farmerCrops(){let hs=await api('/api/v2/v3/harvests');let crops=await api('/api/crops');let markets=await api('/api/markets?state=Tamil Nadu&priced=true');$('content').innerHTML=`<div class="toolbar"><button class="primary" onclick="openVerifiedCropFlow()">＋ ${tr('addCrop')}</button><span class="soft-note">📍 Tamil Nadu is fixed for your selling portal. Use Link India to explore other states.</span></div>${section(tr('upcoming'),hs.length?`<div class="harvest-grid">${hs.map(h=>`<div class="harvest-card"><div class="harvest-top"><div><span class="crop-icon">🌾</span><b>${esc(h.crop)} • ${esc(h.variety)}</b></div><span class="tag ${h.buyer_visible?'success':''}">${h.buyer_visible?tr('openForBuyers'):tr('closed')}</span></div><div class="mini-grid"><span>${tr('quantity')}<b>${num(h.available_quantity_qtl)} qtl</b></span><span>${tr('date')}<b>${esc(h.expected_harvest_date)}</b></span><span>${tr('qualityGrade')}<b>${esc(h.grade_expected||'Pending')}</b></span><span>${tr('token')}<b>${fmt(h.token_amount)}</b></span></div>${h.certificate_url?button('📄 '+tr('certificate'),`openCertificate('${h.certificate_url}')`):''}</div>`).join('')}</div>`:`<div class="empty">No harvests yet. Add a verified crop using live GPS + live photo.</div>`)}${section(tr('priceForecast'),`<div class="forecast-form"><select id="fcrop" class="control">${crops.map(c=>`<option>${esc(c.name)}</option>`).join('')}</select><select id="fmarket" class="control">${markets.map(m=>`<option value="${m.id}">${esc(m.name)} • ${esc(m.district)}${m.market_type?` • ${esc(m.market_type)}`:''}</option>`).join('')}</select><input id="fqty" class="control" type="number" value="10" min="1"><button class="primary" onclick="runFarmerForecast()">✨ ${tr('generate')}</button></div><div id="forecastResult"></div>`)} `}
 
 function getGPS() {
   return new Promise((resolve, reject) =>
@@ -1752,9 +1752,9 @@ async function runFarmerForecast() {
 
           `&quantity_qtl=${quantity}` +
 
-          `&lat=18.5204` +
+          `&lat=11.0168` +
 
-          `&lon=73.8567` +
+          `&lon=76.9558` +
 
           `&horizon=7`
 
@@ -14875,7 +14875,9 @@ async function loadStateMarketData(
 
         state,
 
-        network
+        network,
+
+        markets
 
       );
 
@@ -15584,7 +15586,8 @@ function renderStateNetwork(
 
 function renderStateMap(
   state,
-  rows
+  rows,
+  markets = []
 ) {
 
   if (!$('stateIndiaMap')) return;
@@ -15613,6 +15616,13 @@ function renderStateMap(
 
     ];
 
+  } else if (markets.length && markets[0].lat != null) {
+
+    center = [
+      Number(markets[0].lat),
+      Number(markets[0].lon)
+    ];
+
   }
 
 
@@ -15620,7 +15630,7 @@ function renderStateMap(
     L.map('stateIndiaMap')
      .setView(
        center,
-       rows.length ? 6 : 5
+       rows.length || markets.length ? 6 : 5
      );
 
 
@@ -15667,6 +15677,57 @@ function renderStateMap(
       <br>
 
       ★ ${num(x.rating || 0)}
+
+    `);
+
+  });
+
+
+  /*
+    Markets with coordinates (Tamil Nadu Regulated
+    Markets and Uzhavar Santhai from agrimark.tn.gov.in).
+  */
+
+  markets.forEach(m => {
+
+    if (
+      m.lat === null ||
+      m.lat === undefined ||
+      m.lon === null ||
+      m.lon === undefined
+    ) return;
+
+
+    L.circleMarker(
+      [Number(m.lat), Number(m.lon)],
+      {
+        radius: 5,
+        color: m.market_type === 'Uzhavar Santhai'
+          ? '#2e7d32'
+          : '#b26a00',
+        weight: 1,
+        fillOpacity: 0.8
+      }
+    )
+
+    .addTo(mapObj)
+
+    .bindPopup(`
+
+      <b>${esc(m.name)}</b>
+
+      <br>
+
+      ${esc(m.market_type || 'APMC / Mandi')}
+
+      <br>
+
+      ${esc(m.district || '')},
+      ${esc(state)}
+
+      <br>
+
+      ${esc(m.facilities || '')}
 
     `);
 
@@ -15777,6 +15838,18 @@ async function showStateMarketDetails(
             </b>
 
           </span>
+
+
+          ${
+            market.facilities
+              ? `
+                <span>
+                  Facilities
+                  <b>${esc(market.facilities)}</b>
+                </span>
+              `
+              : ''
+          }
 
 
         </div>
@@ -17206,7 +17279,7 @@ async function viewListing(id) {
       quote =
         await api(
 
-          `/api/listings/${id}/quote?quantity_qtl=1&buyer_lat=19.076&buyer_lon=72.8777`
+          `/api/listings/${id}/quote?quantity_qtl=1&buyer_lat=13.0827&buyer_lon=80.2707`
 
         );
 
@@ -18319,7 +18392,7 @@ async function updateBuyerOrderSummary(id) {
     const quote =
       await api(
 
-        `/api/listings/${id}/quote?quantity_qtl=${encodeURIComponent(qty)}&buyer_lat=19.076&buyer_lon=72.8777`
+        `/api/listings/${id}/quote?quantity_qtl=${encodeURIComponent(qty)}&buyer_lat=13.0827&buyer_lon=80.2707`
 
       );
 
@@ -18556,10 +18629,10 @@ async function confirmBuyerOrder(id) {
               deliveryMode,
 
             buyer_lat:
-              19.076,
+              13.0827,
 
             buyer_lon:
-              72.8777
+              80.2707
 
           })
 
@@ -18762,7 +18835,7 @@ async function openConfirmedOrderTracking(
 
 
 function buyerOffer(id,ask){let price=prompt('Your offer ₹/qtl',Math.round(ask*.98)),qty=prompt('Quantity qtl','5'),pitch=prompt('Pitch to farmer','I can pay token immediately and arrange quick pickup.');if(!price||!qty)return;api('/api/v2/v3/offers',{method:'POST',body:JSON.stringify({listing_id:id,offer_price:+price,quantity_qtl:+qty,pitch})}).then(()=>toast('Offer sent to farmer')).catch(e=>toast(e.message))}
-async function placeOrder(id){let qty=prompt('Quantity qtl','2');if(!qty)return;try{let d=await api('/api/orders',{method:'POST',body:JSON.stringify({listing_id:id,quantity_qtl:+qty,delivery_mode:'SELLER_TRANSPORT',buyer_lat:19.076,buyer_lon:72.8777})});toast(`Order #${d.order_id} created • ${fmt(d.total)}`);closeModal();buyerOrders()}catch(e){toast(e.message)}}
+async function placeOrder(id){let qty=prompt('Quantity qtl','2');if(!qty)return;try{let d=await api('/api/orders',{method:'POST',body:JSON.stringify({listing_id:id,quantity_qtl:+qty,delivery_mode:'SELLER_TRANSPORT',buyer_lat:13.0827,buyer_lon:80.2707})});toast(`Order #${d.order_id} created • ${fmt(d.total)}`);closeModal();buyerOrders()}catch(e){toast(e.message)}}
 
 async function buyerPreorders() {
 

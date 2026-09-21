@@ -1,0 +1,629 @@
+{
+  "retrieved_on": "2026-09-21",
+  "regulated_markets": 138,
+  "uzhavar_santhai": 194,
+  "total": 332,
+  "coords_usable": 318,
+  "flag_counts": {
+    "ok": 271,
+    "low_precision": 13,
+    "repaired_format": 19,
+    "unreadable": 4,
+    "missing": 6,
+    "duplicate_coordinates": 4,
+    "far_from_district": 4,
+    "review_distance": 15
+  },
+  "flagged_rows": [
+    {
+      "source_id": "rm-2",
+      "market_type": "Regulated Market",
+      "name": "Annur",
+      "district": "",
+      "market_committee": "Coimbatore",
+      "raw_lat": "11.14",
+      "raw_lon": "77.06",
+      "coord_flags": "low_precision"
+    },
+    {
+      "source_id": "rm-3",
+      "market_type": "Regulated Market",
+      "name": "Coimbatore",
+      "district": "",
+      "market_committee": "Coimbatore",
+      "raw_lat": "10.59",
+      "raw_lon": "76.59",
+      "coord_flags": "low_precision"
+    },
+    {
+      "source_id": "rm-5",
+      "market_type": "Regulated Market",
+      "name": "Kinathukkadavu",
+      "district": "",
+      "market_committee": "Coimbatore",
+      "raw_lat": "10.88",
+      "raw_lon": "77.01",
+      "coord_flags": "low_precision"
+    },
+    {
+      "source_id": "rm-6",
+      "market_type": "Regulated Market",
+      "name": "Malayadipalayam",
+      "district": "",
+      "market_committee": "Coimbatore",
+      "raw_lat": "11.11",
+      "raw_lon": "76.92",
+      "coord_flags": "low_precision"
+    },
+    {
+      "source_id": "rm-7",
+      "market_type": "Regulated Market",
+      "name": "Negamam",
+      "district": "",
+      "market_committee": "Coimbatore",
+      "raw_lat": "10.74",
+      "raw_lon": "77.10",
+      "coord_flags": "low_precision"
+    },
+    {
+      "source_id": "rm-8",
+      "market_type": "Regulated Market",
+      "name": "Pollachi",
+      "district": "",
+      "market_committee": "Coimbatore",
+      "raw_lat": "10.39",
+      "raw_lon": "76.59",
+      "coord_flags": "low_precision"
+    },
+    {
+      "source_id": "rm-14",
+      "market_type": "Regulated Market",
+      "name": "Cuddalore",
+      "district": "",
+      "market_committee": "Cuddalore",
+      "raw_lat": "11.75N",
+      "raw_lon": "79.75E",
+      "coord_flags": "repaired_format"
+    },
+    {
+      "source_id": "rm-15",
+      "market_type": "Regulated Market",
+      "name": "Veppur",
+      "district": "",
+      "market_committee": "Cuddalore",
+      "raw_lat": "11.53796°N",
+      "raw_lon": "79.14187°N",
+      "coord_flags": "repaired_format"
+    },
+    {
+      "source_id": "rm-54",
+      "market_type": "Regulated Market",
+      "name": "Kamuthi",
+      "district": "",
+      "market_committee": "Ramanathapuram",
+      "raw_lat": "9418036",
+      "raw_lon": "78361572",
+      "coord_flags": "repaired_format"
+    },
+    {
+      "source_id": "rm-56",
+      "market_type": "Regulated Market",
+      "name": "Paramakudi",
+      "district": "",
+      "market_committee": "Ramanathapuram",
+      "raw_lat": "9.32.70.04° N",
+      "raw_lon": "78.36.50.84° E",
+      "coord_flags": "unreadable"
+    },
+    {
+      "source_id": "rm-57",
+      "market_type": "Regulated Market",
+      "name": "Rajasingamangalam",
+      "district": "",
+      "market_committee": "Ramanathapuram",
+      "raw_lat": "",
+      "raw_lon": "",
+      "coord_flags": "missing"
+    },
+    {
+      "source_id": "rm-58",
+      "market_type": "Regulated Market",
+      "name": "Ramanathapuram",
+      "district": "",
+      "market_committee": "Ramanathapuram",
+      "raw_lat": "9.364837,",
+      "raw_lon": "78.831543",
+      "coord_flags": "repaired_format"
+    },
+    {
+      "source_id": "rm-63",
+      "market_type": "Regulated Market",
+      "name": "Meicheri",
+      "district": "",
+      "market_committee": "Salem",
+      "raw_lat": "11.736668",
+      "raw_lon": "78.033996",
+      "coord_flags": "duplicate_coordinates"
+    },
+    {
+      "source_id": "rm-64",
+      "market_type": "Regulated Market",
+      "name": "Omalur",
+      "district": "",
+      "market_committee": "Salem",
+      "raw_lat": "11.736668",
+      "raw_lon": "78.033996",
+      "coord_flags": "duplicate_coordinates"
+    },
+    {
+      "source_id": "rm-69",
+      "market_type": "Regulated Market",
+      "name": "Karaikudi",
+      "district": "",
+      "market_committee": "Sivagangai",
+      "raw_lat": "",
+      "raw_lon": "",
+      "coord_flags": "missing"
+    },
+    {
+      "source_id": "rm-71",
+      "market_type": "Regulated Market",
+      "name": "Singampuneri",
+      "district": "",
+      "market_committee": "Sivagangai",
+      "raw_lat": "",
+      "raw_lon": "",
+      "coord_flags": "missing"
+    },
+    {
+      "source_id": "rm-80",
+      "market_type": "Regulated Market",
+      "name": "Andipatti",
+      "district": "",
+      "market_committee": "Theni",
+      "raw_lat": "9.159387",
+      "raw_lon": "78.066277",
+      "coord_flags": "far_from_district_hq_114km"
+    },
+    {
+      "source_id": "rm-85",
+      "market_type": "Regulated Market",
+      "name": "Dhusi",
+      "district": "",
+      "market_committee": "Thiruvannamalai",
+      "raw_lat": "",
+      "raw_lon": "",
+      "coord_flags": "missing"
+    },
+    {
+      "source_id": "rm-86",
+      "market_type": "Regulated Market",
+      "name": "Karur",
+      "district": "",
+      "market_committee": "Tiruchirapalli",
+      "raw_lat": "10.96",
+      "raw_lon": "78.07",
+      "coord_flags": "low_precision"
+    },
+    {
+      "source_id": "rm-87",
+      "market_type": "Regulated Market",
+      "name": "Lalgudi",
+      "district": "",
+      "market_committee": "Tiruchirapalli",
+      "raw_lat": "10.87",
+      "raw_lon": "78.81",
+      "coord_flags": "low_precision"
+    },
+    {
+      "source_id": "rm-88",
+      "market_type": "Regulated Market",
+      "name": "Manachanallur",
+      "district": "",
+      "market_committee": "Tiruchirapalli",
+      "raw_lat": "10.91",
+      "raw_lon": "78.69",
+      "coord_flags": "low_precision"
+    },
+    {
+      "source_id": "rm-89",
+      "market_type": "Regulated Market",
+      "name": "Manapparai",
+      "district": "",
+      "market_committee": "Tiruchirapalli",
+      "raw_lat": "10.45",
+      "raw_lon": "78.70",
+      "coord_flags": "low_precision"
+    },
+    {
+      "source_id": "rm-90",
+      "market_type": "Regulated Market",
+      "name": "Thathaiyangarpet",
+      "district": "",
+      "market_committee": "Tiruchirapalli",
+      "raw_lat": "11.12",
+      "raw_lon": "78.59",
+      "coord_flags": "low_precision"
+    },
+    {
+      "source_id": "rm-91",
+      "market_type": "Regulated Market",
+      "name": "Thuvarankurichi",
+      "district": "",
+      "market_committee": "Tiruchirapalli",
+      "raw_lat": "10.60",
+      "raw_lon": "78.42",
+      "coord_flags": "low_precision"
+    },
+    {
+      "source_id": "rm-101",
+      "market_type": "Regulated Market",
+      "name": "Srivaikundam",
+      "district": "",
+      "market_committee": "Tirunelveli",
+      "raw_lat": "8.6",
+      "raw_lon": "77.9",
+      "coord_flags": "low_precision"
+    },
+    {
+      "source_id": "rm-108",
+      "market_type": "Regulated Market",
+      "name": "Kangayam",
+      "district": "",
+      "market_committee": "Tiruppur",
+      "raw_lat": "10.946116",
+      "raw_lon": "77.707287",
+      "coord_flags": "duplicate_coordinates"
+    },
+    {
+      "source_id": "rm-115",
+      "market_type": "Regulated Market",
+      "name": "Pethappampatti",
+      "district": "",
+      "market_committee": "Tiruppur",
+      "raw_lat": "11.110942",
+      "raw_lon": "79.750573",
+      "coord_flags": "far_from_district_hq_263km"
+    },
+    {
+      "source_id": "rm-120",
+      "market_type": "Regulated Market",
+      "name": "Vellakkoil",
+      "district": "",
+      "market_committee": "Tiruppur",
+      "raw_lat": "10.946116",
+      "raw_lon": "77.707287",
+      "coord_flags": "duplicate_coordinates"
+    },
+    {
+      "source_id": "rm-121",
+      "market_type": "Regulated Market",
+      "name": "Ammoor",
+      "district": "",
+      "market_committee": "Vellore",
+      "raw_lat": "",
+      "raw_lon": "",
+      "coord_flags": "missing"
+    },
+    {
+      "source_id": "rm-126",
+      "market_type": "Regulated Market",
+      "name": "Marakkanam",
+      "district": "",
+      "market_committee": "Villupuram",
+      "raw_lat": "35.2c",
+      "raw_lon": "95.3f",
+      "coord_flags": "unreadable"
+    },
+    {
+      "source_id": "rm-134",
+      "market_type": "Regulated Market",
+      "name": "Villupuram",
+      "district": "",
+      "market_committee": "Villupuram",
+      "raw_lat": "11.945960N",
+      "raw_lon": "79.497414E",
+      "coord_flags": "repaired_format"
+    },
+    {
+      "source_id": "rm-135",
+      "market_type": "Regulated Market",
+      "name": "Aruppukottai",
+      "district": "",
+      "market_committee": "Virudhunagar",
+      "raw_lat": "9.494549° N",
+      "raw_lon": "78.098010° E",
+      "coord_flags": "repaired_format"
+    },
+    {
+      "source_id": "rm-136",
+      "market_type": "Regulated Market",
+      "name": "Rajapalayam",
+      "district": "",
+      "market_committee": "Virudhunagar",
+      "raw_lat": "",
+      "raw_lon": "",
+      "coord_flags": "missing"
+    },
+    {
+      "source_id": "rm-137",
+      "market_type": "Regulated Market",
+      "name": "Sathur",
+      "district": "",
+      "market_committee": "Virudhunagar",
+      "raw_lat": "9.21.38.72° N",
+      "raw_lon": "77.54.5488° E",
+      "coord_flags": "unreadable"
+    },
+    {
+      "source_id": "rm-138",
+      "market_type": "Regulated Market",
+      "name": "Virudhunagar",
+      "district": "",
+      "market_committee": "Virudhunagar",
+      "raw_lat": "N09. 59.526’’",
+      "raw_lon": "E077. 95.333’’",
+      "coord_flags": "unreadable"
+    },
+    {
+      "source_id": "us-37",
+      "market_type": "Uzhavar Santhai",
+      "name": "Hosur",
+      "district": "Krishnagiri",
+      "market_committee": "",
+      "raw_lat": "N12.43588",
+      "raw_lon": "E077.49736",
+      "coord_flags": "repaired_format;review_distance_78km"
+    },
+    {
+      "source_id": "us-44",
+      "market_type": "Uzhavar Santhai",
+      "name": "Avallapalli",
+      "district": "Krishnagiri",
+      "market_committee": "",
+      "raw_lat": "N12.44552",
+      "raw_lon": "E077.50179",
+      "coord_flags": "repaired_format;review_distance_77km"
+    },
+    {
+      "source_id": "us-53",
+      "market_type": "Uzhavar Santhai",
+      "name": "Rajapalayam",
+      "district": "Virudhunagar",
+      "market_committee": "",
+      "raw_lat": "9.2767392",
+      "raw_lon": "77.33133488",
+      "coord_flags": "review_distance_77km"
+    },
+    {
+      "source_id": "us-61",
+      "market_type": "Uzhavar Santhai",
+      "name": "Keelpennathur",
+      "district": "Thiruvannamalai",
+      "market_committee": "",
+      "raw_lat": "13.248979",
+      "raw_lon": "79.223591",
+      "coord_flags": "far_from_district_hq_115km"
+    },
+    {
+      "source_id": "us-67",
+      "market_type": "Uzhavar Santhai",
+      "name": "Vandavasi",
+      "district": "Thiruvannamalai",
+      "market_committee": "",
+      "raw_lat": "12.505920",
+      "raw_lon": "79.604161",
+      "coord_flags": "review_distance_66km"
+    },
+    {
+      "source_id": "us-68",
+      "market_type": "Uzhavar Santhai",
+      "name": "Cheyyar",
+      "district": "Thiruvannamalai",
+      "market_committee": "",
+      "raw_lat": "12.667965",
+      "raw_lon": "79.539424",
+      "coord_flags": "review_distance_70km"
+    },
+    {
+      "source_id": "us-69",
+      "market_type": "Uzhavar Santhai",
+      "name": "Thalavaipuram",
+      "district": "Virudhunagar",
+      "market_committee": "",
+      "raw_lat": "9.23378204",
+      "raw_lon": "77.29470292",
+      "coord_flags": "review_distance_83km"
+    },
+    {
+      "source_id": "us-72",
+      "market_type": "Uzhavar Santhai",
+      "name": "Sivakasi",
+      "district": "Virudhunagar",
+      "market_committee": "",
+      "raw_lat": "9.279",
+      "raw_lon": "77.4720",
+      "coord_flags": "review_distance_63km"
+    },
+    {
+      "source_id": "us-74",
+      "market_type": "Uzhavar Santhai",
+      "name": "Usilampatti",
+      "district": "Madurai",
+      "market_committee": "",
+      "raw_lat": "9.57505116",
+      "raw_lon": "77.4711566",
+      "coord_flags": "review_distance_81km"
+    },
+    {
+      "source_id": "us-75",
+      "market_type": "Uzhavar Santhai",
+      "name": "Thathakapatti",
+      "district": "Salem",
+      "market_committee": "",
+      "raw_lat": "11.381081",
+      "raw_lon": "78.892842",
+      "coord_flags": "review_distance_87km"
+    },
+    {
+      "source_id": "us-92",
+      "market_type": "Uzhavar Santhai",
+      "name": "Jalagandapuram",
+      "district": "Salem",
+      "market_committee": "",
+      "raw_lat": "11.694738",
+      "raw_lon": "78.875738",
+      "coord_flags": "review_distance_79km"
+    },
+    {
+      "source_id": "us-104",
+      "market_type": "Uzhavar Santhai",
+      "name": "Pallapatti.",
+      "district": "Karur",
+      "market_committee": "",
+      "raw_lat": "10.354372",
+      "raw_lon": "77.523416",
+      "coord_flags": "review_distance_91km"
+    },
+    {
+      "source_id": "us-105",
+      "market_type": "Uzhavar Santhai",
+      "name": "Vengamedu",
+      "district": "Karur",
+      "market_committee": "",
+      "raw_lat": "10.972852",
+      "raw_lon": "77.523416",
+      "coord_flags": "review_distance_61km"
+    },
+    {
+      "source_id": "us-122",
+      "market_type": "Uzhavar Santhai",
+      "name": "Krishnagiri",
+      "district": "Krishnagiri",
+      "market_committee": "",
+      "raw_lat": "N12.31474",
+      "raw_lon": "E078.13264",
+      "coord_flags": "repaired_format"
+    },
+    {
+      "source_id": "us-144",
+      "market_type": "Uzhavar Santhai",
+      "name": "Tirukattupalli",
+      "district": "Thanjavur",
+      "market_committee": "",
+      "raw_lat": "10.848288",
+      "raw_lon": "79.954138",
+      "coord_flags": "review_distance_89km"
+    },
+    {
+      "source_id": "us-146",
+      "market_type": "Uzhavar Santhai",
+      "name": "Sathiyamagalam",
+      "district": "Erode",
+      "market_committee": "",
+      "raw_lat": "N 11.492795",
+      "raw_lon": "E 77.244655",
+      "coord_flags": "repaired_format"
+    },
+    {
+      "source_id": "us-147",
+      "market_type": "Uzhavar Santhai",
+      "name": "Sampath Nagar",
+      "district": "Erode",
+      "market_committee": "",
+      "raw_lat": "N11.339775",
+      "raw_lon": "E77.710159",
+      "coord_flags": "repaired_format"
+    },
+    {
+      "source_id": "us-148",
+      "market_type": "Uzhavar Santhai",
+      "name": "Periyar Nagar",
+      "district": "Erode",
+      "market_committee": "",
+      "raw_lat": "N11.334928",
+      "raw_lon": "E77.725128",
+      "coord_flags": "repaired_format"
+    },
+    {
+      "source_id": "us-149",
+      "market_type": "Uzhavar Santhai",
+      "name": "Gobichettipalayam",
+      "district": "Erode",
+      "market_committee": "",
+      "raw_lat": "N11.4448306",
+      "raw_lon": "E77.4338014",
+      "coord_flags": "repaired_format"
+    },
+    {
+      "source_id": "us-150",
+      "market_type": "Uzhavar Santhai",
+      "name": "Perundurai",
+      "district": "Erode",
+      "market_committee": "",
+      "raw_lat": "N11.283144",
+      "raw_lon": "E77.590103",
+      "coord_flags": "repaired_format"
+    },
+    {
+      "source_id": "us-151",
+      "market_type": "Uzhavar Santhai",
+      "name": "Dharapuram",
+      "district": "Tiruppur",
+      "market_committee": "",
+      "raw_lat": "N10.734678",
+      "raw_lon": "E77.521705",
+      "coord_flags": "repaired_format"
+    },
+    {
+      "source_id": "us-152",
+      "market_type": "Uzhavar Santhai",
+      "name": "Kangayam",
+      "district": "Tiruppur",
+      "market_committee": "",
+      "raw_lat": "N11.007667",
+      "raw_lon": "E77.559864",
+      "coord_flags": "repaired_format"
+    },
+    {
+      "source_id": "us-155",
+      "market_type": "Uzhavar Santhai",
+      "name": "Kaveripattinam",
+      "district": "Krishnagiri",
+      "market_committee": "",
+      "raw_lat": "N12.245982",
+      "raw_lon": "E078.13078",
+      "coord_flags": "repaired_format"
+    },
+    {
+      "source_id": "us-156",
+      "market_type": "Uzhavar Santhai",
+      "name": "Denkanikottai",
+      "district": "Krishnagiri",
+      "market_committee": "",
+      "raw_lat": "N12.31826",
+      "raw_lon": "E077.47324",
+      "coord_flags": "repaired_format;review_distance_83km"
+    },
+    {
+      "source_id": "us-180",
+      "market_type": "Uzhavar Santhai",
+      "name": "Thalavadi",
+      "district": "Erode",
+      "market_committee": "",
+      "raw_lat": "11.77732",
+      "raw_lon": "77.00396",
+      "coord_flags": "review_distance_92km"
+    },
+    {
+      "source_id": "us-185",
+      "market_type": "Uzhavar Santhai",
+      "name": "Pernampet",
+      "district": "Vellore",
+      "market_committee": "",
+      "raw_lat": "120940563",
+      "raw_lon": "78.723483",
+      "coord_flags": "repaired_format;far_from_district_hq_102km"
+    }
+  ]
+}
