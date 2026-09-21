@@ -341,7 +341,7 @@ def interpret(body: InterpretIn, u=Depends(get_user_dep())):
         out["value"] = canonical_crop(out.get("value"))
 
     # Free questions get a real answer from the existing tool-using assistant,
-    # so "what is the onion price in Nashik" reads live data.
+    # so "what is the onion price in Dindigul" reads live data.
     if out.get("kind") == "intent" and out.get("intent") in ("question", "check_price"):
         question = body.text
         if out.get("intent") == "check_price" and out.get("crop"):
@@ -353,10 +353,10 @@ def interpret(body: InterpretIn, u=Depends(get_user_dep())):
             if not ai:
                 raise RuntimeError("offline")
             answer, used, _ = answer_with_tools(u, question + voice_rule, body.lang,
-                                                u.get("state") or "Maharashtra",
+                                                u.get("state") or "Tamil Nadu",
                                                 body.session_id)
         except Exception:
-            answer = legacy_answer(u, question, body.lang, u.get("state") or "Maharashtra")
+            answer = legacy_answer(u, question, body.lang, u.get("state") or "Tamil Nadu")
         out["answer"] = re.sub(r"[*#`|_>]+", " ", answer or "").strip()
         try:
             save_turn(u["id"], body.session_id, "user", body.text, body.lang)
@@ -412,7 +412,7 @@ def speak(body: SpeakIn, u=Depends(get_user_dep())):
 @router.get("/price")
 def price(crop: str, u=Depends(get_user_dep())):
     crop = canonical_crop(crop)
-    state = u.get("state") or "Maharashtra"
+    state = u.get("state") or "Tamil Nadu"
     c = conn()
     latest = c.execute("SELECT max(price_date) d FROM prices WHERE lower(crop)=lower(?)",
                        (crop,)).fetchone()["d"]

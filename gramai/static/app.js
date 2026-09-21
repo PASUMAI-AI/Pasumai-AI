@@ -1,11 +1,11 @@
 let token=localStorage.getItem('gram_token')||'';
-let me=null,activeRole=localStorage.getItem('gram_login_role')||'farmer',currentLang=localStorage.getItem('gram_lang')||'en',currentState='Maharashtra',currentPage='';
+let me=null,activeRole=localStorage.getItem('gram_login_role')||'farmer',currentLang=localStorage.getItem('gram_lang')||'en',currentState='Tamil Nadu',currentPage='';
 let charts={},mapObj=null,networkMarkers=[];
 const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0}), num=n=>Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:1});
 
 const LANGS=window.LANGS={en:['English','en-IN'],hi:['हिन्दी','hi-IN'],mr:['मराठी','mr-IN'],ta:['தமிழ்','ta-IN'],te:['తెలుగు','te-IN'],bn:['বাংলা','bn-IN'],gu:['ગુજરાતી','gu-IN'],kn:['ಕನ್ನಡ','kn-IN'],ml:['മലയാളം','ml-IN'],pa:['ਪੰਜਾਬੀ','pa-IN'],or:['ଓଡ଼ିଆ','or-IN'],as:['অসমীয়া','as-IN'],ur:['اردو','ur-IN'],ne:['नेपाली','ne-IN'],sa:['संस्कृतम्','sa-IN'],ks:['कॉशुर','ks-IN'],sd:['سنڌي','sd-IN'],kok:['कोंकणी','kok-IN'],mai:['मैथिली','mai-IN'],doi:['डोगरी','doi-IN'],brx:['बड़ो','brx-IN'],mni:['মৈতৈলোন্','mni-IN'],sat:['ᱥᱟᱱᱛᱟᱲᱤ','sat-IN'],raj:['राजस्थानी','hi-IN']};
-const EN={dashboard:'Dashboard',crops:'Crops & Forecasts',market:'Market & Offers',preorders:'Pre-Orders',transport:'Transport & Groups',paymentsRewards:'Payments & Rewards',profile:'Profile',feedback:'Feedback',grievances:'Grievances',linkIndia:'Link India',chats:'Chats',discover:'Discover Harvest',orders:'My Orders',bulk:'Bulk & Shared Logistics',rewards:'Rewards',connectBuyers:'Connect Buyers',usersKyc:'Users & KYC',markets:'Markets',payments:'Payments',stateAnalytics:'State Analytics',feedbackReq:'Feedback & Requirements',securityActions:'Security Actions',todayIncome:"Today's Income",totalIncome:'Total Income',openOffers:'Open Buyer Offers',openHarvests:'Open Harvests',todayRecommendation:"Today's Recommendation",gramVerified:'GRAM AI Verified',notVerified:'KYC Required',addCrop:'Add Verified Crop',upcoming:'My Harvests',openForBuyers:'Open for Buyers',closed:'Closed',priceForecast:'1 / 3 / 7 Day Forecast',generate:'Generate GRAM AI Recommendation',finalRecommendation:'Final GRAM AI Recommendation',bestMarket:'Best Market',expectedNet:'Expected Net Income',reliability:'Forecast Reliability',marketPredictions:'Predictions for Markets Near You',currentPrice:'Current Price',predicted1:'1 Day',predicted3:'3 Days',predicted7:'7 Days',buyerOffers:'Buyer Offers',verifiedBuyers:'Top Verified Buyers',viewDetails:'View Details',accept:'Accept',decline:'Decline',wait:'Wait',negotiate:'Negotiate',chat:'Chat',token:'Token Money',securePayment:'Secure Payment',qualityGrade:'AI Quality Grade',livePhoto:'Live Produce Photo',gps:'Use Live GPS',certificate:'Quality Certificate',transportCost:'Transport Cost',distance:'Distance',location:'Location',groupSelling:'Group Selling',myTransport:'My Transport',sharedTransport:'Shared Transport',rewardPoints:'GramPoints',redeem:'Redeem',validTill:'Valid till',cancellation:'Cancellation Health',profileDetails:'Profile Details',bankDetails:'Bank & Payout Details',kyc:'KYC + Live Photo Verification',verifiedBadge:'Verified Badge',submit:'Submit',rating:'Rating',orderFeedback:'Mandatory Order Feedback',complaint:'Complaint',raiseGrievance:'Raise Grievance',networkMap:'India Network Map',sellers:'Sellers',buyers:'Buyers',combineSell:'Start Combined Selling',message:'Message',area:'Area',purchased:'Crops Purchased',tracking:'Order Tracking',spend:'Total Purchase Value',availableHarvests:'Verified Harvests in Maharashtra',placeOrder:'Place Order',placePreorder:'Place Pre-Order',bulkBuying:'Buyer Pool',nearbyBuyers:'Nearby Buyers',nearbyTransport:'Route-share Transport',revenue:'Platform Revenue',complaints:'Complaints',pendingKyc:'Pending KYC',risk:'Risk / Security',block:'Block',unblock:'Unblock',terminate:'Terminate',warn:'Warn',solution:'Resolution',status:'Status',details:'Details',state:'State',district:'District',crop:'Crop',quantity:'Quantity',price:'Price',date:'Date',farmer:'Farmer',buyer:'Buyer',admin:'Admin',logout:'Logout',language:'Language',home:'Home',search:'Search',notification:'Notifications',why:'Why?',paymentStatus:'Payment Status',refund:'Refund',cashback:'Cashback',warning:'Warning',penalty:'Penalty',noData:'No data yet',allIndia:'All India'};
+const EN={dashboard:'Dashboard',crops:'Crops & Forecasts',market:'Market & Offers',preorders:'Pre-Orders',transport:'Transport & Groups',paymentsRewards:'Payments & Rewards',profile:'Profile',feedback:'Feedback',grievances:'Grievances',linkIndia:'Link India',chats:'Chats',discover:'Discover Harvest',orders:'My Orders',bulk:'Bulk & Shared Logistics',rewards:'Rewards',connectBuyers:'Connect Buyers',usersKyc:'Users & KYC',markets:'Markets',payments:'Payments',stateAnalytics:'State Analytics',feedbackReq:'Feedback & Requirements',securityActions:'Security Actions',todayIncome:"Today's Income",totalIncome:'Total Income',openOffers:'Open Buyer Offers',openHarvests:'Open Harvests',todayRecommendation:"Today's Recommendation",gramVerified:'GRAM AI Verified',notVerified:'KYC Required',addCrop:'Add Verified Crop',upcoming:'My Harvests',openForBuyers:'Open for Buyers',closed:'Closed',priceForecast:'1 / 3 / 7 Day Forecast',generate:'Generate GRAM AI Recommendation',finalRecommendation:'Final GRAM AI Recommendation',bestMarket:'Best Market',expectedNet:'Expected Net Income',reliability:'Forecast Reliability',marketPredictions:'Predictions for Markets Near You',currentPrice:'Current Price',predicted1:'1 Day',predicted3:'3 Days',predicted7:'7 Days',buyerOffers:'Buyer Offers',verifiedBuyers:'Top Verified Buyers',viewDetails:'View Details',accept:'Accept',decline:'Decline',wait:'Wait',negotiate:'Negotiate',chat:'Chat',token:'Token Money',securePayment:'Secure Payment',qualityGrade:'AI Quality Grade',livePhoto:'Live Produce Photo',gps:'Use Live GPS',certificate:'Quality Certificate',transportCost:'Transport Cost',distance:'Distance',location:'Location',groupSelling:'Group Selling',myTransport:'My Transport',sharedTransport:'Shared Transport',rewardPoints:'GramPoints',redeem:'Redeem',validTill:'Valid till',cancellation:'Cancellation Health',profileDetails:'Profile Details',bankDetails:'Bank & Payout Details',kyc:'KYC + Live Photo Verification',verifiedBadge:'Verified Badge',submit:'Submit',rating:'Rating',orderFeedback:'Mandatory Order Feedback',complaint:'Complaint',raiseGrievance:'Raise Grievance',networkMap:'India Network Map',sellers:'Sellers',buyers:'Buyers',combineSell:'Start Combined Selling',message:'Message',area:'Area',purchased:'Crops Purchased',tracking:'Order Tracking',spend:'Total Purchase Value',availableHarvests:'Verified Harvests in Tamil Nadu',placeOrder:'Place Order',placePreorder:'Place Pre-Order',bulkBuying:'Buyer Pool',nearbyBuyers:'Nearby Buyers',nearbyTransport:'Route-share Transport',revenue:'Platform Revenue',complaints:'Complaints',pendingKyc:'Pending KYC',risk:'Risk / Security',block:'Block',unblock:'Unblock',terminate:'Terminate',warn:'Warn',solution:'Resolution',status:'Status',details:'Details',state:'State',district:'District',crop:'Crop',quantity:'Quantity',price:'Price',date:'Date',farmer:'Farmer',buyer:'Buyer',admin:'Admin',logout:'Logout',language:'Language',home:'Home',search:'Search',notification:'Notifications',why:'Why?',paymentStatus:'Payment Status',refund:'Refund',cashback:'Cashback',warning:'Warning',penalty:'Penalty',noData:'No data yet',allIndia:'All India'};
 const PACK={
  hi:{dashboard:'डैशबोर्ड',crops:'फसल और पूर्वानुमान',market:'बाज़ार और ऑफ़र',preorders:'प्री-ऑर्डर',transport:'परिवहन और समूह',paymentsRewards:'भुगतान और पुरस्कार',profile:'प्रोफ़ाइल',feedback:'फीडबैक',grievances:'शिकायतें',linkIndia:'लिंक इंडिया',chats:'चैट',discover:'फसल खोजें',orders:'मेरे ऑर्डर',bulk:'समूह खरीद और साझा परिवहन',rewards:'पुरस्कार',connectBuyers:'खरीदारों से जुड़ें',usersKyc:'उपयोगकर्ता और KYC',markets:'बाज़ार',payments:'भुगतान',stateAnalytics:'राज्य विश्लेषण',feedbackReq:'फीडबैक और आवश्यकताएँ',securityActions:'सुरक्षा कार्रवाई',todayIncome:'आज की आय',todayRecommendation:'आज की सलाह',addCrop:'सत्यापित फसल जोड़ें',upcoming:'मेरी फसलें',priceForecast:'1 / 3 / 7 दिन पूर्वानुमान',generate:'GRAM AI सलाह बनाएं',finalRecommendation:'अंतिम GRAM AI सलाह',bestMarket:'सर्वश्रेष्ठ बाज़ार',expectedNet:'अपेक्षित शुद्ध आय',buyerOffers:'खरीदार ऑफ़र',verifiedBuyers:'शीर्ष सत्यापित खरीदार',accept:'स्वीकार',decline:'अस्वीकार',wait:'प्रतीक्षा',negotiate:'बातचीत',chat:'चैट',securePayment:'सुरक्षित भुगतान',qualityGrade:'AI गुणवत्ता ग्रेड',livePhoto:'लाइव फसल फोटो',gps:'लाइव GPS',certificate:'गुणवत्ता प्रमाणपत्र',rewardPoints:'ग्रामपॉइंट्स',redeem:'रिडीम',kyc:'KYC + लाइव फोटो सत्यापन',networkMap:'भारत नेटवर्क मानचित्र',logout:'लॉगआउट'},
  mr:{dashboard:'डॅशबोर्ड',crops:'पिके आणि अंदाज',market:'बाजार आणि ऑफर्स',preorders:'प्री-ऑर्डर',transport:'वाहतूक आणि गट',paymentsRewards:'पेमेंट आणि रिवॉर्ड्स',profile:'प्रोफाइल',feedback:'अभिप्राय',grievances:'तक्रारी',linkIndia:'लिंक इंडिया',chats:'चॅट्स',discover:'पीक शोधा',orders:'माझे ऑर्डर्स',bulk:'सामूहिक खरेदी आणि शेअर्ड लॉजिस्टिक्स',rewards:'रिवॉर्ड्स',connectBuyers:'खरेदीदारांशी जोडा',usersKyc:'वापरकर्ते आणि KYC',markets:'बाजार',payments:'पेमेंट्स',stateAnalytics:'राज्य विश्लेषण',feedbackReq:'अभिप्राय आणि गरजा',securityActions:'सुरक्षा कारवाई',todayIncome:'आजचे उत्पन्न',todayRecommendation:'आजची शिफारस',addCrop:'सत्यापित पीक जोडा',upcoming:'माझी कापणी',openForBuyers:'खरेदीदारांसाठी खुले',priceForecast:'1 / 3 / 7 दिवसांचा अंदाज',generate:'GRAM AI शिफारस तयार करा',finalRecommendation:'अंतिम GRAM AI शिफारस',bestMarket:'सर्वोत्तम बाजार',expectedNet:'अपेक्षित निव्वळ उत्पन्न',marketPredictions:'जवळच्या बाजारांचे अंदाज',buyerOffers:'खरेदीदार ऑफर्स',verifiedBuyers:'शीर्ष सत्यापित खरेदीदार',viewDetails:'तपशील पहा',accept:'स्वीकारा',decline:'नकार',wait:'थांबा',negotiate:'वाटाघाटी',chat:'चॅट',token:'टोकन रक्कम',securePayment:'सुरक्षित पेमेंट',qualityGrade:'AI गुणवत्ता ग्रेड',livePhoto:'लाइव्ह पीक फोटो',gps:'लाइव्ह GPS वापरा',certificate:'गुणवत्ता प्रमाणपत्र',transportCost:'वाहतूक खर्च',distance:'अंतर',groupSelling:'गट विक्री',myTransport:'माझी वाहतूक',sharedTransport:'शेअर्ड वाहतूक',rewardPoints:'ग्रामपॉइंट्स',redeem:'रिडीम',validTill:'वैधता',cancellation:'रद्द करण्याची स्थिती',profileDetails:'प्रोफाइल तपशील',bankDetails:'बँक आणि पेआउट तपशील',kyc:'KYC + लाइव्ह फोटो पडताळणी',verifiedBadge:'सत्यापित बॅज',orderFeedback:'अनिवार्य ऑर्डर अभिप्राय',raiseGrievance:'तक्रार नोंदवा',networkMap:'भारत नेटवर्क नकाशा',combineSell:'एकत्र विक्री सुरू करा',logout:'लॉगआउट'},
@@ -72,15 +72,15 @@ function showLoginMethod(m){$('emailBox').classList.toggle('hidden',m!=='email')
 async function login(){try{let d=await api('/auth/login',{method:'POST',body:JSON.stringify({email:$('email').value,password:$('password').value})});token=d.access_token;localStorage.setItem('gram_token',token);me=await api('/auth/me');if(me.role!==activeRole){logout();throw Error(`This account is ${me.role}, not ${activeRole}`)}boot()}catch(e){$('authMessage').textContent=e.message}}
 async function sendOtp(){try{let d=await api('/auth/otp/request',{method:'POST',body:JSON.stringify({phone:$('loginPhone').value})});$('otpEntry').classList.remove('hidden');$('otpMessage').textContent=d.demo_otp?`Demo OTP: ${d.demo_otp}`:'OTP sent'}catch(e){$('otpMessage').textContent=e.message}}
 async function verifyOtp(){try{let d=await api('/auth/otp/verify',{method:'POST',body:JSON.stringify({phone:$('loginPhone').value,otp:$('loginOtp').value})});token=d.access_token;localStorage.setItem('gram_token',token);me=await api('/auth/me');boot()}catch(e){toast(e.message)}}
-async function registerUser(){try{let d=await api('/auth/register',{method:'POST',body:JSON.stringify({name:$('rName').value,email:$('rEmail').value,phone:$('rPhone').value,district:$('rDistrict').value,state:'Maharashtra',role:activeRole})});$('regMessage').textContent=d.message||'Registered'}catch(e){$('regMessage').textContent=e.message}}
+async function registerUser(){try{let d=await api('/auth/register',{method:'POST',body:JSON.stringify({name:$('rName').value,email:$('rEmail').value,phone:$('rPhone').value,district:$('rDistrict').value,state:'Tamil Nadu',role:activeRole})});$('regMessage').textContent=d.message||'Registered'}catch(e){$('regMessage').textContent=e.message}}
 function logout(){token='';me=null;localStorage.removeItem('gram_token');$('appShell').classList.add('hidden');$('auth').classList.remove('hidden');$('gsFab').classList.add('hidden')}
 async function boot(){if(!me)me=await api('/auth/me');$('auth').classList.add('hidden');$('appShell').classList.remove('hidden');$('gsFab').classList.remove('hidden');$('userName').textContent=me.name;$('userRole').textContent=tr(me.role);$('userInitial').textContent=me.name[0];$('portalName').textContent=`${tr(me.role)} Portal`;if(me.role==='farmer')$('stateSelect').closest('label').style.display='none';else{$('stateSelect').closest('label').style.display='flex';fillStates()}renderNav();route('dashboard')}
-async function fillStates(){let states=['Maharashtra','Tamil Nadu','Karnataka','Gujarat','Punjab','Rajasthan','Madhya Pradesh','Uttar Pradesh','West Bengal','Telangana','Kerala','Odisha','Bihar','Assam','Delhi'];$('stateSelect').innerHTML=states.map(s=>`<option>${s}</option>`).join('');$('stateSelect').value=currentState}
+async function fillStates(){let states=['Tamil Nadu','Maharashtra','Karnataka','Gujarat','Punjab','Rajasthan','Madhya Pradesh','Uttar Pradesh','West Bengal','Telangana','Kerala','Odisha','Bihar','Assam','Delhi'];$('stateSelect').innerHTML=states.map(s=>`<option>${s}</option>`).join('');$('stateSelect').value=currentState}
 function changeState(v){currentState=v;route(currentPage)}
 
 const NAV={farmer:[['dashboard','🏠'],['crops','🌾'],['market','🧺'],['preorders','🤝'],['transport','🚚'],['paymentsRewards','💳'],['profile','👤'],['feedback','⭐'],['grievances','🛡'],['linkIndia','🗺'],['chats','💬']],buyer:[['dashboard','🏠'],['discover','🌾'],['preorders','📅'],['orders','📦'],['bulk','👥'],['rewards','🎁'],['profile','👤'],['feedback','⭐'],['grievances','🛡'],['connectBuyers','🗺'],['chats','💬']],admin:[['dashboard','📊'],['usersKyc','🪪'],['markets','🌐'],['payments','💳'],['grievances','🛡'],['stateAnalytics','📈'],['feedbackReq','💬'],['securityActions','🔐']]};
 function renderNav(){$('nav').innerHTML=NAV[me.role].map(([k,ic])=>`<button class="nav-btn ${currentPage===k?'active':''}" onclick="route('${k}')"><span>${ic}</span><b>${tr(k)}</b></button>`).join('')}
-function setTitle(k){currentPage=k;$('pageTitle').textContent=tr(k);$('breadcrumb').textContent=`GRAM AI • ${me.role==='farmer'?'Maharashtra':currentState}`;renderNav()}
+function setTitle(k){currentPage=k;$('pageTitle').textContent=tr(k);$('breadcrumb').textContent=`GRAM AI • ${me.role==='farmer'?'Tamil Nadu':currentState}`;renderNav()}
 async function route(k){setTitle(k);currentPage=k;destroyCharts();if(mapObj){mapObj.remove();mapObj=null}try{if(me.role==='farmer')return await farmerRoute(k);if(me.role==='buyer')return await buyerRoute(k);return await adminRoute(k)}catch(e){$('content').innerHTML=`<div class="card error">${esc(e.message)}</div>`}finally{if(window.I18N)setTimeout(()=>window.I18N.apply(document.body),0)}}
 function destroyCharts(){Object.values(charts).forEach(c=>{try{c.destroy()}catch{}});charts={}}
 function card(label,value,sub='',cls=''){return `<div class="stat-card ${cls}"><small>${label}</small><b>${value}</b>${sub?`<span>${sub}</span>`:''}</div>`}
@@ -146,7 +146,7 @@ async function whatsappInventorySection(){
 
 async function farmerDashboard(){let d=await api('/api/v2/v3/dashboard');let notes=await api('/api/notifications');$('content').innerHTML=`<div class="hero-reco"><div><small>${tr('todayRecommendation')}</small><h2>${esc(d.recommendation)}</h2><p>GRAM AI combines local price movement, demand and logistics before you commit a sale.</p></div><div>${badge(d.kyc.status==='VERIFIED'&&d.kyc.live_check)}</div></div><div class="grid stats-4">${card(tr('todayIncome'),fmt(d.today_income),'Revenue credited today','green')}${card(tr('totalIncome'),fmt(d.total_income),'Lifetime recorded sales')}${card(tr('openOffers'),d.open_offers,'Waiting for your action')}${card(tr('rewardPoints'),d.reward_points,'Redeem for transport / fee benefits')}</div>${section(tr('notification'),notes.slice(0,6).map(n=>`<div class="list-item"><div><b>${esc(n.title)}</b><small>${esc(n.message)}</small></div><span class="tag">${esc(n.severity)}</span></div>`).join('')||`<div class="empty">${tr('noData')}</div>`)} ${await whatsappInventorySection()}`}
 
-async function farmerCrops(){let hs=await api('/api/v2/v3/harvests');let crops=await api('/api/crops');let markets=await api('/api/markets?state=Maharashtra');$('content').innerHTML=`<div class="toolbar"><button class="primary" onclick="openVerifiedCropFlow()">＋ ${tr('addCrop')}</button><span class="soft-note">📍 Maharashtra is fixed for your selling portal. Use Link India to explore other states.</span></div>${section(tr('upcoming'),hs.length?`<div class="harvest-grid">${hs.map(h=>`<div class="harvest-card"><div class="harvest-top"><div><span class="crop-icon">🌾</span><b>${esc(h.crop)} • ${esc(h.variety)}</b></div><span class="tag ${h.buyer_visible?'success':''}">${h.buyer_visible?tr('openForBuyers'):tr('closed')}</span></div><div class="mini-grid"><span>${tr('quantity')}<b>${num(h.available_quantity_qtl)} qtl</b></span><span>${tr('date')}<b>${esc(h.expected_harvest_date)}</b></span><span>${tr('qualityGrade')}<b>${esc(h.grade_expected||'Pending')}</b></span><span>${tr('token')}<b>${fmt(h.token_amount)}</b></span></div>${h.certificate_url?button('📄 '+tr('certificate'),`openCertificate('${h.certificate_url}')`):''}</div>`).join('')}</div>`:`<div class="empty">No harvests yet. Add a verified crop using live GPS + live photo.</div>`)}${section(tr('priceForecast'),`<div class="forecast-form"><select id="fcrop" class="control">${crops.map(c=>`<option>${esc(c.name)}</option>`).join('')}</select><select id="fmarket" class="control">${markets.map(m=>`<option value="${m.id}">${esc(m.name)} • ${esc(m.district)}</option>`).join('')}</select><input id="fqty" class="control" type="number" value="10" min="1"><button class="primary" onclick="runFarmerForecast()">✨ ${tr('generate')}</button></div><div id="forecastResult"></div>`)} `}
+async function farmerCrops(){let hs=await api('/api/v2/v3/harvests');let crops=await api('/api/crops');let markets=await api('/api/markets?state=Tamil Nadu');$('content').innerHTML=`<div class="toolbar"><button class="primary" onclick="openVerifiedCropFlow()">＋ ${tr('addCrop')}</button><span class="soft-note">📍 Tamil Nadu is fixed for your selling portal. Use Link India to explore other states.</span></div>${section(tr('upcoming'),hs.length?`<div class="harvest-grid">${hs.map(h=>`<div class="harvest-card"><div class="harvest-top"><div><span class="crop-icon">🌾</span><b>${esc(h.crop)} • ${esc(h.variety)}</b></div><span class="tag ${h.buyer_visible?'success':''}">${h.buyer_visible?tr('openForBuyers'):tr('closed')}</span></div><div class="mini-grid"><span>${tr('quantity')}<b>${num(h.available_quantity_qtl)} qtl</b></span><span>${tr('date')}<b>${esc(h.expected_harvest_date)}</b></span><span>${tr('qualityGrade')}<b>${esc(h.grade_expected||'Pending')}</b></span><span>${tr('token')}<b>${fmt(h.token_amount)}</b></span></div>${h.certificate_url?button('📄 '+tr('certificate'),`openCertificate('${h.certificate_url}')`):''}</div>`).join('')}</div>`:`<div class="empty">No harvests yet. Add a verified crop using live GPS + live photo.</div>`)}${section(tr('priceForecast'),`<div class="forecast-form"><select id="fcrop" class="control">${crops.map(c=>`<option>${esc(c.name)}</option>`).join('')}</select><select id="fmarket" class="control">${markets.map(m=>`<option value="${m.id}">${esc(m.name)} • ${esc(m.district)}</option>`).join('')}</select><input id="fqty" class="control" type="number" value="10" min="1"><button class="primary" onclick="runFarmerForecast()">✨ ${tr('generate')}</button></div><div id="forecastResult"></div>`)} `}
 
 function getGPS() {
   return new Promise((resolve, reject) =>
@@ -1783,19 +1783,19 @@ async function runFarmerForecast() {
 
 
 
-    const maharashtraMarkets =
+    const tamilNaduMarkets =
 
       (comparisonData || [])
         .filter(
           x =>
             x.state ===
-            'Maharashtra'
+            'Tamil Nadu'
         );
 
 
 
     const best =
-      maharashtraMarkets[0] ||
+      tamilNaduMarkets[0] ||
       comparisonData[0] ||
       {};
 
@@ -2090,7 +2090,7 @@ async function runFarmerForecast() {
 
               ${
 
-                maharashtraMarkets
+                tamilNaduMarkets
 
                   .map(
 
@@ -2326,7 +2326,7 @@ async function runFarmerForecast() {
 
 
     const top =
-      maharashtraMarkets
+      tamilNaduMarkets
         .slice(0, 6);
 
 
@@ -2446,7 +2446,7 @@ async function farmerMarket() {
 
     const [offers, buyers] = await Promise.all([
       api('/api/v2/v3/offers'),
-      api('/api/buyers?state=Maharashtra')
+      api('/api/buyers?state=Tamil Nadu')
     ]);
 
     $('content').innerHTML = `
@@ -2816,12 +2816,12 @@ async function openOfferConfirmation(id) {
               <p>
                 📍 ${esc(
                   o.buyer_district ||
-                  'Maharashtra'
+                  'Tamil Nadu'
                 )}
                 ${
                   o.buyer_state
                     ? `, ${esc(o.buyer_state)}`
-                    : ', Maharashtra'
+                    : ', Tamil Nadu'
                 }
               </p>
 
@@ -3028,9 +3028,9 @@ async function openOfferConfirmation(id) {
                 ${esc(
                   listing.district ||
                   me.district ||
-                  'Maharashtra'
+                  'Tamil Nadu'
                 )},
-                Maharashtra
+                Tamil Nadu
               </b>
 
             </div>
@@ -3806,7 +3806,7 @@ async function farmerPreorders() {
     const [demands, linkedPreorders] =
       await Promise.all([
         api('/api/v2/v3/buyer-preorders/available'),
-        api('/api/v2/preorders?state=Maharashtra')
+        api('/api/v2/preorders?state=Tamil Nadu')
       ]);
 
 
@@ -3929,7 +3929,7 @@ async function farmerPreorders() {
 
                       ${esc(
                         d.delivery_state
-                        || 'Maharashtra'
+                        || 'Tamil Nadu'
                       )}
 
                     </p>
@@ -4102,7 +4102,7 @@ async function farmerPreorders() {
             <div class="empty">
 
               No open buyer requirements currently
-              match your Maharashtra farmer profile.
+              match your Tamil Nadu farmer profile.
 
             </div>
 
@@ -4257,7 +4257,7 @@ async function farmerPreorders() {
     const [demands, linkedPreorders] =
       await Promise.all([
         api('/api/v2/v3/buyer-preorders/available'),
-        api('/api/v2/preorders?state=Maharashtra')
+        api('/api/v2/preorders?state=Tamil Nadu')
       ]);
 
 
@@ -4380,7 +4380,7 @@ async function farmerPreorders() {
 
                       ${esc(
                         d.delivery_state
-                        || 'Maharashtra'
+                        || 'Tamil Nadu'
                       )}
 
                     </p>
@@ -4553,7 +4553,7 @@ async function farmerPreorders() {
             <div class="empty">
 
               No open buyer requirements currently
-              match your Maharashtra farmer profile.
+              match your Tamil Nadu farmer profile.
 
             </div>
 
@@ -4947,9 +4947,9 @@ async function farmerTransport() {
 
       api('/api/v2/v3/transports'),
 
-      api('/api/transport?state=Maharashtra'),
+      api('/api/transport?state=Tamil Nadu'),
 
-      api('/api/v2/groups?state=Maharashtra')
+      api('/api/v2/groups?state=Tamil Nadu')
 
     ]);
 
@@ -5116,7 +5116,7 @@ async function farmerTransport() {
 
                 <p>
                   View farmer groups currently available
-                  in Maharashtra.
+                  in Tamil Nadu.
                 </p>
 
               </div>
@@ -5206,7 +5206,7 @@ async function farmerTransport() {
 
 }
 
-function openTransportRequest(){$('modalBody').innerHTML=`<h2>Request Transport</h2><div class="form-grid"><div class="field"><label>Crop</label><input id="trCrop" class="control" value="Tomato"></div><div class="field"><label>Pickup</label><input id="trPick" class="control" value="Pune Farm"></div><div class="field"><label>Drop</label><input id="trDrop" class="control" value="Pune APMC"></div><div class="field"><label>Distance km</label><input id="trKm" class="control" type="number" value="22"></div><div class="field"><label>Estimated cost ₹</label><input id="trCost" class="control" type="number" value="500"></div><div class="field"><label><input id="trShared" type="checkbox" checked> Shared route</label></div></div><button class="primary wide" onclick="saveTransport()">Submit</button>`;$('modal').classList.remove('hidden')}
+function openTransportRequest(){$('modalBody').innerHTML=`<h2>Request Transport</h2><div class="form-grid"><div class="field"><label>Crop</label><input id="trCrop" class="control" value="Tomato"></div><div class="field"><label>Pickup</label><input id="trPick" class="control" value="Coimbatore Farm"></div><div class="field"><label>Drop</label><input id="trDrop" class="control" value="Coimbatore APMC"></div><div class="field"><label>Distance km</label><input id="trKm" class="control" type="number" value="22"></div><div class="field"><label>Estimated cost ₹</label><input id="trCost" class="control" type="number" value="500"></div><div class="field"><label><input id="trShared" type="checkbox" checked> Shared route</label></div></div><button class="primary wide" onclick="saveTransport()">Submit</button>`;$('modal').classList.remove('hidden')}
 async function saveTransport(){try{await api('/api/v2/v3/transports',{method:'POST',body:JSON.stringify({crop:$('trCrop').value,pickup:$('trPick').value,dropoff:$('trDrop').value,distance_km:+$('trKm').value,quoted_cost:+$('trCost').value,shared:$('trShared').checked})});closeModal();farmerTransport()}catch(e){toast(e.message)}}
 async function openGroupSellingPage() {
 
@@ -5364,7 +5364,7 @@ function showCreateGroupForm() {
           <input
             id="sgName"
             class="control"
-            placeholder="Example: Pune Tomato Farmers"
+            placeholder="Example: Coimbatore Tomato Farmers"
           >
 
         </div>
@@ -5394,7 +5394,7 @@ function showCreateGroupForm() {
           <input
             id="sgDistrict"
             class="control"
-            value="${esc(me.district || 'Pune')}"
+            value="${esc(me.district || 'Coimbatore')}"
           >
 
         </div>
@@ -5677,7 +5677,7 @@ async function submitSellingGroup() {
 
             district: district,
 
-            state: 'Maharashtra',
+            state: 'Tamil Nadu',
 
             area: area,
 
@@ -5848,7 +5848,7 @@ function showJoinGroupForm() {
         <input
           id="joinGroupCode"
           class="control group-code-input"
-          placeholder="Example: GT-PUNE-4821"
+          placeholder="Example: GT-CBE-4821"
           autocomplete="off"
         >
 
@@ -5920,7 +5920,7 @@ async function findSellingGroupByCode() {
 
             <p>
               ${esc(group.district)},
-              ${esc(group.state || 'Maharashtra')}
+              ${esc(group.state || 'Tamil Nadu')}
             </p>
 
           </div>
@@ -6416,7 +6416,7 @@ async function viewGroupJoinRequests(groupId) {
                       <p>
                         ${esc(
                           r.district ||
-                          'Maharashtra'
+                          'Tamil Nadu'
                         )}
                       </p>
 
@@ -6639,7 +6639,7 @@ async function viewSellingGroup(groupId) {
             <p>
               ${esc(g.crop)}
               • ${esc(g.district)}
-              • Maharashtra
+              • Tamil Nadu
             </p>
 
           </div>
@@ -6792,7 +6792,7 @@ async function viewSellingGroup(groupId) {
                 </b>
 
                 <small>
-                  ${esc(m.district || 'Maharashtra')}
+                  ${esc(m.district || 'Tamil Nadu')}
                 </small>
 
               </div>
@@ -8453,8 +8453,8 @@ async function redeemReward(code){
 
 async function redeemReward(code){try{let d=await api(`/api/v2/v3/rewards/${code}/redeem`,{method:'POST'});toast(`Reward active until ${new Date(d.expires_at).toLocaleDateString()}`);paymentsRewardsPage()}catch(e){toast(e.message)}}
 
-async function profilePage(){let [p,s]=await Promise.all([api('/api/profile'),api('/api/v2/v3/me-status')]);$('content').innerHTML=`<div class="profile-header"><div><h2>${esc(p.name)} ${s.verified?'<span class="verified-badge">✓ GRAM AI Verified</span>':''}</h2><p>${esc(p.district)}, ${esc(p.state||'Maharashtra')} • ${esc(p.phone||'')}</p></div>${badge(s.verified)}</div><div class="grid two">${section(tr('profileDetails'),`<div class="form-grid"><div class="field"><label>Name</label><input id="pfName" class="control" value="${esc(p.name)}"></div><div class="field"><label>Phone</label><input id="pfPhone" class="control" value="${esc(p.phone||'')}"></div><div class="field"><label>District</label><input id="pfDistrict" class="control" value="${esc(p.district||'')}"></div><div class="field"><label>State</label><input class="control" value="Maharashtra" disabled></div><div class="field full"><label>Address</label><input id="pfAddress" class="control" value="${esc(p.address||'')}"></div>${me.role==='farmer'?`<div class="field"><label>Farm area (acres)</label><input id="pfFarm" type="number" class="control" value="${p.farm_size_acres||0}"></div>`:''}</div><button class="primary" onclick="saveFullProfile()">Save</button>`)}${section(tr('bankDetails'),`<div class="form-grid"><div class="field"><label>Account holder</label><input id="pfBankName" class="control" value="${esc(p.bank_account_name||'')}"></div><div class="field"><label>Account last 4</label><input id="pfBankLast" class="control" maxlength="4" value="${esc(p.bank_account_last4||'')}"></div><div class="field"><label>IFSC</label><input id="pfIfsc" class="control" value="${esc(p.bank_ifsc||'')}"></div><div class="field"><label>UPI ID</label><input id="pfUpi" class="control" value="${esc(p.upi_id||'')}"></div></div><div class="security-note">Full bank account numbers and UPI PINs are never requested in this prototype.</div>`)}</div>${section(tr('kyc'),`<div class="kyc-status">${badge(s.verified)}<p>Method: ${esc(s.kyc.method||'Not started')} • ${esc(s.kyc.masked_document||'')}</p><p>Marketplace gate: ${s.verified?'Selling / ordering and payouts enabled.':'Selling / ordering and payouts blocked until verified.'}</p></div><div class="form-grid"><div class="field"><label>KYC method</label><select id="kycMethod" class="control"><option>AADHAAR</option><option>KYC</option></select></div><div class="field"><label>Aadhaar last 4 only</label><input id="kycLast" class="control" maxlength="4"></div><div class="field full"><label>Live selfie</label><input id="kycSelfie" class="control" type="file" accept="image/*" capture="user"></div></div><label><input id="kycConsent" type="checkbox"> I consent to secure verification.</label><button class="primary" onclick="submitLiveKyc()">Submit KYC + Live Photo</button><div class="warn-box">Demo accounts are pre-verified so the SIH workflow can be demonstrated. Newly registered accounts remain blocked until Admin verifies KYC. No full Aadhaar number is stored.</div>`)}`}
-async function saveFullProfile(){try{let p=await api('/api/profile');await api('/api/profile',{method:'PATCH',body:JSON.stringify({...p,name:$('pfName').value,phone:$('pfPhone').value,district:$('pfDistrict').value,state:'Maharashtra',address:$('pfAddress').value,farm_size_acres:$('pfFarm')?+$('pfFarm').value:p.farm_size_acres,bank_account_name:$('pfBankName').value,bank_account_last4:$('pfBankLast').value,bank_ifsc:$('pfIfsc').value,upi_id:$('pfUpi').value})});toast('Profile updated')}catch(e){toast(e.message)}}
+async function profilePage(){let [p,s]=await Promise.all([api('/api/profile'),api('/api/v2/v3/me-status')]);$('content').innerHTML=`<div class="profile-header"><div><h2>${esc(p.name)} ${s.verified?'<span class="verified-badge">✓ GRAM AI Verified</span>':''}</h2><p>${esc(p.district)}, ${esc(p.state||'Tamil Nadu')} • ${esc(p.phone||'')}</p></div>${badge(s.verified)}</div><div class="grid two">${section(tr('profileDetails'),`<div class="form-grid"><div class="field"><label>Name</label><input id="pfName" class="control" value="${esc(p.name)}"></div><div class="field"><label>Phone</label><input id="pfPhone" class="control" value="${esc(p.phone||'')}"></div><div class="field"><label>District</label><input id="pfDistrict" class="control" value="${esc(p.district||'')}"></div><div class="field"><label>State</label><input class="control" value="Tamil Nadu" disabled></div><div class="field full"><label>Address</label><input id="pfAddress" class="control" value="${esc(p.address||'')}"></div>${me.role==='farmer'?`<div class="field"><label>Farm area (acres)</label><input id="pfFarm" type="number" class="control" value="${p.farm_size_acres||0}"></div>`:''}</div><button class="primary" onclick="saveFullProfile()">Save</button>`)}${section(tr('bankDetails'),`<div class="form-grid"><div class="field"><label>Account holder</label><input id="pfBankName" class="control" value="${esc(p.bank_account_name||'')}"></div><div class="field"><label>Account last 4</label><input id="pfBankLast" class="control" maxlength="4" value="${esc(p.bank_account_last4||'')}"></div><div class="field"><label>IFSC</label><input id="pfIfsc" class="control" value="${esc(p.bank_ifsc||'')}"></div><div class="field"><label>UPI ID</label><input id="pfUpi" class="control" value="${esc(p.upi_id||'')}"></div></div><div class="security-note">Full bank account numbers and UPI PINs are never requested in this prototype.</div>`)}</div>${section(tr('kyc'),`<div class="kyc-status">${badge(s.verified)}<p>Method: ${esc(s.kyc.method||'Not started')} • ${esc(s.kyc.masked_document||'')}</p><p>Marketplace gate: ${s.verified?'Selling / ordering and payouts enabled.':'Selling / ordering and payouts blocked until verified.'}</p></div><div class="form-grid"><div class="field"><label>KYC method</label><select id="kycMethod" class="control"><option>AADHAAR</option><option>KYC</option></select></div><div class="field"><label>Aadhaar last 4 only</label><input id="kycLast" class="control" maxlength="4"></div><div class="field full"><label>Live selfie</label><input id="kycSelfie" class="control" type="file" accept="image/*" capture="user"></div></div><label><input id="kycConsent" type="checkbox"> I consent to secure verification.</label><button class="primary" onclick="submitLiveKyc()">Submit KYC + Live Photo</button><div class="warn-box">Demo accounts are pre-verified so the SIH workflow can be demonstrated. Newly registered accounts remain blocked until Admin verifies KYC. No full Aadhaar number is stored.</div>`)}`}
+async function saveFullProfile(){try{let p=await api('/api/profile');await api('/api/profile',{method:'PATCH',body:JSON.stringify({...p,name:$('pfName').value,phone:$('pfPhone').value,district:$('pfDistrict').value,state:'Tamil Nadu',address:$('pfAddress').value,farm_size_acres:$('pfFarm')?+$('pfFarm').value:p.farm_size_acres,bank_account_name:$('pfBankName').value,bank_account_last4:$('pfBankLast').value,bank_ifsc:$('pfIfsc').value,upi_id:$('pfUpi').value})});toast('Profile updated')}catch(e){toast(e.message)}}
 async function submitLiveKyc(){try{let f=$('kycSelfie').files[0];if(!f)throw Error('Take a live selfie');let fd=new FormData();fd.append('method',$('kycMethod').value);fd.append('aadhaar_last4',$('kycLast').value);fd.append('consent',$('kycConsent').checked?'true':'false');fd.append('selfie',f);let d=await api('/api/v2/v3/kyc-live',{method:'POST',body:fd});toast('KYC submitted to admin: '+d.status);profilePage()}catch(e){toast(e.message)}}
 
 async function farmerFeedbackPage() {
@@ -9227,7 +9227,7 @@ async function farmerFeedbackPage() {
             <input
               id="ffMarketName"
               class="control"
-              placeholder="e.g. Pune APMC / Buyer name"
+              placeholder="e.g. Coimbatore APMC / Buyer name"
             >
 
           </div>
@@ -16860,7 +16860,7 @@ async function replyThread(other,thread){let text=$('threadInput').value;if(!tex
 
 // BUYER
 async function buyerRoute(k){if(k==='dashboard')return buyerDashboard();if(k==='discover')return buyerDiscover();if(k==='preorders')return buyerPreorders();if(k==='orders')return buyerOrders();if(k==='bulk')return buyerBulk();if(k==='rewards')return paymentsRewardsPage();if(k==='profile')return profilePage();if(k==='feedback')return buyerFeedbackPage();if(k==='grievances')return buyerGrievancePage();if(k==='connectBuyers')return networkPage('buyer');if(k==='chats')return chatsPage()}
-async function buyerDashboard(){let [d,orders,notes]=await Promise.all([api('/api/v2/v3/dashboard'),api('/api/orders'),api('/api/notifications')]);$('content').innerHTML=`<div class="hero-reco"><div><small>${tr('todayRecommendation')}</small><h2>${esc(d.recommendation)}</h2><p>Area: ${esc(d.district)}, Maharashtra</p></div>${badge(d.kyc.status==='VERIFIED'&&d.kyc.live_check)}</div><div class="grid stats-4">${card(tr('purchased'),d.orders,'Orders placed')}${card('Purchase Value',fmt(d.spend),'Recorded order value')}${card(tr('preorders'),d.preorders,'Harvest commitments')}${card(tr('rewardPoints'),d.reward_points,'Buyer rewards')}</div>${section(tr('tracking'),orders.slice(0,5).map(o=>`<div class="list-item"><div><b>Order #${o.id} • ${esc(o.crop)}</b><small>${esc(o.district)}, Maharashtra • ${esc(o.status)}</small></div><button class="secondary" onclick="showTracking(${o.id})">Track</button></div>`).join('')||'<div class="empty">No orders yet.</div>')}${section(tr('notification'),notes.slice(0,5).map(n=>`<div class="list-item"><div><b>${esc(n.title)}</b><small>${esc(n.message)}</small></div></div>`).join(''))}`}
+async function buyerDashboard(){let [d,orders,notes]=await Promise.all([api('/api/v2/v3/dashboard'),api('/api/orders'),api('/api/notifications')]);$('content').innerHTML=`<div class="hero-reco"><div><small>${tr('todayRecommendation')}</small><h2>${esc(d.recommendation)}</h2><p>Area: ${esc(d.district)}, Tamil Nadu</p></div>${badge(d.kyc.status==='VERIFIED'&&d.kyc.live_check)}</div><div class="grid stats-4">${card(tr('purchased'),d.orders,'Orders placed')}${card('Purchase Value',fmt(d.spend),'Recorded order value')}${card(tr('preorders'),d.preorders,'Harvest commitments')}${card(tr('rewardPoints'),d.reward_points,'Buyer rewards')}</div>${section(tr('tracking'),orders.slice(0,5).map(o=>`<div class="list-item"><div><b>Order #${o.id} • ${esc(o.crop)}</b><small>${esc(o.district)}, Tamil Nadu • ${esc(o.status)}</small></div><button class="secondary" onclick="showTracking(${o.id})">Track</button></div>`).join('')||'<div class="empty">No orders yet.</div>')}${section(tr('notification'),notes.slice(0,5).map(n=>`<div class="list-item"><div><b>${esc(n.title)}</b><small>${esc(n.message)}</small></div></div>`).join(''))}`}
 
 async function buyerDiscover() {
 
@@ -16875,7 +16875,7 @@ async function buyerDiscover() {
         ? listings.filter(
             x =>
               String(x.state || '').toLowerCase()
-              === 'maharashtra'
+              === 'tamil nadu'
           )
         : [];
 
@@ -17027,7 +17027,7 @@ async function buyerDiscover() {
                           •
 
                           ${esc(l.district || '')},
-                          Maharashtra
+                          Tamil Nadu
 
                         </p>
 
@@ -17158,7 +17158,7 @@ async function buyerDiscover() {
               <div class="empty">
 
                 No verified harvests are
-                currently available in Maharashtra.
+                currently available in Tamil Nadu.
 
               </div>
 
@@ -17382,7 +17382,7 @@ async function viewListing(id) {
             <b>
 
               ${esc(d.district || '')},
-              ${esc(d.state || 'Maharashtra')}
+              ${esc(d.state || 'Tamil Nadu')}
 
             </b>
 
@@ -18052,7 +18052,7 @@ async function openOrderConfirmation(id) {
                   )},
 
                   ${esc(
-                    d.state || 'Maharashtra'
+                    d.state || 'Tamil Nadu'
                   )}
 
                 </b>
@@ -18776,7 +18776,7 @@ async function buyerPreorders() {
         ),
 
         api(
-          '/api/v2/preorders?state=Maharashtra'
+          '/api/v2/preorders?state=Tamil Nadu'
         )
 
       ]);
@@ -18905,7 +18905,7 @@ async function buyerPreorders() {
 
                   ${esc(
                     d.delivery_state
-                    || 'Maharashtra'
+                    || 'Tamil Nadu'
                   )}
 
                 </b>
@@ -19078,7 +19078,7 @@ async function buyerPreorders() {
                 •
 
                 ${esc(
-                  x.district || 'Maharashtra'
+                  x.district || 'Tamil Nadu'
                 )}
 
               </p>
@@ -19320,7 +19320,7 @@ function openCreateBuyerPreorder() {
             id="bpVariety"
             class="control"
             value="Any"
-            placeholder="Premium / Nashik Red / Any"
+            placeholder="Premium / Small Onion / Any"
           >
 
         </div>
@@ -19426,7 +19426,7 @@ function openCreateBuyerPreorder() {
             value="${esc(
               me?.district || ''
             )}"
-            placeholder="Pune"
+            placeholder="Coimbatore"
           >
 
         </div>
@@ -19442,7 +19442,7 @@ function openCreateBuyerPreorder() {
           <input
             id="bpState"
             class="control"
-            value="Maharashtra"
+            value="Tamil Nadu"
             readonly
           >
 
@@ -19625,7 +19625,7 @@ async function publishBuyerPreorder() {
 
     const state =
       $('bpState')?.value
-      || 'Maharashtra';
+      || 'Tamil Nadu';
 
 
     const deliveryMode =
@@ -19939,7 +19939,7 @@ async function viewBuyerPreorderResponses(
 
                       ${esc(
                         r.farmer_state
-                        || 'Maharashtra'
+                        || 'Tamil Nadu'
                       )}
 
                     </small>
@@ -20636,7 +20636,7 @@ function showPreorderPaymentSuccess(
 
 
 
-async function buyerOrders(){let os=await api('/api/orders');os=os.filter(o=>o.buyer_id===me.id);$('content').innerHTML=section(tr('orders'),os.length?os.map(o=>`<div class="order-card"><div><span class="tag">${esc(o.status)}</span><h3>Order #${o.id} • ${esc(o.crop)}</h3><p>${esc(o.district)}, Maharashtra • ${num(o.quantity_qtl)} qtl</p><div class="mini-grid"><span>Produce<b>${fmt(o.produce_total)}</b></span><span>${tr('transportCost')}<b>${fmt(o.transport_total)}</b></span><span>Total<b>${fmt(o.total)}</b></span><span>${tr('paymentStatus')}<b>${esc(o.status)}</b></span></div></div><div class="action-row"><button class="secondary" onclick="showTracking(${o.id})">📍 Track</button><button class="secondary" onclick="openComplaintForOrder(${o.id})">🛡 Complaint</button></div></div>`).join(''):'<div class="empty">No orders yet.</div>') }
+async function buyerOrders(){let os=await api('/api/orders');os=os.filter(o=>o.buyer_id===me.id);$('content').innerHTML=section(tr('orders'),os.length?os.map(o=>`<div class="order-card"><div><span class="tag">${esc(o.status)}</span><h3>Order #${o.id} • ${esc(o.crop)}</h3><p>${esc(o.district)}, Tamil Nadu • ${num(o.quantity_qtl)} qtl</p><div class="mini-grid"><span>Produce<b>${fmt(o.produce_total)}</b></span><span>${tr('transportCost')}<b>${fmt(o.transport_total)}</b></span><span>Total<b>${fmt(o.total)}</b></span><span>${tr('paymentStatus')}<b>${esc(o.status)}</b></span></div></div><div class="action-row"><button class="secondary" onclick="showTracking(${o.id})">📍 Track</button><button class="secondary" onclick="openComplaintForOrder(${o.id})">🛡 Complaint</button></div></div>`).join(''):'<div class="empty">No orders yet.</div>') }
 async function showTracking(id){let t=await api(`/api/v2/v3/order-tracking/${id}`);$('modalBody').innerHTML=`<h2>${tr('tracking')} • #${id}</h2><div class="timeline">${t.map((x,i)=>`<div class="timeline-item ${i<2?'done':''}"><span></span><div><b>${esc(x.status)}</b><p>${esc(x.note)}</p><small>${esc(x.location_text)}</small></div></div>`).join('')}</div>`;$('modal').classList.remove('hidden')}
 function openComplaintForOrder(id){route('grievances');setTimeout(()=>{if($('gdesc'))$('gdesc').value=`Issue regarding Order #${id}: `},80)}
 
@@ -20975,8 +20975,8 @@ async function buyerBulk() {
                   <div>
                     <h3>${esc(b.name)}</h3>
                     <div class="muted">
-                      📍 ${esc(b.district || 'Maharashtra')},
-                      ${esc(b.state || 'Maharashtra')}
+                      📍 ${esc(b.district || 'Tamil Nadu')},
+                      ${esc(b.state || 'Tamil Nadu')}
                     </div>
                   </div>
 
@@ -21190,7 +21190,7 @@ function openCreateBulkOrder() {
         <label>
           Bulk Order Name
           <input id="bulkName"
-            placeholder="Example: Pune Tomato Bulk Buy">
+            placeholder="Example: Coimbatore Tomato Bulk Buy">
         </label>
 
         <label>
@@ -21248,7 +21248,7 @@ function openCreateBulkOrder() {
         <label>
           District
           <input id="bulkDistrict"
-            value="${esc(me?.district || 'Pune')}">
+            value="${esc(me?.district || 'Coimbatore')}">
         </label>
 
         <label>
@@ -21707,7 +21707,7 @@ async function openAddBuyerToBulk(poolId) {
 
           ${buyers.map(b => `
             <option value="${b.id}">
-              ${esc(b.name)} — ${esc(b.district || 'Maharashtra')}
+              ${esc(b.name)} — ${esc(b.district || 'Tamil Nadu')}
             </option>
           `).join('')}
         </select>
@@ -22128,13 +22128,13 @@ async function openRouteShareBid(transporterId) {
           <label>
             Pickup Location
             <input id="bidPickup"
-              placeholder="Example: Pune Market Yard">
+              placeholder="Example: Coimbatore Market Yard">
           </label>
 
           <label>
             Delivery Location
             <input id="bidDelivery"
-              placeholder="Example: Mumbai Warehouse">
+              placeholder="Example: Chennai Warehouse">
           </label>
 
           <label>
@@ -22556,7 +22556,7 @@ async function viewLogisticsBid(bidId) {
 
 // ADMIN
 async function adminRoute(k){if(k==='dashboard')return adminDashboard();if(k==='usersKyc'||k==='securityActions')return adminUsers();if(k==='markets')return adminMarkets();if(k==='payments')return adminPayments();if(k==='grievances')return adminGrievances();if(k==='stateAnalytics')return adminAnalytics();if(k==='feedbackReq')return adminFeedback()}
-async function adminDashboard(){let [d,risk,g]=await Promise.all([api('/api/v2/v3/dashboard'),api('/api/v2/risk-alerts'),api('/api/v2/grievances')]);$('content').innerHTML=`<div class="grid stats-4">${card(tr('revenue'),fmt(d.revenue),'Verified payment value','green')}${card(tr('sellers'),d.farmers,'Registered farmers')}${card(tr('buyers'),d.buyers,'Registered buyers')}${card(tr('pendingKyc'),d.pending_kyc,'Needs review')}${card(tr('grievances'),d.open_grievances,'Open cases')}${card(tr('risk'),risk.length,'Active risk alerts')}${card('Security','JWT + KYC + Webhooks','Role-based controls')}${card('Default','Maharashtra','Pan-India analytics')}</div>${section('Priority Grievances',g.slice(0,5).map(x=>`<div class="list-item"><div><b>#${x.id} ${esc(x.category)}</b><small>${esc(x.description)}</small></div><span class="severity ${String(x.severity).toLowerCase()}">${esc(x.severity)}</span></div>`).join('')||'<div class="empty">No open cases.</div>')}`}
+async function adminDashboard(){let [d,risk,g]=await Promise.all([api('/api/v2/v3/dashboard'),api('/api/v2/risk-alerts'),api('/api/v2/grievances')]);$('content').innerHTML=`<div class="grid stats-4">${card(tr('revenue'),fmt(d.revenue),'Verified payment value','green')}${card(tr('sellers'),d.farmers,'Registered farmers')}${card(tr('buyers'),d.buyers,'Registered buyers')}${card(tr('pendingKyc'),d.pending_kyc,'Needs review')}${card(tr('grievances'),d.open_grievances,'Open cases')}${card(tr('risk'),risk.length,'Active risk alerts')}${card('Security','JWT + KYC + Webhooks','Role-based controls')}${card('Default','Tamil Nadu','Pan-India analytics')}</div>${section('Priority Grievances',g.slice(0,5).map(x=>`<div class="list-item"><div><b>#${x.id} ${esc(x.category)}</b><small>${esc(x.description)}</small></div><span class="severity ${String(x.severity).toLowerCase()}">${esc(x.severity)}</span></div>`).join('')||'<div class="empty">No open cases.</div>')}`}
 async function adminUsers(){let users=await api('/api/v2/v3/admin/users');$('content').innerHTML=section(`${tr('usersKyc')} + Account Control`,`<div class="table-wrap"><table><thead><tr><th>User</th><th>Role</th><th>Location</th><th>KYC</th><th>Live</th><th>Account</th><th>Actions</th></tr></thead><tbody>${users.map(x=>`<tr><td><b>${esc(x.name)}</b><br><small>${esc(x.email)}</small></td><td>${esc(x.role)}</td><td>${esc(x.district)}, ${esc(x.state)}</td><td>${x.kyc_status==='VERIFIED'?'<span class="verified-badge">✓ Verified</span>':`<span class="tag">${esc(x.kyc_status||'Not started')}</span>`}<br><small>${esc(x.masked_document||'')}</small>${x.kyc_id&&x.kyc_status==='PENDING'?`<br><button class="secondary" onclick="adminVerifyKyc(${x.kyc_id})">Verify KYC</button>`:''}</td><td>${x.live_check?'✓':'—'}</td><td>${esc(x.account_action||'ACTIVE')}</td><td><div class="table-actions"><button onclick="adminAction(${x.id},'WARN')">Warn</button><button onclick="adminAction(${x.id},'BLOCK')">Block</button><button onclick="adminAction(${x.id},'UNBLOCK')">Unblock</button><button class="danger-btn" onclick="adminAction(${x.id},'TERMINATE')">Terminate</button><button onclick="adminMessage(${x.id})">Message</button></div></td></tr>`).join('')}</tbody></table></div>`)}
 
 async function adminVerifyKyc(id){try{await api(`/api/v2/kyc/${id}`,{method:'PATCH',body:JSON.stringify({status:'VERIFIED',risk_note:'Live photo and masked KYC reviewed in SIH prototype'})});toast('KYC verified');adminUsers()}catch(e){toast(e.message)}}

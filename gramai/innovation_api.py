@@ -1,6 +1,6 @@
 """GRAM AI SIH innovation layer.
 
-Adds Maharashtra-first state context, KYC/Aadhaar-ready verification, pre-orders,
+Adds Tamil Nadu-first state context, KYC/Aadhaar-ready verification, pre-orders,
 Razorpay test-mode payment reconciliation, GramRewards, GramRakshak grievances,
 feedback, group selling and admin analytics without replacing legacy tables/routes.
 
@@ -29,7 +29,7 @@ DB = os.path.join(BASE, "gramai.db")
 EVIDENCE_DIR = os.path.join(BASE, "uploads", "grievances")
 os.makedirs(EVIDENCE_DIR, exist_ok=True)
 
-DEFAULT_STATE = "Maharashtra"
+DEFAULT_STATE = "Tamil Nadu"
 RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID", "")
 RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET", "")
 RAZORPAY_WEBHOOK_SECRET = os.environ.get("RAZORPAY_WEBHOOK_SECRET", "")
@@ -96,7 +96,7 @@ def init_innovation_schema():
           expected_harvest_date TEXT NOT NULL,
           expected_price REAL NOT NULL DEFAULT 0,
           district TEXT NOT NULL DEFAULT '',
-          state TEXT NOT NULL DEFAULT 'Maharashtra',
+          state TEXT NOT NULL DEFAULT 'Tamil Nadu',
           grade_expected TEXT NOT NULL DEFAULT '',
           status TEXT NOT NULL DEFAULT 'OPEN',
           group_id INTEGER,
@@ -128,7 +128,7 @@ def init_innovation_schema():
         CREATE TABLE IF NOT EXISTS fpo_groups(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL,
-          state TEXT NOT NULL DEFAULT 'Maharashtra',
+          state TEXT NOT NULL DEFAULT 'Tamil Nadu',
           district TEXT NOT NULL DEFAULT '',
           crop TEXT NOT NULL DEFAULT '',
           owner_id INTEGER NOT NULL,
@@ -267,8 +267,8 @@ def init_innovation_schema():
         CREATE INDEX IF NOT EXISTS idx_grievances_status ON grievances_v2(status,severity);
         """
     )
-    # Maharashtra becomes default for empty legacy user profiles, without overriding existing states.
-        # Maharashtra becomes default for empty legacy user profiles,
+    # Tamil Nadu becomes default for empty legacy user profiles, without overriding existing states.
+        # Tamil Nadu becomes default for empty legacy user profiles,
     # without overriding existing states.
     c.execute(
         "UPDATE users SET state=? WHERE trim(coalesce(state,''))=''",
@@ -1476,9 +1476,9 @@ def seed_innovation_demo():
     c=conn()
     if c.execute("SELECT count(*) FROM harvests").fetchone()[0]==0:
         samples=[
-          (1,'Tomato','Premium',80,80,'2026-09-05',2450,'Pune','Maharashtra','A'),
-          (1,'Onion','Nashik Red',120,120,'2026-09-12',2200,'Nashik','Maharashtra','A'),
-          (1,'Soybean','JS-335',60,60,'2026-10-01',4800,'Ahmednagar','Maharashtra','B')
+          (1,'Tomato','Premium',80,80,'2026-09-05',2450,'Coimbatore','Tamil Nadu','A'),
+          (1,'Onion','Small Onion',120,120,'2026-09-12',2200,'Dindigul','Tamil Nadu','A'),
+          (1,'Banana','Nendran',60,60,'2026-10-01',2600,'Theni','Tamil Nadu','B')
         ]
         for r in samples:
             c.execute("""INSERT INTO harvests(farmer_id,crop,variety,expected_quantity_qtl,available_quantity_qtl,expected_harvest_date,expected_price,district,state,grade_expected,status,created_at)
@@ -1538,7 +1538,7 @@ def init_v3_schema():
       required_by_date TEXT NOT NULL,
 
       delivery_district TEXT NOT NULL DEFAULT '',
-      delivery_state TEXT NOT NULL DEFAULT 'Maharashtra',
+      delivery_state TEXT NOT NULL DEFAULT 'Tamil Nadu',
 
       delivery_mode TEXT NOT NULL DEFAULT 'BUYER_PICKUP',
 
@@ -1627,7 +1627,7 @@ def init_v3_schema():
       rating REAL NOT NULL DEFAULT 4.5, phone_masked TEXT NOT NULL DEFAULT '', volume_qtl REAL NOT NULL DEFAULT 0);
     CREATE TABLE IF NOT EXISTS buyer_pools(
       id INTEGER PRIMARY KEY AUTOINCREMENT, owner_id INTEGER NOT NULL, name TEXT NOT NULL, crop TEXT NOT NULL,
-      district TEXT NOT NULL, state TEXT NOT NULL DEFAULT 'Maharashtra', target_qtl REAL NOT NULL, current_qtl REAL NOT NULL DEFAULT 0,
+      district TEXT NOT NULL, state TEXT NOT NULL DEFAULT 'Tamil Nadu', target_qtl REAL NOT NULL, current_qtl REAL NOT NULL DEFAULT 0,
       status TEXT NOT NULL DEFAULT 'OPEN', created_at TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS buyer_pool_members(
       id INTEGER PRIMARY KEY AUTOINCREMENT, pool_id INTEGER NOT NULL, buyer_id INTEGER NOT NULL, quantity_qtl REAL NOT NULL,
@@ -1762,17 +1762,17 @@ def init_v3_schema():
       ('BUY_FEE_WAIVER','buyer','Buyer Fee Waiver',220,200,'Waives up to ₹200 of eligible platform fees.',30)]
     for r in rewards:
         c.execute('INSERT OR IGNORE INTO reward_catalog(code,role,title,points_cost,benefit_rupees,description,valid_days) VALUES(?,?,?,?,?,?,?)',r)
-    # Demo network across India with Maharashtra dense coverage.
+    # Demo network across India with Tamil Nadu dense coverage.
     if c.execute('SELECT count(*) n FROM network_profiles').fetchone()['n']==0:
         points=[
-          ('farmer','Sahyadri Tomato Farm','Maharashtra','Pune',18.5204,73.8567,'Tomato, Onion',1,4.8,'******4210',90),
-          ('farmer','Nashik Fresh Growers','Maharashtra','Nashik',20.0110,73.7903,'Onion, Grapes, Tomato',1,4.9,'******1182',160),
-          ('farmer','Kolhapur Farm Collective','Maharashtra','Kolhapur',16.7050,74.2433,'Sugarcane, Tomato, Chilli',1,4.7,'******4509',210),
-          ('farmer','Nagpur Orange Growers','Maharashtra','Nagpur',21.1458,79.0882,'Orange, Soybean',1,4.6,'******3321',140),
-          ('buyer','Mumbai FreshMart','Maharashtra','Mumbai',19.0760,72.8777,'Tomato, Onion, Banana',1,4.9,'******7812',300),
-          ('buyer','Pune Food Hub','Maharashtra','Pune',18.5204,73.8567,'Tomato, Potato, Onion',1,4.8,'******8822',220),
-          ('buyer','Nashik Procurement','Maharashtra','Nashik',20.0110,73.7903,'Onion, Tomato, Soybean',1,4.7,'******9901',250),
-          ('farmer','Coimbatore Growers','Tamil Nadu','Coimbatore',11.0168,76.9558,'Tomato, Banana',1,4.7,'******2701',100),
+          ('farmer','Kongu Tomato Farm','Tamil Nadu','Coimbatore',11.0168, 76.9558,'Tomato, Onion',1,4.8,'******4210',90),
+          ('farmer','Dindigul Fresh Growers','Tamil Nadu','Dindigul',10.3673,77.9803,'Onion, Grapes, Tomato',1,4.9,'******1182',160),
+          ('farmer','Erode Farm Collective','Tamil Nadu','Erode',11.3410,77.7172,'Sugarcane, Turmeric, Chilli',1,4.7,'******4509',210),
+          ('farmer','Madurai Banana Growers','Tamil Nadu','Madurai',9.9252,78.1198,'Banana, Maize',1,4.6,'******3321',140),
+          ('buyer','Chennai FreshMart','Tamil Nadu','Chennai',13.0827,80.2707,'Tomato, Onion, Banana',1,4.9,'******7812',300),
+          ('buyer','Coimbatore Food Hub','Tamil Nadu','Coimbatore',11.0168, 76.9558,'Tomato, Potato, Onion',1,4.8,'******8822',220),
+          ('buyer','Dindigul Procurement','Tamil Nadu','Dindigul',10.3673,77.9803,'Onion, Tomato, Banana',1,4.7,'******9901',250),
+          ('farmer','Pollachi Growers','Tamil Nadu','Pollachi',10.6609,77.0048,'Tomato, Banana',1,4.7,'******2701',100),
           ('farmer','Punjab Grain Collective','Punjab','Ludhiana',30.9010,75.8573,'Wheat, Maize',1,4.8,'******5502',300),
           ('buyer','Bengaluru Produce Hub','Karnataka','Bengaluru',12.9716,77.5946,'Tomato, Banana, Onion',1,4.8,'******6603',260),
           ('buyer','Ahmedabad Agri Buyers','Gujarat','Ahmedabad',23.0225,72.5714,'Groundnut, Cotton, Onion',1,4.6,'******7711',290)]
@@ -1785,7 +1785,7 @@ def init_v3_schema():
     # Demo buyer offers and chats on legacy listings.
     if c.execute('SELECT count(*) n FROM buyer_offers').fetchone()['n']==0:
         c.execute("INSERT INTO buyer_offers(buyer_user_id,listing_id,offer_price,quantity_qtl,pitch,status,created_at,updated_at) VALUES(2,1,2250,8,'I can pick up within 24 hours. Fast payment and reusable crates available.','OPEN',?,?)",(now_iso(),now_iso()))
-        c.execute("INSERT INTO buyer_offers(buyer_user_id,listing_id,offer_price,quantity_qtl,pitch,status,created_at,updated_at) VALUES(2,2,2050,12,'Buying for Mumbai retail demand. Token payment can be made immediately.','OPEN',?,?)",(now_iso(),now_iso()))
+        c.execute("INSERT INTO buyer_offers(buyer_user_id,listing_id,offer_price,quantity_qtl,pitch,status,created_at,updated_at) VALUES(2,2,2050,12,'Buying for Chennai retail demand. Token payment can be made immediately.','OPEN',?,?)",(now_iso(),now_iso()))
     # Seed farmer points high enough to demonstrate redemption.
     pts=c.execute('SELECT coalesce(sum(points),0) p FROM reward_ledger WHERE user_id=1').fetchone()['p']
     if pts<180:
@@ -1841,11 +1841,11 @@ def v3_harvest_from_verification(verification_id:int,quantity_qtl:float,harvest_
     # nearest market resolves district/state from verified GPS
     m=c.execute('SELECT *, ((lat-?)*(lat-?)+(lon-?)*(lon-?)) d FROM markets ORDER BY d LIMIT 1',(v['latitude'],v['latitude'],v['longitude'],v['longitude'])).fetchone()
     cur=c.execute('''INSERT INTO harvests(farmer_id,crop,variety,expected_quantity_qtl,available_quantity_qtl,expected_harvest_date,expected_price,district,state,grade_expected,status,created_at,verification_id,token_amount,latitude,longitude,photo_path,certificate_path,quality_confidence,buyer_visible,transport_rate_per_km,transport_radius_km)
-      VALUES(?,?,?,?,?,?,?,?,?,?,'OPEN',?,?,?,?,?,?,?,?,?,?,?)''',(u['id'],v['crop'],variety,quantity_qtl,quantity_qtl,harvest_date,ask_price,m['district'] if m else u['district'],m['state'] if m else 'Maharashtra',v['predicted_grade'],now_iso(),verification_id,token_amount,v['latitude'],v['longitude'],v['image_path'],v['certificate_path'],v['confidence'],int(buyer_visible),transport_rate_per_km,transport_radius_km))
+      VALUES(?,?,?,?,?,?,?,?,?,?,'OPEN',?,?,?,?,?,?,?,?,?,?,?)''',(u['id'],v['crop'],variety,quantity_qtl,quantity_qtl,harvest_date,ask_price,m['district'] if m else u['district'],m['state'] if m else 'Tamil Nadu',v['predicted_grade'],now_iso(),verification_id,token_amount,v['latitude'],v['longitude'],v['image_path'],v['certificate_path'],v['confidence'],int(buyer_visible),transport_rate_per_km,transport_radius_km))
     hid=cur.lastrowid;c.commit();c.close();return {'id':hid,'status':'OPEN','buyer_visible':buyer_visible,'grade':v['predicted_grade'],'certificate_url':f'/api/produce/certificate/{verification_id}'}
 
 @router.get('/v3/harvests')
-def v3_harvests(state:str='Maharashtra',u=Depends(get_user_dep())):
+def v3_harvests(state:str='Tamil Nadu',u=Depends(get_user_dep())):
     c=conn();
     if u['role']=='farmer':
       rows=c.execute('''SELECT h.*,q.certificate_number FROM harvests h LEFT JOIN quality_certificates q ON q.verification_id=h.verification_id WHERE h.farmer_id=? ORDER BY h.created_at DESC''',(u['id'],)).fetchall()
@@ -1958,11 +1958,11 @@ def v3_dashboard(u=Depends(get_user_dep())):
       total=c.execute('SELECT coalesce(sum(o.total),0) s FROM orders o JOIN listings l ON l.id=o.listing_id WHERE l.seller_id=?',(u['id'],)).fetchone()['s']
       offers=c.execute('''SELECT count(*) n FROM buyer_offers bo JOIN listings l ON l.id=bo.listing_id WHERE l.seller_id=? AND bo.status IN ('OPEN','NEGOTIATING')''',(u['id'],)).fetchone()['n']
       harvests=c.execute("SELECT count(*) n FROM harvests WHERE farmer_id=? AND status='OPEN'",(u['id'],)).fetchone()['n']
-      recommendation='Onion demand is strengthening around Maharashtra. Run a 1/3/7-day forecast before committing today; compare Pune and Nashik after transport cost.'
+      recommendation='Onion demand is strengthening around Tamil Nadu. Run a 1/3/7-day forecast before committing today; compare Coimbatore and Dindigul after transport cost.'
       out={'today_income':today,'total_income':total,'open_offers':offers,'open_harvests':harvests,'reward_points':points,'kyc':k,'recommendation':recommendation}
     elif u['role']=='buyer':
       orders_n=c.execute('SELECT count(*) n FROM orders WHERE buyer_id=?',(u['id'],)).fetchone()['n'];spend=c.execute('SELECT coalesce(sum(total),0) s FROM orders WHERE buyer_id=?',(u['id'],)).fetchone()['s'];pre=c.execute('SELECT count(*) n FROM preorder_requests WHERE buyer_id=?',(u['id'],)).fetchone()['n']
-      out={'district':u['district'],'state':u['state'] or 'Maharashtra','orders':orders_n,'spend':spend,'preorders':pre,'reward_points':points,'kyc':k,'recommendation':'Verified tomato harvests are available around Pune. Shared logistics can reduce delivery cost on compatible routes.'}
+      out={'district':u['district'],'state':u['state'] or 'Tamil Nadu','orders':orders_n,'spend':spend,'preorders':pre,'reward_points':points,'kyc':k,'recommendation':'Verified tomato harvests are available around Coimbatore. Shared logistics can reduce delivery cost on compatible routes.'}
     else:
       users=c.execute('SELECT role,count(*) n FROM users GROUP BY role').fetchall();ud={r['role']:r['n'] for r in users};revenue=c.execute("SELECT coalesce(sum(confirmed_amount_paise),0)/100.0 s FROM payments_v2 WHERE status='SUCCESS'").fetchone()['s'];g=c.execute("SELECT count(*) n FROM grievances_v2 WHERE status NOT IN ('RESOLVED','CLOSED')").fetchone()['n'];pk=c.execute("SELECT count(*) n FROM kyc_profiles WHERE status='PENDING'").fetchone()['n'];out={'revenue':revenue,'farmers':ud.get('farmer',0),'buyers':ud.get('buyer',0),'open_grievances':g,'pending_kyc':pk,'reward_points':0}
     c.close();return out
@@ -1979,7 +1979,7 @@ def v3_admin_action(user_id:int,x:AdminActionIn,u=Depends(get_user_dep())):
     c.commit();c.close();return {'status':x.action}
 
 @router.get('/v3/admin/state-analytics')
-def v3_admin_state_analytics(state:str='Maharashtra',u=Depends(get_user_dep())):
+def v3_admin_state_analytics(state:str='Tamil Nadu',u=Depends(get_user_dep())):
     require_role(u,'admin');c=conn();markets=c.execute('SELECT count(*) n FROM markets WHERE state=?',(state,)).fetchone()['n'];listings=c.execute("SELECT count(*) n FROM listings WHERE state=?",(state,)).fetchone()['n'];harvests=c.execute('SELECT count(*) n FROM harvests WHERE state=?',(state,)).fetchone()['n'];network=c.execute('SELECT role,count(*) n FROM network_profiles WHERE state=? GROUP BY role',(state,)).fetchall();n={r['role']:r['n'] for r in network};crops=[rowdict(r) for r in c.execute('''SELECT crop,count(*) n,round(avg(ask_price),0) avg_price FROM listings WHERE state=? GROUP BY crop ORDER BY n DESC LIMIT 8''',(state,)).fetchall()];c.close();return {'state':state,'markets':markets,'listings':listings,'harvests':harvests,'farmers':n.get('farmer',0),'buyers':n.get('buyer',0),'crops':crops}
 
 # initialize v3 on import
@@ -2019,7 +2019,7 @@ class BuyerDemandPreorderIn(BaseModel):
     )
 
     delivery_state: str = Field(
-        default="Maharashtra",
+        default="Tamil Nadu",
         max_length=80
     )
 
@@ -3543,7 +3543,7 @@ def v3_buyer_pool_create(
         )
         VALUES(
             ?,?,?,?,?,?,
-            'Maharashtra',
+            'Tamil Nadu',
             ?,?,?,?,?,?,?,?,
             ?,
             'OPEN',
@@ -3642,7 +3642,7 @@ def v3_buyer_pools(
         JOIN users us
           ON us.id=bp.owner_id
 
-        WHERE bp.state='Maharashtra'
+        WHERE bp.state='Tamil Nadu'
 
         ORDER BY
             CASE
@@ -4508,8 +4508,8 @@ def v3_nearby_buyers(
           AND us.id<>?
           AND coalesce(
                 NULLIF(us.state,''),
-                'Maharashtra'
-              )='Maharashtra'
+                'Tamil Nadu'
+              )='Tamil Nadu'
 
         ORDER BY
             CASE
@@ -4550,7 +4550,7 @@ def v3_route_share_options(
         SELECT *
         FROM transporters
         WHERE verified=1
-          AND state='Maharashtra'
+          AND state='Tamil Nadu'
         ORDER BY
             rating DESC,
             rate_per_km ASC

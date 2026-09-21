@@ -36,7 +36,7 @@ GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_MODELS = [m.strip() for m in os.environ.get(
     "GROQ_MODEL", "openai/gpt-oss-120b,qwen/qwen3.8-27b").split(",") if m.strip()]
 
-DEFAULT_STATE = "Maharashtra"
+DEFAULT_STATE = "Tamil Nadu"
 MAX_TOOL_ROUNDS = 4
 HISTORY_TURNS = 8
 
@@ -232,7 +232,7 @@ def t_compare_best_markets(u, args):
     qty = float(_need(args, "quantity_qtl", 10) or 10)
     if not crop:
         return {"error": "crop is required"}
-    lat, lon = 18.5204, 73.8567  # Pune fallback origin
+    lat, lon = 11.0168, 76.9558  # Coimbatore fallback origin
     c = conn()
     r = c.execute("SELECT latitude,longitude FROM listings WHERE seller_id=? "
                   "AND latitude IS NOT NULL ORDER BY id DESC LIMIT 1",
