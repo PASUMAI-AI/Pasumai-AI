@@ -40,8 +40,8 @@ WHATSAPP_VERIFY_TOKEN = os.environ.get("WHATSAPP_VERIFY_TOKEN", "kisansetu_webho
 GRAPH_VERSION = os.environ.get("WHATSAPP_GRAPH_VERSION", "v23.0").strip()
 GRAPH_URL = f"https://graph.facebook.com/{GRAPH_VERSION}"
 
-DEFAULT_STATE = "Maharashtra"
-DEFAULT_DISTRICT = "Pune"
+DEFAULT_STATE = "Tamil Nadu"
+DEFAULT_DISTRICT = "Coimbatore"
 
 
 def log(stage, msg):

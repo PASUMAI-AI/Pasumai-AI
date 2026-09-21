@@ -571,10 +571,10 @@ users = [
         "farmer@gram.ai",
         hpw("Farmer@123"),
         "farmer",
-        "Pune",
-        "Maharashtra",
+        "Coimbatore",
+        "Tamil Nadu",
         "9876543210",
-        "Pune, Maharashtra",
+        "Coimbatore, Tamil Nadu",
         7.5,
         "English",
         "Demo Farmer",
@@ -589,10 +589,10 @@ users = [
         "buyer@gram.ai",
         hpw("Buyer@123"),
         "buyer",
-        "Mumbai",
-        "Maharashtra",
+        "Chennai",
+        "Tamil Nadu",
         "9876500000",
-        "Mumbai, Maharashtra",
+        "Chennai, Tamil Nadu",
         0,
         "English",
         "Demo Buyer",
@@ -1249,7 +1249,7 @@ for i, (
 
 
 # =========================================================
-# EXISTING MAHARASHTRA DEMO LISTINGS
+# EXISTING TAMIL NADU DEMO LISTINGS
 #
 # KEEP DEMO FARMER ID = 1
 # =========================================================
@@ -1336,9 +1336,9 @@ for idx, (
             0
         ),
 
-        "Pune",
+        "Coimbatore",
 
-        "Maharashtra",
+        "Tamil Nadu",
 
         date.today().isoformat(),
 
@@ -1417,10 +1417,10 @@ for state_index, (
 ) in enumerate(STATES):
 
 
-# Keep original Maharashtra Demo Farmer.
-# We do not need another primary Maharashtra account.
+# Keep original Tamil Nadu Demo Farmer.
+# We do not need another primary Tamil Nadu account.
 
-    if state == "Maharashtra":
+    if state == "Tamil Nadu":
 
         continue
 

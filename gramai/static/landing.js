@@ -29,10 +29,10 @@
 
   // Used only if the server cannot be reached, so the page never looks empty.
   var FALLBACK = [
-    { crop: 'Onion', price: 2140, best: 2480, best_market: 'Lasalgaon, Maharashtra', change_pct: 4.2 },
-    { crop: 'Tomato', price: 1860, best: 2210, best_market: 'Pune, Maharashtra', change_pct: 2.1 },
+    { crop: 'Onion', price: 2140, best: 2480, best_market: 'Oddanchatram, Tamil Nadu', change_pct: 4.2 },
+    { crop: 'Tomato', price: 1860, best: 2210, best_market: 'Coimbatore, Tamil Nadu', change_pct: 2.1 },
     { crop: 'Wheat', price: 2310, best: 2460, best_market: 'Indore, Madhya Pradesh', change_pct: -0.8 },
-    { crop: 'Soybean', price: 4620, best: 4890, best_market: 'Latur, Maharashtra', change_pct: 1.4 }
+    { crop: 'Turmeric', price: 13620, best: 14180, best_market: 'Erode, Tamil Nadu', change_pct: 1.4 }
   ];
 
   var prices = [];
