@@ -279,6 +279,75 @@ def _intent_prompt(u, body):
     return "\n".join(lines)
 
 
+# Crop words in a few Indian languages, so the offline fallback can still find the crop.
+_LOCAL_CROPS = {
+    "tamatar": "Tomato", "thakkali": "Tomato", "தக்காளி": "Tomato", "टमाटर": "Tomato", "टोमॅटो": "Tomato",
+    "pyaz": "Onion", "pyaaz": "Onion", "kanda": "Onion", "vengayam": "Onion", "வெங்காயம்": "Onion", "प्याज": "Onion", "कांदा": "Onion",
+    "aloo": "Potato", "alu": "Potato", "urulai": "Potato", "உருளைக்கிழங்கு": "Potato", "आलू": "Potato", "बटाटा": "Potato",
+    "gehun": "Wheat", "godhumai": "Wheat", "गेहूं": "Wheat", "arisi": "Rice", "அரிசி": "Rice", "chawal": "Rice",
+    "mirchi": "Chilli", "milagai": "Chilli", "மிளகாய்": "Chilli", "मिर्च": "Chilli",
+}
+
+
+def _find_crop(text):
+    """Best-effort crop name from free text, without the AI. Returns None if unsure."""
+    low = (text or "").lower()
+    try:
+        from whatsapp_api import CROP_ALIASES
+        aliases = dict(CROP_ALIASES)
+    except Exception:
+        aliases = {}
+    aliases.update(_LOCAL_CROPS)
+    for n in _crop_names():
+        aliases.setdefault(n.lower(), n)
+    for alias in sorted(aliases, key=len, reverse=True):
+        if re.search(r"(?<!\w)" + re.escape(alias.lower()) + r"(?!\w)", low):
+            return aliases[alias]
+    return None
+
+
+_YES = ("yes", "yeah", "yep", "ok", "okay", "sure", "confirm", "do it", "haan", "han", "ha", "ho",
+        "aamaam", "aam", "sari", "seri", "avunu", "हाँ", "हां", "हो", "ஆம்", "சரி", "అవును")
+_NO = ("no", "nope", "cancel", "don't", "dont", "nahi", "nahin", "nako", "venda", "vendam", "illai",
+       "नहीं", "नको", "வேண்டாம்", "இல்லை", "వద్దు")
+
+
+def _fallback_answer(text, expect):
+    """Understand the answer to a question the app just asked, without the AI."""
+    etype = (expect or {}).get("type", "text")
+    t = (text or "").strip()
+    low = t.lower()
+    num = re.search(r"\d+(?:\.\d+)?", low.replace(",", ""))
+    if etype == "number":
+        return {"kind": "answer", "value": float(num.group(0))} if num else None
+    if etype == "quantity":
+        if not num:
+            return None
+        unit = "kg"
+        if re.search(r"quintal|qtl|kwintal", low):
+            unit = "quintal"
+        elif re.search(r"tonne|ton(?!\w)", low):
+            unit = "tonne"
+        return {"kind": "answer", "value": {"quantity": float(num.group(0)), "unit": unit}}
+    if etype == "price":
+        if re.search(r"market|best|suggest|today|aaj|indru|இன்று", low):
+            return {"kind": "answer", "value": "market"}
+        return {"kind": "answer", "value": float(num.group(0))} if num else None
+    if etype == "yesno":
+        words = set(re.findall(r"[\wऀ-෿']+", low))
+        if words & set(_NO):
+            return {"kind": "answer", "value": False}
+        if words & set(_YES) or any(p in low for p in _YES if " " in p):
+            return {"kind": "answer", "value": True}
+        return None
+    if etype == "crop":
+        crop = _find_crop(t)
+        return {"kind": "answer", "value": crop} if crop else None
+    if etype == "choice":
+        return {"kind": "answer", "value": int(float(num.group(0)))} if num else None
+    return {"kind": "answer", "value": t} if t else None
+
+
 def _fallback_intent(text, role):
     """Keyword intent when Groq is unavailable. Deliberately small."""
     t = text.lower()
@@ -297,8 +366,11 @@ def _fallback_intent(text, role):
         if any(w in t for w in words):
             if intent["intent"] == "sell_produce" and role != "farmer":
                 continue
-            m = re.search(r"(\d+(?:\.\d+)?)\s*(kg|kilo|quintal|qtl|tonne|ton)?", t)
+        elif re.search(r"tonne|ton(?!\w)", low):
             out = dict(intent, kind="intent")
+            crop = _find_crop(text)
+            if crop and intent["intent"] in ("sell_produce", "check_price", "book_transport"):
+                out["crop"] = crop
             if m and intent["intent"] == "sell_produce":
                 out["quantity"] = float(m.group(1))
                 out["unit"] = (m.group(2) or "kg").replace("qtl", "quintal")
@@ -320,7 +392,7 @@ def interpret(body: InterpretIn, u=Depends(get_user_dep())):
         ])
     except Exception:
         ai = False
-        out = _fallback_intent(body.text, u.get("role"))
+        out = (_fallback_answer(body.text, body.expect) if body.expect else None)             or _fallback_intent(body.text, u.get("role"))
 
     if not isinstance(out, dict):
         out = {"kind": "unclear"}

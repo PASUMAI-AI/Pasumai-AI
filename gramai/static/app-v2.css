@@ -1,0 +1,159 @@
+/* PasumAI in-app theme: the same white / black / lime look as the landing page.
+   Loaded last. Restyling only, no layout or behaviour changes.
+   The old stylesheets colour almost everything through --green, so re-pointing the variables
+   recolours most of the app; the rules below handle what is hard-coded. */
+
+:root {
+  --green: #0A0A0A;
+  --green2: #262626;
+  --green3: #f3f3ef;
+  --green4: #fafaf8;
+  --bg: #fafaf8;
+  --ink: #111111;
+  --muted: #6F6F6F;
+  --line: #0000001a;
+  --accent: #DCFF00;
+  --lime: #DCFF00;
+  --lime2: #D8F90A;
+  --shadow: 0 10px 30px #0000000f;
+  --app-serif: 'Instrument Serif', 'Noto Serif Tamil', Georgia, serif;
+}
+html, body { background: #fafaf8; color: var(--ink); font-family: 'Inter', 'Noto Sans Tamil', system-ui, sans-serif; }
+.app-shell, .app-shell main { background: #fafaf8; }
+
+/* ---------- sidebar ---------- */
+.app-shell aside, aside { background: #0A0A0A; color: #F2F2F2; }
+.side-brand .brand-mark { background: var(--lime); color: #0A0A0A; }
+.side-brand b { font-family: var(--app-serif); font-weight: 400; font-size: 26px; letter-spacing: -.02em; }
+.side-brand small { color: #9b9b95; }
+.nav-btn { color: #d8d8d2; font-weight: 500; }
+.nav-btn:hover { background: #ffffff14; color: #fff; }
+.nav-btn.active { background: var(--lime); color: #0A0A0A; box-shadow: none; font-weight: 600; }
+.nav-btn.active:hover { background: var(--lime); color: #0A0A0A; }
+.nav-sep { background: #ffffff1f; }
+
+/* ---------- header ---------- */
+header { background: #fff; border-bottom: 1px solid var(--line); }
+header small, #breadcrumb { color: var(--muted); letter-spacing: .04em; }
+header h1, #pageTitle { font-family: var(--app-serif); font-weight: 400; font-size: 32px; letter-spacing: -.02em; line-height: 1.1; }
+.header-controls select, .compact { border-color: var(--line); background: #fff; }
+.user-chip { background: #fff; border-color: var(--line); }
+.user-chip > span { background: var(--lime); color: #0A0A0A; }
+.app-listen { background: #0A0A0A; border-color: #0A0A0A; color: #fff; font-weight: 600; }
+.app-listen:hover { background: #262626; }
+.app-listen.speaking { background: var(--lime); border-color: var(--lime); color: #0A0A0A; animation: none; }
+
+/* ---------- headings ---------- */
+#content h2, .section-head h2 { font-family: var(--app-serif); font-weight: 400; letter-spacing: -.015em; font-size: 28px; line-height: 1.15; }
+#content h3 { font-weight: 600; }
+.stat b, .stat-card b { font-family: var(--app-serif); font-weight: 400; letter-spacing: -.01em; font-size: 34px; color: #0A0A0A; }
+.metric { font-family: var(--app-serif); font-weight: 400; font-size: 28px; color: #0A0A0A; white-space: nowrap; }
+.stat small, .stat-card small { color: var(--muted); }
+
+/* ---------- surfaces ---------- */
+.card, .stat-card, .offer-card, .preorder-card, .order-card, .harvest-card, .listing-card, .network-card, .transport-card, .reward-card, .grievance-card, .decision-card {
+  background: #fff; border: 1px solid var(--line); box-shadow: none; border-radius: 20px;
+}
+.card:hover, .offer-card:hover, .harvest-card:hover, .listing-card:hover, .decision-card:hover { border-color: #00000055; }
+.list-item { border-color: var(--line); background: #fff; }
+.table th { background: #f3f3ef; color: #444; }
+.table td { border-bottom-color: #0000000d; }
+.heat-cell { background: #f3f3ef; border-color: var(--line); }
+.progress { background: #ececE8; }
+.progress span { background: #0A0A0A; }
+.tag { background: #f3f3ef; color: #111; }
+.tag.warn { background: #fff4e5; color: var(--warn); }
+.tag.danger { background: #fdecec; color: var(--danger); }
+.explain { background: #f6ffc2; border-left-color: #0A0A0A; }
+
+/* ---------- hero panels: black with lime ---------- */
+.welcome-card, .farmer-hero, .decision-result { background: #0A0A0A; color: #F2F2F2; border-radius: 24px; box-shadow: none; }
+.welcome-card h2, .farmer-hero h2, .decision-result h2 { font-family: var(--app-serif); font-weight: 400; font-size: 40px; letter-spacing: -.02em; color: #fff; }
+.welcome-card p, .decision-result p { color: #b4b4ad; }
+.hero-mini span { background: #ffffff14; border-color: #ffffff2b; }
+.recommendation, .decision-result-market { background: var(--lime2); color: #1E1E1E; }
+.recommendation b.big, .decision-result-market b { color: #1E1E1E; font-family: var(--app-serif); font-weight: 400; }
+.decision-result-market span { color: #333; }
+.hero-reco { background: #f6ffc2; border-left: 6px solid #0A0A0A; border-radius: 20px; box-shadow: none; }
+.hero-reco small, .recommendation-main small { color: #0A0A0A; }
+.decision-card.recommended { border: 2px solid #0A0A0A; background: #f6ffc2; box-shadow: none; }
+.decision-card em { background: #0A0A0A; }
+.decision-card:hover { transform: translateY(-2px); }
+.verified-badge, .tag.success { background: #f6ffc2; color: #1E1E1E; }
+
+/* ---------- buttons and forms ---------- */
+button.primary, .primary { background: #0A0A0A; color: #fff; border: 0; transition: transform .2s, background .2s, color .2s; }
+button.primary:hover, .primary:hover { background: var(--lime); color: #0A0A0A; transform: translateY(-1px); }
+button.secondary, .secondary { background: #fff; color: #0A0A0A; border: 1px solid #00000033; }
+button.secondary:hover, .secondary:hover { border-color: #0A0A0A; }
+.control:focus, #content select:focus, #content input:focus { border-color: #0A0A0A; box-shadow: 0 0 0 3px #DCFF0066; outline: none; }
+.tabs, .method-tabs { background: #f3f3ef; }
+.tabs button, .method-tabs button { color: #555; }
+.tabs button.active, .method-tabs button.active { background: #0A0A0A; color: #fff; }
+.mic { background: #f3f3ef; color: #0A0A0A; }
+
+/* ---------- certificate, modal, toast ---------- */
+.cert-view h2 { font-family: var(--app-serif); font-weight: 400; }
+.cert-grade { background: #0A0A0A; }
+.cert-grade b { font-family: var(--app-serif); font-weight: 400; }
+.cert-strip { background: #f6ffc2; border-color: #0000001a; }
+.modal { background: #000000a6; }
+.modal-card { border-radius: 24px; }
+.toast { background: #0A0A0A; color: #fff; }
+
+/* ---------- GRAM Saathi chat + voice agent ---------- */
+.gs-fab { background: var(--lime); color: #0A0A0A; box-shadow: 0 12px 30px #00000033; }
+.gs-fab:hover { box-shadow: 0 18px 40px #0000004d; }
+.gs-head { background: #0A0A0A; }
+.gs-head small { color: #9b9b95; }
+.va-fab, .va-type button { background: #0A0A0A; color: #fff; }
+.va-fab:hover { background: #262626; }
+.va-fab.va-live { background: var(--lime); color: #0A0A0A; box-shadow: none; }
+
+/* ---------- login dialog + language picker (opened from the landing page) ---------- */
+.lp-dialog .auth-top b, .lp-lang-head h2 { color: #0A0A0A; }
+.lp-dialog .auth-panel h2, .lp-lang-card h2 { font-family: var(--app-serif); font-weight: 400; font-size: 34px; letter-spacing: -.02em; }
+.lp-dialog .role-picker button.selected { border-color: #0A0A0A; background: #f6ffc2; box-shadow: inset 0 0 0 1px #0A0A0A; }
+.lp-dialog .role-picker button { border-color: var(--line); }
+.lp-dialog .primary { background: #0A0A0A; color: #fff; }
+.lp-dialog .primary:hover { background: var(--lime); color: #0A0A0A; }
+.lp-dialog-scrim { background: #000000a6; }
+.lp-lang-grid button { border-color: var(--line); background: #fff; }
+.lp-lang-grid button:hover { border-color: #0A0A0A; }
+.lp-lang-grid button.on { border-color: #0A0A0A; background: #f6ffc2; }
+.lp-lang-grid button.on::after { background: #0A0A0A; color: var(--lime); }
+
+/* ---------- other languages: longer text, taller glyphs ---------- */
+html:not([lang="en"]) header h1, html:not([lang="en"]) #pageTitle { font-size: 28px; letter-spacing: 0; line-height: 1.3; font-weight: 500; }
+html:not([lang="en"]) #content h2, html:not([lang="en"]) .section-head h2 { letter-spacing: 0; font-size: 24px; line-height: 1.35; font-weight: 500; }
+html:not([lang="en"]) .welcome-card h2, html:not([lang="en"]) .farmer-hero h2, html:not([lang="en"]) .decision-result h2 { font-size: 30px; letter-spacing: 0; line-height: 1.3; font-weight: 500; }
+html:not([lang="en"]) .stat b, html:not([lang="en"]) .stat-card b, html:not([lang="en"]) .metric { font-size: 24px; letter-spacing: 0; }
+html:not([lang="en"]) .nav-btn { line-height: 1.4; }
+html:not([lang="en"]) .side-brand b { letter-spacing: 0; }
+html:not([lang="en"]) body { line-height: 1.6; }
+html:not([lang="en"]) .lp-dialog .auth-panel h2 { font-size: 26px; letter-spacing: 0; }
+
+/* ---------- remaining hard-coded green panels ---------- */
+.stat-card.green, .gr-protection-card, .fr-hero, .fr-stat-card.primary, .ff-impact-card {
+  background: #0A0A0A !important; background-image: none !important; color: #F2F2F2; box-shadow: none;
+}
+.stat-card.green small, .stat-card.green span, .stat-card.green b, .fr-hero, .fr-hero h1, .fr-hero h2, .fr-hero p { color: #F2F2F2; }
+.stat-card.green b { color: var(--lime); }
+.fr-hero h1, .fr-hero h2, .gr-protection-card h2, .gr-protection-card h3 { font-family: var(--app-serif); font-weight: 400; letter-spacing: -.02em; }
+.buyer-avatar, .thread-avatar, .request-icon, .chat-send-btn, .message-row.mine .message-bubble, .farmer-feedback-page .primary { background: #0A0A0A; color: #fff; }
+.crop-step.active span, .ff-status-step.active span, .ff-select-check, .ff-vote-check, .crop-step.done { background: #0A0A0A; border-color: #0A0A0A; color: var(--lime); }
+.fr-improvement-fill { background: #0A0A0A; }
+[data-role].selected::after { background: #0A0A0A; color: var(--lime); }
+
+/* chat toolbar buttons (speaker, hands-free) in the new theme */
+.gs-btn.gs-on, .gs-btn.gs-speaking { background: #f6ffc2; border-color: #0A0A0A; color: #0A0A0A; }
+.gs-btn.gs-speaking { animation: gsSpeakingV2 1.3s ease-in-out infinite; }
+@keyframes gsSpeakingV2 { 0%, 100% { box-shadow: 0 0 0 0 #0a0a0a44; } 50% { box-shadow: 0 0 0 8px #0a0a0a00; } }
+.gs-send { background: #0A0A0A; border-color: #0A0A0A; }
+.gs-send:hover { background: #262626; }
+
+
+/* ---------- brand logo ---------- */
+.brand-img { display: block; border-radius: 50%; object-fit: contain; flex: none; background: #fff; }
+.side-brand .brand-img { width: 48px; height: 48px; box-shadow: 0 0 0 2px #ffffff33; }
+.side-brand { display: flex; align-items: center; gap: 12px; }

@@ -72,7 +72,7 @@ function showLoginMethod(m){$('emailBox').classList.toggle('hidden',m!=='email')
 async function login(){try{let d=await api('/auth/login',{method:'POST',body:JSON.stringify({email:$('email').value,password:$('password').value})});token=d.access_token;localStorage.setItem('gram_token',token);me=await api('/auth/me');if(me.role!==activeRole){logout();throw Error(`This account is ${me.role}, not ${activeRole}`)}boot()}catch(e){$('authMessage').textContent=e.message}}
 async function sendOtp(){try{let d=await api('/auth/otp/request',{method:'POST',body:JSON.stringify({phone:$('loginPhone').value})});$('otpEntry').classList.remove('hidden');$('otpMessage').textContent=d.demo_otp?`Demo OTP: ${d.demo_otp}`:'OTP sent'}catch(e){$('otpMessage').textContent=e.message}}
 async function verifyOtp(){try{let d=await api('/auth/otp/verify',{method:'POST',body:JSON.stringify({phone:$('loginPhone').value,otp:$('loginOtp').value})});token=d.access_token;localStorage.setItem('gram_token',token);me=await api('/auth/me');boot()}catch(e){toast(e.message)}}
-async function registerUser(){try{let d=await api('/auth/register',{method:'POST',body:JSON.stringify({name:$('rName').value,email:$('rEmail').value,phone:$('rPhone').value,district:$('rDistrict').value,state:'Tamil Nadu',role:activeRole})});$('regMessage').textContent=d.message||'Registered'}catch(e){$('regMessage').textContent=e.message}}
+async function registerUser(){try{let d=await api('/auth/register',{method:'POST',body:JSON.stringify({name:$('rName').value,email:$('rEmail').value,phone:$('rPhone').value,district:$('rDistrict').value,state:'Tamil Nadu',role:activeRole,buyer_type:($('rBuyerType')||{}).value||'',business_name:(($('rBizName')||{}).value||'').trim()})});$('regMessage').textContent=d.message||'Registered'}catch(e){$('regMessage').textContent=e.message}}
 function logout(){token='';me=null;localStorage.removeItem('gram_token');$('appShell').classList.add('hidden');$('auth').classList.remove('hidden');$('gsFab').classList.add('hidden')}
 async function boot(){if(!me)me=await api('/auth/me');$('auth').classList.add('hidden');$('appShell').classList.remove('hidden');$('gsFab').classList.remove('hidden');$('userName').textContent=me.name;$('userRole').textContent=tr(me.role);$('userInitial').textContent=me.name[0];$('portalName').textContent=`${tr(me.role)} Portal`;if(me.role==='farmer')$('stateSelect').closest('label').style.display='none';else{$('stateSelect').closest('label').style.display='flex';fillStates()}renderNav();route('dashboard')}
 async function fillStates(){let states=['Tamil Nadu','Maharashtra','Karnataka','Gujarat','Punjab','Rajasthan','Madhya Pradesh','Uttar Pradesh','West Bengal','Telangana','Kerala','Odisha','Bihar','Assam','Delhi'];$('stateSelect').innerHTML=states.map(s=>`<option>${s}</option>`).join('');$('stateSelect').value=currentState}
@@ -80,7 +80,7 @@ function changeState(v){currentState=v;route(currentPage)}
 
 const NAV={farmer:[['dashboard','🏠'],['crops','🌾'],['market','🧺'],['preorders','🤝'],['transport','🚚'],['paymentsRewards','💳'],['profile','👤'],['feedback','⭐'],['grievances','🛡'],['linkIndia','🗺'],['chats','💬']],buyer:[['dashboard','🏠'],['discover','🌾'],['preorders','📅'],['orders','📦'],['bulk','👥'],['rewards','🎁'],['profile','👤'],['feedback','⭐'],['grievances','🛡'],['connectBuyers','🗺'],['chats','💬']],admin:[['dashboard','📊'],['usersKyc','🪪'],['markets','🌐'],['payments','💳'],['grievances','🛡'],['stateAnalytics','📈'],['feedbackReq','💬'],['securityActions','🔐']]};
 function renderNav(){$('nav').innerHTML=NAV[me.role].map(([k,ic])=>`<button class="nav-btn ${currentPage===k?'active':''}" onclick="route('${k}')"><span>${ic}</span><b>${tr(k)}</b></button>`).join('')}
-function setTitle(k){currentPage=k;$('pageTitle').textContent=tr(k);$('breadcrumb').textContent=`GRAM AI • ${me.role==='farmer'?'Tamil Nadu':currentState}`;renderNav()}
+function setTitle(k){currentPage=k;$('pageTitle').textContent=tr(k);$('breadcrumb').textContent=`PasumAI • ${me.role==='farmer'?'Tamil Nadu':currentState}`;renderNav()}
 async function route(k){setTitle(k);currentPage=k;destroyCharts();if(mapObj){mapObj.remove();mapObj=null}try{if(me.role==='farmer')return await farmerRoute(k);if(me.role==='buyer')return await buyerRoute(k);return await adminRoute(k)}catch(e){$('content').innerHTML=`<div class="card error">${esc(e.message)}</div>`}finally{if(window.I18N)setTimeout(()=>window.I18N.apply(document.body),0)}}
 function destroyCharts(){Object.values(charts).forEach(c=>{try{c.destroy()}catch{}});charts={}}
 function card(label,value,sub='',cls=''){return `<div class="stat-card ${cls}"><small>${label}</small><b>${value}</b>${sub?`<span>${sub}</span>`:''}</div>`}
@@ -146,7 +146,7 @@ async function whatsappInventorySection(){
 
 async function farmerDashboard(){let d=await api('/api/v2/v3/dashboard');let notes=await api('/api/notifications');$('content').innerHTML=`<div class="hero-reco"><div><small>${tr('todayRecommendation')}</small><h2>${esc(d.recommendation)}</h2><p>GRAM AI combines local price movement, demand and logistics before you commit a sale.</p></div><div>${badge(d.kyc.status==='VERIFIED'&&d.kyc.live_check)}</div></div><div class="grid stats-4">${card(tr('todayIncome'),fmt(d.today_income),'Revenue credited today','green')}${card(tr('totalIncome'),fmt(d.total_income),'Lifetime recorded sales')}${card(tr('openOffers'),d.open_offers,'Waiting for your action')}${card(tr('rewardPoints'),d.reward_points,'Redeem for transport / fee benefits')}</div>${section(tr('notification'),notes.slice(0,6).map(n=>`<div class="list-item"><div><b>${esc(n.title)}</b><small>${esc(n.message)}</small></div><span class="tag">${esc(n.severity)}</span></div>`).join('')||`<div class="empty">${tr('noData')}</div>`)} ${await whatsappInventorySection()}`}
 
-async function farmerCrops(){let hs=await api('/api/v2/v3/harvests');let crops=await api('/api/crops');let markets=await api('/api/markets?state=Tamil Nadu&priced=true');$('content').innerHTML=`<div class="toolbar"><button class="primary" onclick="openVerifiedCropFlow()">＋ ${tr('addCrop')}</button><span class="soft-note">📍 Tamil Nadu is fixed for your selling portal. Use Link India to explore other states.</span></div>${section(tr('upcoming'),hs.length?`<div class="harvest-grid">${hs.map(h=>`<div class="harvest-card"><div class="harvest-top"><div><span class="crop-icon">🌾</span><b>${esc(h.crop)} • ${esc(h.variety)}</b></div><span class="tag ${h.buyer_visible?'success':''}">${h.buyer_visible?tr('openForBuyers'):tr('closed')}</span></div><div class="mini-grid"><span>${tr('quantity')}<b>${num(h.available_quantity_qtl)} qtl</b></span><span>${tr('date')}<b>${esc(h.expected_harvest_date)}</b></span><span>${tr('qualityGrade')}<b>${esc(h.grade_expected||'Pending')}</b></span><span>${tr('token')}<b>${fmt(h.token_amount)}</b></span></div>${h.certificate_url?button('📄 '+tr('certificate'),`openCertificate('${h.certificate_url}')`):''}</div>`).join('')}</div>`:`<div class="empty">No harvests yet. Add a verified crop using live GPS + live photo.</div>`)}${section(tr('priceForecast'),`<div class="forecast-form"><select id="fcrop" class="control">${crops.map(c=>`<option>${esc(c.name)}</option>`).join('')}</select><select id="fmarket" class="control">${markets.map(m=>`<option value="${m.id}">${esc(m.name)} • ${esc(m.district)}${m.market_type?` • ${esc(m.market_type)}`:''}</option>`).join('')}</select><input id="fqty" class="control" type="number" value="10" min="1"><button class="primary" onclick="runFarmerForecast()">✨ ${tr('generate')}</button></div><div id="forecastResult"></div>`)} `}
+async function farmerCrops(){let hs=await api('/api/v2/v3/harvests');let crops=await api('/api/crops');let markets=await api('/api/markets?state=Tamil Nadu&priced=true');$('content').innerHTML=`<div class="toolbar"><button class="primary" onclick="openVerifiedCropFlow()">＋ ${tr('addCrop')}</button><span class="soft-note">📍 Tamil Nadu is fixed for your selling portal. Use Link India to explore other states.</span></div>${section(tr('upcoming'),hs.length?`<div class="harvest-grid">${hs.map(h=>`<div class="harvest-card"><div class="harvest-top"><div><span class="crop-icon">🌾</span><b>${esc(h.crop)} • ${esc(h.variety)}</b></div><span class="tag ${h.buyer_visible?'success':''}">${h.buyer_visible?tr('openForBuyers'):tr('closed')}</span></div><div class="mini-grid"><span>${tr('quantity')}<b>${num(h.available_quantity_qtl)} qtl</b></span><span>${tr('date')}<b>${esc(h.expected_harvest_date)}</b></span><span>${tr('qualityGrade')}<b>${esc(h.grade_expected||'Pending')}</b></span><span>${tr('token')}<b>${fmt(h.token_amount)}</b></span></div>${h.location_text?`<div class="geo-place-line">📍 ${esc(h.location_text)}</div>`:''}<div class="geo-photo-line">📷 ${h.photo_count||0} photo(s) · <b>${h.geo_verified_photos||0} geo-tag verified</b></div><div class="action-row">${h.certificate_url?button('📄 '+tr('certificate'),`openCertificate('${h.certificate_url}')`):''}${button('🧭 Best places to sell',`openBestOptions(${h.id})`,'primary')}${button('📷 Add photos',`openHarvestPhotos(${h.id})`)}</div></div>`).join('')}</div>`:`<div class="empty">No harvests yet. Add a verified crop using live GPS + live photo.</div>`)}${section(tr('priceForecast'),`<div class="forecast-form"><select id="fcrop" class="control">${crops.map(c=>`<option>${esc(c.name)}</option>`).join('')}</select><select id="fmarket" class="control">${markets.map(m=>`<option value="${m.id}">${esc(m.name)} • ${esc(m.district)}${m.market_type?` • ${esc(m.market_type)}`:''}</option>`).join('')}</select><input id="fqty" class="control" type="number" value="10" min="1"><button class="primary" onclick="runFarmerForecast()">✨ ${tr('generate')}</button></div><div id="forecastResult"></div>`)} `}
 
 function getGPS() {
   return new Promise((resolve, reject) =>
@@ -2466,8 +2466,9 @@ async function farmerMarket() {
                   <div>
 
                     <span class="verified-badge">
-                      ✓ ${esc(o.buyer_name)}
+                      ✓ ${esc(o.buyer_business||o.buyer_name)}
                     </span>
+                    ${window.buyerTypeChip?buyerTypeChip(o.buyer_type):''}
 
                     <h3>
                       ${esc(o.crop)}
@@ -2810,8 +2811,9 @@ async function openOfferConfirmation(id) {
               </span>
 
               <h3>
-                ${esc(o.buyer_name)}
+                ${esc(o.buyer_business||o.buyer_name)}
               </h3>
+              ${window.buyerTypeChip?buyerTypeChip(o.buyer_type):''}
 
               <p>
                 📍 ${esc(
@@ -4943,13 +4945,15 @@ async function farmerTransport() {
 
   try {
 
-    const [my, t, g] = await Promise.all([
+    const [my, t, g, tg] = await Promise.all([
 
       api('/api/v2/v3/transports'),
 
       api('/api/transport?state=Tamil Nadu'),
 
-      api('/api/v2/groups?state=Tamil Nadu')
+      api('/api/v2/groups?state=Tamil Nadu'),
+
+      api('/api/v2/transport-groups?state=Tamil Nadu')
 
     ]);
 
@@ -5007,6 +5011,86 @@ async function farmerTransport() {
         button(
           '＋ Request Transport',
           'openTransportRequest()',
+          'primary'
+        )
+
+      )}
+
+
+
+      ${section(
+
+        '🚛 Shared Transport Groups',
+
+        `
+          <p class="lp-sub" style="margin:-6px 0 14px">
+            Join a lorry that is already going your way and split the cost,
+            or start a new route for other farmers to join.
+          </p>
+
+          <div class="transport-group-grid">
+
+            ${
+              tg.length
+                ? tg.map(x => `
+                    <div class="transport-group-card">
+
+                      <div class="tg-route">
+                        <b>${esc(x.route_from)}</b>
+                        <span>→</span>
+                        <b>${esc(x.route_to)}</b>
+                        ${x.distance_km ? `<small>${num(x.distance_km)} km</small>` : ''}
+                      </div>
+
+                      <div class="tg-vehicle">
+                        ${esc(x.vehicle_type)} • ${esc(x.crop || 'Mixed crop')}
+                        ${x.departure_date ? ` • leaves ${esc(x.departure_date)}` : ''}
+                      </div>
+
+                      <div class="tg-space">
+                        <div class="tg-space-bar">
+                          <span style="width:${Math.min(100, Math.round((x.used_qtl / Math.max(x.capacity_qtl,1)) * 100))}%"></span>
+                        </div>
+                        <small>${num(x.used_qtl)} of ${num(x.capacity_qtl)} qtl used • ${num(x.space_left_qtl)} qtl free</small>
+                      </div>
+
+                      <div class="tg-members">
+                        ${
+                          x.members.length
+                            ? x.members.map(m => `
+                                <span class="tg-member-chip" title="${esc(m.crop || x.crop)} • ${num(m.quantity_qtl)} qtl">
+                                  ${esc(m.name)} <em>${num(m.quantity_qtl)} qtl</em>
+                                </span>
+                              `).join('')
+                            : `<span class="tg-member-chip empty">No farmers yet — be the first</span>`
+                        }
+                      </div>
+
+                      <div class="tg-foot">
+                        <div>
+                          <small>Cost to join</small>
+                          <b>₹${num(x.cost_per_qtl)}<span> / qtl</span></b>
+                        </div>
+                        <button
+                          class="primary"
+                          ${x.space_left_qtl <= 0 ? 'disabled' : ''}
+                          onclick="openJoinTransportGroup(${x.id})"
+                        >
+                          ${x.space_left_qtl <= 0 ? 'Full' : 'Join Group'}
+                        </button>
+                      </div>
+
+                    </div>
+                  `).join('')
+                : `<div class="empty">No shared transport routes yet. Create the first one.</div>`
+            }
+
+          </div>
+        `,
+
+        button(
+          '＋ Create Transport Group',
+          'openCreateTransportGroup()',
           'primary'
         )
 
@@ -5131,39 +5215,42 @@ async function farmerTransport() {
 
                 ? g.map(x => `
 
-                    <div class="list-item group-list-item">
+                    <div class="group-list-item-rich">
 
-
-                      <div>
-
-                        <b>
-                          ${esc(x.name)}
-                        </b>
-
-
-                        <small>
-
-                          ${esc(x.crop)}
-
-                          •
-
-                          ${esc(x.district)}
-
-                          •
-
-                          ${esc(x.state)}
-
-                        </small>
-
+                      <div class="glr-head">
+                        <div>
+                          <b>${esc(x.name)}</b>
+                          <small>${esc(x.crop)} • ${esc(x.district)} • ${esc(x.state)}</small>
+                        </div>
+                        <span class="tag">${esc(x.status || 'OPEN')}</span>
                       </div>
 
+                      <div class="tg-space">
+                        <div class="tg-space-bar">
+                          <span style="width:${Math.min(100, Math.round(((x.current_quantity_qtl||0) / Math.max(x.target_quantity_qtl||1,1)) * 100))}%"></span>
+                        </div>
+                        <small>${num(x.current_quantity_qtl||0)} of ${num(x.target_quantity_qtl||0)} qtl committed • expected ₹${num(x.expected_price||0)}/qtl</small>
+                      </div>
 
-                      <span class="tag">
+                      <div class="tg-members">
+                        ${
+                          (x.members||[]).length
+                            ? x.members.map(m => `
+                                <span class="tg-member-chip" title="${num(m.quantity_qtl)} qtl">
+                                  ${esc(m.name)} <em>${num(m.quantity_qtl)} qtl</em>
+                                </span>
+                              `).join('')
+                            : `<span class="tg-member-chip empty">No farmers yet — be the first</span>`
+                        }
+                      </div>
 
-                        ${esc(x.status || 'OPEN')}
-
-                      </span>
-
+                      <div class="tg-foot">
+                        <div>
+                          <small>Joining code</small>
+                          <b class="mini-code">${esc(x.join_code || '—')}</b>
+                        </div>
+                        <button class="primary" onclick="quickJoinSellingGroup(${x.id})">Join Group</button>
+                      </div>
 
                     </div>
 
@@ -5208,6 +5295,109 @@ async function farmerTransport() {
 
 function openTransportRequest(){$('modalBody').innerHTML=`<h2>Request Transport</h2><div class="form-grid"><div class="field"><label>Crop</label><input id="trCrop" class="control" value="Tomato"></div><div class="field"><label>Pickup</label><input id="trPick" class="control" value="Coimbatore Farm"></div><div class="field"><label>Drop</label><input id="trDrop" class="control" value="Coimbatore APMC"></div><div class="field"><label>Distance km</label><input id="trKm" class="control" type="number" value="22"></div><div class="field"><label>Estimated cost ₹</label><input id="trCost" class="control" type="number" value="500"></div><div class="field"><label><input id="trShared" type="checkbox" checked> Shared route</label></div></div><button class="primary wide" onclick="saveTransport()">Submit</button>`;$('modal').classList.remove('hidden')}
 async function saveTransport(){try{await api('/api/v2/v3/transports',{method:'POST',body:JSON.stringify({crop:$('trCrop').value,pickup:$('trPick').value,dropoff:$('trDrop').value,distance_km:+$('trKm').value,quoted_cost:+$('trCost').value,shared:$('trShared').checked})});closeModal();farmerTransport()}catch(e){toast(e.message)}}
+
+async function quickJoinSellingGroup(groupId){
+  try{
+    const g = await api(`/api/v2/groups/${groupId}`);
+    $('modalBody').innerHTML = `
+      <h2>Join "${esc(g.name)}"</h2>
+      <p class="lp-sub">${esc(g.crop)} • ${esc(g.district)} • target ${num(g.target_quantity_qtl||0)} qtl</p>
+      <div class="form-grid">
+        <div class="field"><label>Your quantity (qtl)</label><input id="sgJoinQty" class="control" type="number" value="5" min="0.5" step="0.5"></div>
+        <div class="field full"><label>Message to group owner</label><textarea id="sgJoinMsg" class="control" rows="2" placeholder="I would like to join this group with my crop quantity."></textarea></div>
+      </div>
+      <button class="primary wide" onclick="submitQuickJoinSellingGroup(${g.id}, '${esc(g.join_code || '')}')">Send Join Request</button>
+    `;
+    $('modal').classList.remove('hidden');
+  }catch(e){ toast(e.message); }
+}
+
+async function submitQuickJoinSellingGroup(groupId, code){
+  try{
+    const quantity_qtl = Number($('sgJoinQty').value);
+    if(!quantity_qtl || quantity_qtl <= 0) throw new Error('Enter a valid quantity');
+    await api(`/api/v2/groups/${groupId}/join-request`, {
+      method: 'POST',
+      body: JSON.stringify({ join_code: code, quantity_qtl, message: $('sgJoinMsg').value.trim() })
+    });
+    toast('Join request sent to the group owner');
+    closeModal();
+    farmerTransport();
+  }catch(e){ toast(e.message); }
+}
+
+function openCreateTransportGroup(){
+  $('modalBody').innerHTML = `
+    <h2>🚛 Create Transport Group</h2>
+    <div class="form-grid">
+      <div class="field"><label>Pickup point</label><input id="tgFrom" class="control" placeholder="Example: Vandalur"></div>
+      <div class="field"><label>Drop point</label><input id="tgTo" class="control" placeholder="Example: Tambaram"></div>
+      <div class="field"><label>Distance (km)</label><input id="tgKm" class="control" type="number" value="10" min="0"></div>
+      <div class="field"><label>Vehicle</label><input id="tgVehicle" class="control" value="Mini Lorry"></div>
+      <div class="field"><label>Lorry capacity (qtl)</label><input id="tgCapacity" class="control" type="number" value="60" min="1"></div>
+      <div class="field"><label>Main crop</label><input id="tgCrop" class="control" value="${esc(me.crop || 'Tomato')}"></div>
+      <div class="field"><label>Cost per qtl to join (₹)</label><input id="tgCost" class="control" type="number" value="40" min="0"></div>
+      <div class="field"><label>Departure date</label><input id="tgDate" class="control" type="date"></div>
+      <div class="field"><label>Your quantity (qtl)</label><input id="tgQty" class="control" type="number" value="10" min="0"></div>
+    </div>
+    <button class="primary wide" onclick="submitTransportGroup()">Create Group</button>
+  `;
+  $('modal').classList.remove('hidden');
+}
+
+async function submitTransportGroup(){
+  try{
+    const route_from = $('tgFrom').value.trim();
+    const route_to = $('tgTo').value.trim();
+    const capacity_qtl = Number($('tgCapacity').value);
+    if(!route_from || !route_to) throw new Error('Enter pickup and drop point');
+    if(!capacity_qtl || capacity_qtl <= 0) throw new Error('Enter lorry capacity');
+    await api('/api/v2/transport-groups', {
+      method: 'POST',
+      body: JSON.stringify({
+        route_from, route_to,
+        distance_km: Number($('tgKm').value) || 0,
+        vehicle_type: $('tgVehicle').value.trim() || 'Mini Truck',
+        capacity_qtl,
+        crop: $('tgCrop').value.trim(),
+        cost_per_qtl: Number($('tgCost').value) || 0,
+        departure_date: $('tgDate').value || null,
+        quantity_qtl: Number($('tgQty').value) || 0,
+        district: me.district || '',
+        state: 'Tamil Nadu'
+      })
+    });
+    toast('Transport group created');
+    closeModal();
+    farmerTransport();
+  }catch(e){ toast(e.message); }
+}
+
+function openJoinTransportGroup(groupId){
+  $('modalBody').innerHTML = `
+    <h2>Join Transport Group</h2>
+    <div class="form-grid">
+      <div class="field"><label>Your quantity (qtl)</label><input id="tgJoinQty" class="control" type="number" value="5" min="0.5" step="0.5"></div>
+      <div class="field"><label>Crop</label><input id="tgJoinCrop" class="control" value="${esc(me.crop || '')}"></div>
+    </div>
+    <button class="primary wide" onclick="submitJoinTransportGroup(${groupId})">Confirm & Join</button>
+  `;
+  $('modal').classList.remove('hidden');
+}
+
+async function submitJoinTransportGroup(groupId){
+  try{
+    const quantity_qtl = Number($('tgJoinQty').value);
+    if(!quantity_qtl || quantity_qtl <= 0) throw new Error('Enter a valid quantity');
+    const res = await api(`/api/v2/transport-groups/${groupId}/join`, {
+      method: 'POST',
+      body: JSON.stringify({ quantity_qtl, crop: $('tgJoinCrop').value.trim() })
+    });
+    toast(`Joined! Estimated cost ₹${res.cost}`);
+    closeModal();
+    farmerTransport();
+  }catch(e){ toast(e.message); }
+}
 async function openGroupSellingPage() {
 
   try {
@@ -8453,8 +8643,8 @@ async function redeemReward(code){
 
 async function redeemReward(code){try{let d=await api(`/api/v2/v3/rewards/${code}/redeem`,{method:'POST'});toast(`Reward active until ${new Date(d.expires_at).toLocaleDateString()}`);paymentsRewardsPage()}catch(e){toast(e.message)}}
 
-async function profilePage(){let [p,s]=await Promise.all([api('/api/profile'),api('/api/v2/v3/me-status')]);$('content').innerHTML=`<div class="profile-header"><div><h2>${esc(p.name)} ${s.verified?'<span class="verified-badge">✓ GRAM AI Verified</span>':''}</h2><p>${esc(p.district)}, ${esc(p.state||'Tamil Nadu')} • ${esc(p.phone||'')}</p></div>${badge(s.verified)}</div><div class="grid two">${section(tr('profileDetails'),`<div class="form-grid"><div class="field"><label>Name</label><input id="pfName" class="control" value="${esc(p.name)}"></div><div class="field"><label>Phone</label><input id="pfPhone" class="control" value="${esc(p.phone||'')}"></div><div class="field"><label>District</label><input id="pfDistrict" class="control" value="${esc(p.district||'')}"></div><div class="field"><label>State</label><input class="control" value="Tamil Nadu" disabled></div><div class="field full"><label>Address</label><input id="pfAddress" class="control" value="${esc(p.address||'')}"></div>${me.role==='farmer'?`<div class="field"><label>Farm area (acres)</label><input id="pfFarm" type="number" class="control" value="${p.farm_size_acres||0}"></div>`:''}</div><button class="primary" onclick="saveFullProfile()">Save</button>`)}${section(tr('bankDetails'),`<div class="form-grid"><div class="field"><label>Account holder</label><input id="pfBankName" class="control" value="${esc(p.bank_account_name||'')}"></div><div class="field"><label>Account last 4</label><input id="pfBankLast" class="control" maxlength="4" value="${esc(p.bank_account_last4||'')}"></div><div class="field"><label>IFSC</label><input id="pfIfsc" class="control" value="${esc(p.bank_ifsc||'')}"></div><div class="field"><label>UPI ID</label><input id="pfUpi" class="control" value="${esc(p.upi_id||'')}"></div></div><div class="security-note">Full bank account numbers and UPI PINs are never requested in this prototype.</div>`)}</div>${section(tr('kyc'),`<div class="kyc-status">${badge(s.verified)}<p>Method: ${esc(s.kyc.method||'Not started')} • ${esc(s.kyc.masked_document||'')}</p><p>Marketplace gate: ${s.verified?'Selling / ordering and payouts enabled.':'Selling / ordering and payouts blocked until verified.'}</p></div><div class="form-grid"><div class="field"><label>KYC method</label><select id="kycMethod" class="control"><option>AADHAAR</option><option>KYC</option></select></div><div class="field"><label>Aadhaar last 4 only</label><input id="kycLast" class="control" maxlength="4"></div><div class="field full"><label>Live selfie</label><input id="kycSelfie" class="control" type="file" accept="image/*" capture="user"></div></div><label><input id="kycConsent" type="checkbox"> I consent to secure verification.</label><button class="primary" onclick="submitLiveKyc()">Submit KYC + Live Photo</button><div class="warn-box">Demo accounts are pre-verified so the SIH workflow can be demonstrated. Newly registered accounts remain blocked until Admin verifies KYC. No full Aadhaar number is stored.</div>`)}`}
-async function saveFullProfile(){try{let p=await api('/api/profile');await api('/api/profile',{method:'PATCH',body:JSON.stringify({...p,name:$('pfName').value,phone:$('pfPhone').value,district:$('pfDistrict').value,state:'Tamil Nadu',address:$('pfAddress').value,farm_size_acres:$('pfFarm')?+$('pfFarm').value:p.farm_size_acres,bank_account_name:$('pfBankName').value,bank_account_last4:$('pfBankLast').value,bank_ifsc:$('pfIfsc').value,upi_id:$('pfUpi').value})});toast('Profile updated')}catch(e){toast(e.message)}}
+async function profilePage(){let [p,s]=await Promise.all([api('/api/profile'),api('/api/v2/v3/me-status'),(window.GeoFeatures?GeoFeatures.loadBuyerTypes():Promise.resolve())]);$('content').innerHTML=`<div class="profile-header"><div><h2>${esc(p.name)} ${s.verified?'<span class="verified-badge">✓ GRAM AI Verified</span>':''}</h2><p>${esc(p.district)}, ${esc(p.state||'Tamil Nadu')} • ${esc(p.phone||'')}</p></div>${badge(s.verified)}</div><div class="grid two">${section(tr('profileDetails'),`<div class="form-grid"><div class="field"><label>Name</label><input id="pfName" class="control" value="${esc(p.name)}"></div><div class="field"><label>Phone</label><input id="pfPhone" class="control" value="${esc(p.phone||'')}"></div><div class="field"><label>District</label><input id="pfDistrict" class="control" value="${esc(p.district||'')}"></div><div class="field"><label>State</label><input class="control" value="Tamil Nadu" disabled></div><div class="field full"><label>Address</label><input id="pfAddress" class="control" value="${esc(p.address||'')}"></div>${me.role==='farmer'?`<div class="field"><label>Farm area (acres)</label><input id="pfFarm" type="number" class="control" value="${p.farm_size_acres||0}"></div>`:''}${me.role==='buyer'?`<div class="field"><label>Business type</label><select id="pfBuyerType" class="control">${(window.GeoFeatures?GeoFeatures.typeOptions(p.buyer_type):'')}</select></div><div class="field"><label>Business / shop name</label><input id="pfBizName" class="control" value="${esc(p.business_name||'')}"></div>`:''}</div><button class="primary" onclick="saveFullProfile()">Save</button>`)}${section(tr('bankDetails'),`<div class="form-grid"><div class="field"><label>Account holder</label><input id="pfBankName" class="control" value="${esc(p.bank_account_name||'')}"></div><div class="field"><label>Account last 4</label><input id="pfBankLast" class="control" maxlength="4" value="${esc(p.bank_account_last4||'')}"></div><div class="field"><label>IFSC</label><input id="pfIfsc" class="control" value="${esc(p.bank_ifsc||'')}"></div><div class="field"><label>UPI ID</label><input id="pfUpi" class="control" value="${esc(p.upi_id||'')}"></div></div><div class="security-note">Full bank account numbers and UPI PINs are never requested in this prototype.</div>`)}</div>${section(tr('kyc'),`<div class="kyc-status">${badge(s.verified)}<p>Method: ${esc(s.kyc.method||'Not started')} • ${esc(s.kyc.masked_document||'')}</p><p>Marketplace gate: ${s.verified?'Selling / ordering and payouts enabled.':'Selling / ordering and payouts blocked until verified.'}</p></div><div class="form-grid"><div class="field"><label>KYC method</label><select id="kycMethod" class="control"><option>AADHAAR</option><option>KYC</option></select></div><div class="field"><label>Aadhaar last 4 only</label><input id="kycLast" class="control" maxlength="4"></div><div class="field full"><label>Live selfie</label><input id="kycSelfie" class="control" type="file" accept="image/*" capture="user"></div></div><label><input id="kycConsent" type="checkbox"> I consent to secure verification.</label><button class="primary" onclick="submitLiveKyc()">Submit KYC + Live Photo</button><div class="warn-box">Demo accounts are pre-verified so the SIH workflow can be demonstrated. Newly registered accounts remain blocked until Admin verifies KYC. No full Aadhaar number is stored.</div>`)}`}
+async function saveFullProfile(){try{let p=await api('/api/profile');await api('/api/profile',{method:'PATCH',body:JSON.stringify({...p,name:$('pfName').value,phone:$('pfPhone').value,district:$('pfDistrict').value,state:'Tamil Nadu',address:$('pfAddress').value,farm_size_acres:$('pfFarm')?+$('pfFarm').value:p.farm_size_acres,buyer_type:$('pfBuyerType')?$('pfBuyerType').value:(p.buyer_type||''),business_name:$('pfBizName')?$('pfBizName').value:(p.business_name||''),bank_account_name:$('pfBankName').value,bank_account_last4:$('pfBankLast').value,bank_ifsc:$('pfIfsc').value,upi_id:$('pfUpi').value})});toast('Profile updated')}catch(e){toast(e.message)}}
 async function submitLiveKyc(){try{let f=$('kycSelfie').files[0];if(!f)throw Error('Take a live selfie');let fd=new FormData();fd.append('method',$('kycMethod').value);fd.append('aadhaar_last4',$('kycLast').value);fd.append('consent',$('kycConsent').checked?'true':'false');fd.append('selfie',f);let d=await api('/api/v2/v3/kyc-live',{method:'POST',body:fd});toast('KYC submitted to admin: '+d.status);profilePage()}catch(e){toast(e.message)}}
 
 async function farmerFeedbackPage() {

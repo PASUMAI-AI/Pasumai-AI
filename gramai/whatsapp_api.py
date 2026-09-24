@@ -167,15 +167,25 @@ def parse_produce_message(text):
 # Farmer identification
 # --------------------------------------------------------------------------
 def resolve_farmer(wa_id, profile_name=""):
-    """Match a wa_id to a farmer, creating one if the number is unknown.
+    """Match a sender id to a farmer, creating one if unknown.
 
     wa_id arrives with a country code ("916382713089") while users.phone holds
-    a local 10-digit number ("9876543210"), so both forms are tried.
+    a local 10-digit number ("9876543210"), so both forms are tried. It may
+    also be a non-phone key from another channel (Telegram's "tg<chat_id>",
+    the in-app chat's "app<user_id>") - those are matched exactly first, so
+    every caller that resolves a farmer by sender id (WhatsApp, Telegram,
+    in-app chat) lands on the same row instead of each creating its own.
     """
+    c = db()
+    exact = c.execute("SELECT * FROM users WHERE phone=? LIMIT 1", (str(wa_id),)).fetchone()
+    if exact:
+        c.close()
+        log("WHATSAPP", f"Farmer matched (exact): id={exact['id']} name={exact['name']}")
+        return dict(exact)
+
     digits = "".join(ch for ch in str(wa_id) if ch.isdigit())
     local = digits[-10:] if len(digits) >= 10 else digits
 
-    c = db()
     row = c.execute(
         "SELECT * FROM users WHERE phone=? OR phone=? OR phone=? LIMIT 1",
         (local, digits, "+" + digits),

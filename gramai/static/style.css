@@ -2009,6 +2009,95 @@ header{background:#fff;border-bottom:1px solid var(--line)}
     border-left: 4px solid #4e9668;
 }
 
+/* ---------- SHARED TRANSPORT GROUPS + rich selling group cards ---------- */
+
+.transport-group-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 10px;
+}
+
+.transport-group-card, .group-list-item-rich {
+    background: #ffffff;
+    border: 1px solid #dce8df;
+    border-left: 4px solid #4e9668;
+    border-radius: 15px;
+    padding: 16px 18px;
+    box-shadow: 0 5px 18px rgba(25, 76, 45, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.group-list-item-rich { margin-bottom: 14px; }
+
+.tg-route {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 16px;
+    color: #173e2a;
+}
+
+.tg-route span { color: #7a877f; }
+.tg-route small { color: #7a877f; font-weight: 500; margin-left: auto; }
+
+.tg-vehicle, .glr-head small { color: #7a877f; font-size: 13px; }
+
+.glr-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+.glr-head b { display: block; color: #173e2a; }
+.glr-head small { display: block; margin-top: 2px; }
+
+.tg-space-bar {
+    background: #eef4ef;
+    border-radius: 999px;
+    height: 7px;
+    overflow: hidden;
+}
+.tg-space-bar span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #4e9668, #7fc79a);
+    border-radius: 999px;
+}
+.tg-space small { color: #7a877f; font-size: 12px; }
+
+.tg-members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.tg-member-chip {
+    background: #f2f8f3;
+    border: 1px solid #dce8df;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: #173e2a;
+}
+.tg-member-chip em { font-style: normal; color: #4e9668; font-weight: 700; margin-left: 4px; }
+.tg-member-chip.empty { color: #7a877f; font-style: italic; }
+
+.tg-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px dashed #dce8df;
+}
+.tg-foot small { display: block; color: #7a877f; font-size: 12px; }
+.tg-foot b { font-size: 17px; color: #173e2a; }
+.tg-foot b span { font-size: 12px; font-weight: 500; color: #7a877f; }
+.tg-foot .mini-code { font-size: 14px; letter-spacing: .04em; }
+
 
 /* ---------- MY SELLING GROUPS ---------- */
 

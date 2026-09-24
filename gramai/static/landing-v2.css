@@ -1,0 +1,190 @@
+/* PasumAI landing redesign: bright video hero, then white sections with lime accents.
+   Loaded after landing.css; only restyles, so every login/language/voice hook keeps working. */
+
+#auth.lp {
+  --lp-serif: 'Instrument Serif', 'Noto Serif Tamil', Georgia, serif;
+  --lime: #DCFF00;
+  --lime2: #D8F90A;
+  --dim: #b4b4ad;
+  background: #fff;
+  color: #111;
+  font-family: 'Inter', 'Noto Sans Tamil', system-ui, sans-serif;
+}
+#auth.lp h1, #auth.lp h2, #auth.lp h3 { font-weight: 400; letter-spacing: -.02em; }
+#auth.lp h2 { font-size: clamp(38px, 5vw, 58px); line-height: 1.02; }
+
+/* ---------- shared ---------- */
+#auth .lp-tag { background: var(--lime); color: #0A0A0A; letter-spacing: .14em; font-size: 12px; font-weight: 700; }
+#auth .lp-tag.light { background: #0000000d; color: #6F6F6F; }
+#auth .lp-cta { background: var(--lime); color: #0A0A0A; box-shadow: none; font-weight: 700; transition: transform .2s, background .2s; }
+#auth .lp-cta:hover { background: #c9ea00; transform: translateY(-2px); }
+#auth .lp-listen { background: transparent; color: #111; border-color: #00000026; }
+#auth .lp-listen:hover { border-color: #000; color: #000; }
+#auth .lp-listen.speaking { background: var(--lime); color: #0A0A0A; border-color: var(--lime); }
+#auth .lp-sub { color: #6F6F6F; }
+
+/* ---------- nav ---------- */
+#auth .lp-nav { background: #fff; }
+#auth .lp-nav.scrolled { box-shadow: 0 1px 0 #0000001a; }
+#auth .lp-logo { font-family: var(--lp-serif); font-size: 32px; letter-spacing: -.03em; color: #000; line-height: 1; }
+#auth .lp-logo sup { font-size: 12px; font-family: 'Inter', sans-serif; }
+#auth .lp-logo.light { color: #fff; }
+#auth .lp-links a { color: #6F6F6F; font-weight: 500; font-size: 14px; opacity: 1; transition: color .2s; }
+#auth .lp-links a:first-child, #auth .lp-links a:hover { color: #000; }
+#auth .lp-lang-btn { background: transparent; border: 1px solid #00000026; color: #000; font-weight: 500; font-size: 14px; }
+#auth .lp-ghost { background: transparent; border: 1px solid #00000026; color: #000; font-weight: 500; font-size: 14px; }
+#auth .lp-nav .lp-cta { background: #000; color: #fff; font-weight: 500; font-size: 14px; }
+#auth .lp-nav .lp-cta:hover { background: #000; transform: scale(1.03); }
+
+/* ---------- hero ---------- */
+#auth .lp-hero { background: #fff; min-height: calc(100vh - 68px); justify-content: flex-start; padding: calc(8rem - 75px) 24px 160px; }
+#auth .lp-hero-video { position: absolute; z-index: 0; top: 90px; left: 0; right: 0; bottom: 0; width: 100%; height: calc(100% - 90px); object-fit: cover; object-position: center 35%; opacity: 0; }
+#auth .lp-hero-fade {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    linear-gradient(to bottom, #fff 0, transparent 42%, transparent 55%, rgba(255,255,255,.35) 70%, rgba(255,255,255,.8) 88%, #fff 100%),
+    linear-gradient(to right, #fff 0, transparent 5%, transparent 95%, #fff 100%);
+}
+#auth .lp-hero-copy { color: #000; max-width: 1200px; }
+#auth .lp-hero h1 { font-size: clamp(48px, 8vw, 96px); line-height: .95; letter-spacing: -2.46px; text-shadow: none; color: #000; animation: lpRise .8s ease-out both; }
+#auth .lp-hero h1 em { color: #6F6F6F; font-style: italic; }
+#auth .lp-hero-copy > p { color: #6F6F6F; max-width: 640px; margin: 32px auto 40px; animation: lpRise .8s ease-out .2s both; }
+#auth .lp-hero .lp-phone { animation: lpRise .8s ease-out .4s both; box-shadow: 0 10px 40px #00000018; border: 1px solid #0000001a; }
+#auth .lp-hero .lp-phone .lp-cta { background: #000; color: #fff; }
+#auth .lp-hero .lp-phone .lp-cta:hover { transform: scale(1.03); }
+#auth .lp-hero .lp-quick { margin-top: 18px; animation: lpRise .8s ease-out .5s both; }
+#auth .lp-hero .lp-listen.light { color: #000; border-color: #00000026; background: #ffffffb0; }
+#auth .lp-hero .lp-listen.light:hover { border-color: #000; color: #000; }
+@keyframes lpRise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+
+/* ---------- who + stats ---------- */
+#auth .lp-who { max-width: none; margin: 0; padding: 20px max(20px, calc((100% - 1120px) / 2)) 60px; background: #fff; }
+#auth .lp-who > button { background: #fff; color: #111; border: 1px solid #0000001a; box-shadow: none; }
+#auth .lp-who > button:hover { border-color: #000; }
+#auth .lp-who .ico { background: #f3f3f0; }
+#auth .lp-who small { color: #6F6F6F; }
+#auth .lp-stats { background: var(--lime); color: #0A0A0A; box-shadow: none; }
+#auth .lp-stats b { font-weight: 400; font-size: 40px; }
+
+/* ---------- feature rows ---------- */
+#auth .lp-split-copy > p { color: #6F6F6F; }
+#auth .lp-points li { color: #111; font-weight: 500; }
+#auth .lp-points i { background: #f3f3f0; }
+#auth .lp-blob { background: radial-gradient(circle at 30% 30%, #DCFF0088, #DCFF0010 70%); }
+#auth .lp-device.phone, #auth .lp-screen { border-color: #111; box-shadow: 0 30px 60px #00000030; }
+#auth .lp-base { background: linear-gradient(#d7d7d3, #a9a9a5); }
+#auth .mock-side, #auth .ph-top { background: #0A0A0A; }
+#auth .mock-card.green { background: #0A0A0A; }
+#auth .mock-chart span.hot { background: var(--lime2); }
+
+/* ---------- price cards ---------- */
+#auth .lp-arrows > button:not(.lp-listen) { background: #000; color: #fff; }
+#auth .lp-card { background: #fff; border: 1px solid #0000001a; box-shadow: none; transition: transform .3s, border-color .3s; }
+#auth .lp-card:hover { transform: translateY(-4px); border-color: #000; }
+#auth .lp-card-body h3 { color: #000; }
+#auth .lp-card-price { color: #000; }
+#auth .lp-card-row small, #auth .lp-card-best { color: #6F6F6F; }
+#auth .lp-chip { background: var(--lime); color: #0A0A0A; }
+#auth .lp-chip.down { background: #fdeae5; }
+#auth .lp-bar { background: #eee; }
+#auth .lp-bar span { background: #000; }
+
+/* ---------- why ---------- */
+#auth .lp-soil { background: #f7f7f4; color: #111; padding: clamp(70px, 9vw, 120px) 0; }
+#auth .lp-sec-head.light .lp-sub { color: #6F6F6F; }
+#auth .lp-why-item { background: #fff; border: 1px solid #0000001a; transition: transform .3s, border-color .3s; }
+#auth .lp-why-item:hover { transform: translateY(-4px); border-color: #000; }
+#auth .lp-why-ico { background: var(--lime); box-shadow: none; }
+#auth .lp-why-item p { color: #6F6F6F; }
+#auth .lp-listen.light { color: #111; border-color: #00000026; background: transparent; }
+
+/* ---------- calculator ---------- */
+#auth .lp-night { background: #fff; color: #111; min-height: 0; }
+#auth .lp-night-inner { padding: clamp(70px, 9vw, 120px) 24px; }
+#auth .lp-calc-field { background: #fff; border-color: #0000001a; }
+#auth .lp-calc-field input[type=range] { accent-color: #000; }
+#auth .lp-calc-out > div { background: #f7f7f4; border: 1px solid #0000000d; }
+#auth .lp-calc-out .big { background: var(--lime2); color: #1E1E1E; border: 0; }
+#auth .lp-calc-out .big b { color: #1E1E1E; }
+#auth .lp-calc-out em { background: #1E1E1E; color: var(--lime); }
+#auth .lp-calc-out b { font-weight: 400; }
+#auth .lp-note { color: #6F6F6F; opacity: 1; }
+
+/* ---------- final CTA: lime card ---------- */
+#auth .lp-final { display: block; max-width: 860px; margin: 20px auto 80px; padding: 64px 32px; background: var(--lime2); color: #1E1E1E; border-radius: 10px; text-align: center; }
+#auth .lp-final h2 { color: #1E1E1E; font-size: clamp(42px, 6vw, 64px); }
+#auth .lp-final-copy { padding: 0; }
+#auth .lp-final-copy p { color: #1E1E1E; }
+#auth .lp-final .lp-phone { margin: 0 auto; background: #fff; border: 0; }
+#auth .lp-final .lp-cta { background: #0A0A0A; color: #fff; }
+
+/* ---------- footer ---------- */
+#auth .lp-footer { background: #fff; color: #111; border-top: 1px solid #0000001a; }
+#auth .lp-logo.light { color: #000; }
+#auth .lp-foot-grid p, #auth .lp-foot-bottom { color: #6F6F6F; }
+#auth .lp-foot-grid h4 { color: #000; }
+#auth .lp-foot-grid a { color: #333; }
+#auth .lp-foot-grid a:hover { color: #000; }
+#auth .lp-foot-bottom { border-top-color: #0000001a; }
+
+
+/* ---------- scroll reveal (class added by landing.js) ---------- */
+#auth .lp-rv { opacity: 0; transform: translateY(40px); transition: opacity .8s ease-out, transform .8s ease-out; }
+#auth .lp-rv.in { opacity: 1; transform: none; }
+#auth .lp-rv-stagger > * { opacity: 0; transform: translateY(30px); transition: opacity .7s ease-out, transform .7s ease-out; }
+#auth .lp-rv-stagger.in > * { opacity: 1; transform: none; }
+#auth .lp-rv-stagger.in > *:nth-child(2) { transition-delay: .12s; }
+#auth .lp-rv-stagger.in > *:nth-child(3) { transition-delay: .24s; }
+#auth .lp-phone-wrap .lp-device.phone { transition: transform .1s linear; }
+
+@media (prefers-reduced-motion: reduce) {
+  #auth .lp-rv, #auth .lp-rv-stagger > * { opacity: 1; transform: none; transition: none; }
+  #auth .lp-hero h1, #auth .lp-hero-copy > p, #auth .lp-hero .lp-phone, #auth .lp-hero .lp-quick { animation: none; }
+}
+@media (max-width: 640px) {
+  #auth .lp-logo { font-size: 28px; }
+  #auth .lp-hero-video { top: 160px; height: calc(100% - 160px); }
+}
+
+/* ---------- splash cursor layer ---------- */
+.splash-cursor { position: fixed; inset: 0; z-index: 60; pointer-events: none; }
+.splash-cursor canvas { width: 100vw; height: 100vh; display: block; }
+.scroll-reveal-word, #auth .word { display: inline-block; }
+
+/* ---------- other languages (Tamil first): longer words, taller glyphs, no negative tracking ---------- */
+html:not([lang="en"]) #auth h1, html:not([lang="en"]) #auth h2, html:not([lang="en"]) #auth h3 { letter-spacing: 0; font-weight: 500; }
+html:not([lang="en"]) #auth .lp-hero h1 { letter-spacing: 0; line-height: 1.2; font-size: clamp(32px, 5vw, 64px); max-width: 1000px; margin: 0 auto; }
+html:not([lang="en"]) #auth h2 { line-height: 1.25; font-size: clamp(26px, 3.4vw, 42px); }
+html:not([lang="en"]) #auth .lp-final h2 { font-size: clamp(28px, 4vw, 50px); }
+html:not([lang="en"]) #auth h3 { line-height: 1.3; }
+html:not([lang="en"]) #auth .lp-hero-copy > p { font-size: clamp(16px, 1.6vw, 19px); line-height: 1.85; max-width: 700px; }
+html:not([lang="en"]) #auth .lp-split-copy > p, html:not([lang="en"]) #auth .lp-sub, html:not([lang="en"]) #auth .lp-why-item p { line-height: 1.85; font-size: 16px; }
+html:not([lang="en"]) #auth .lp-points li { line-height: 1.6; font-size: 16px; }
+html:not([lang="en"]) #auth .lp-tag { letter-spacing: .03em; line-height: 1.5; white-space: normal; text-align: center; }
+html:not([lang="en"]) #auth .lp-links { gap: 20px; }
+html:not([lang="en"]) #auth .lp-links a { font-size: 13px; white-space: nowrap; }
+html:not([lang="en"]) #auth .lp-nav .lp-cta, html:not([lang="en"]) #auth .lp-ghost, html:not([lang="en"]) #auth .lp-lang-btn { font-size: 13px; white-space: nowrap; padding-left: 14px; padding-right: 14px; }
+html:not([lang="en"]) #auth .lp-cta { line-height: 1.4; font-size: 15px; }
+html:not([lang="en"]) #auth .lp-listen { font-size: 14px; line-height: 1.4; }
+html:not([lang="en"]) #auth .lp-who > button b { font-size: 17px; line-height: 1.35; }
+html:not([lang="en"]) #auth .lp-who small { line-height: 1.4; }
+html:not([lang="en"]) #auth .lp-stats span { font-size: 12px; line-height: 1.3; }
+html:not([lang="en"]) #auth .lp-card-body h3 { font-size: 22px; }
+html:not([lang="en"]) #auth .lp-calc-field, html:not([lang="en"]) #auth .lp-calc-out small { font-size: 15px; line-height: 1.5; }
+html:not([lang="en"]) #auth .lp-calc-out b { line-height: 1.2; }
+html:not([lang="en"]) #auth .lp-note, html:not([lang="en"]) #auth .lp-foot-grid a { line-height: 1.7; }
+html:not([lang="en"]) #auth .ph-icons small, html:not([lang="en"]) #auth .mock-card small { font-size: 9px; line-height: 1.3; }
+@media (max-width: 980px) { html:not([lang="en"]) #auth .lp-hero h1 { font-size: clamp(28px, 7vw, 46px); } }
+
+/* keep the stat numbers large in every language */
+#auth .lp-stats b { font-family: var(--lp-serif); font-size: 40px; line-height: 1.05; }
+
+
+/* ---------- brand logo ---------- */
+.brand-img { display: block; border-radius: 50%; object-fit: contain; flex: none; background: #fff; }
+#auth .lp-logo { display: inline-flex; align-items: center; gap: 10px; }
+#auth .lp-logo .brand-img { width: 46px; height: 46px; box-shadow: 0 2px 10px #00000024; }
+#auth .lp-logo.light { color: #000; }
+.auth-brand { display: flex; align-items: center; gap: 12px; }
+.auth-brand .brand-img { width: 42px; height: 42px; }
+@media (max-width: 640px) { #auth .lp-logo .brand-img { width: 38px; height: 38px; } }

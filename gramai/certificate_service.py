@@ -8,6 +8,8 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.lib.utils import ImageReader
+from reportlab.graphics.barcode.qr import QrCodeWidget
+from reportlab.graphics.shapes import Drawing
 from reportlab.platypus import (
     SimpleDocTemplate,
     Paragraph,
@@ -212,7 +214,11 @@ def generate_quality_certificate(
     image_hash,
     model_name,
     image_path=None,
-    scanned_at=None
+    scanned_at=None,
+    place="",
+    verify_url="",
+    farmer_class="",
+    geo_photos=0
 ):
 
     filename = (
@@ -237,12 +243,24 @@ def generate_quality_certificate(
 
     story = []
 
-    story.append(
-        Paragraph(
-            "GRAM AI",
-            styles["Title"]
+    logo_path = os.path.join(BASE_DIR, "static", "brand", "logo-256.png")
+    if os.path.exists(logo_path):
+        head = Table(
+            [[RLImage(logo_path, width=22 * mm, height=22 * mm), Paragraph("PasumAI", styles["Title"])]],
+            colWidths=[26 * mm, 140 * mm]
         )
-    )
+        head.setStyle(TableStyle([
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("ALIGN", (1, 0), (1, 0), "LEFT"),
+        ]))
+        story.append(head)
+    else:
+        story.append(
+            Paragraph(
+                "PasumAI",
+                styles["Title"]
+            )
+        )
 
     story.append(
         Paragraph(
@@ -301,9 +319,12 @@ def generate_quality_certificate(
         ["Valid Until", _ist(valid_until)],
         ["Validity Period", f"{days} day(s) for {crop}"],
         ["Status", Paragraph(f"<b><font color='{status_color}'>{status_text}</font></b>", styles["BodyText"])],
-        ["Latitude", f"{latitude:.6f}"],
-        ["Longitude", f"{longitude:.6f}"],
-        ["Location Source", str(location_source or "").upper()],
+        ["Location", Paragraph(
+            f"<b>{place or 'Location recorded'}</b><br/><font size=7 color='#666666'>"
+            f"GPS {latitude:.5f}, {longitude:.5f} ({str(location_source or '').upper()})</font>",
+            styles["BodyText"])],
+        *([["Grower Class", farmer_class]] if farmer_class else []),
+        ["Geo-tagged Photos", f"{geo_photos} verified"],
         ["YOLO Model", model_name],
         ["PDF Generated At", _ist(issued_at)],
         ["Image SHA-256", Paragraph(f"<font size=7>{image_hash}</font>", styles["BodyText"])]
@@ -357,6 +378,30 @@ def generate_quality_certificate(
         table
     )
 
+    if verify_url:
+        qr_size = 34 * mm
+        widget = QrCodeWidget(verify_url)
+        x1, y1, x2, y2 = widget.getBounds()
+        drawing = Drawing(qr_size, qr_size, transform=[qr_size / (x2 - x1), 0, 0, qr_size / (y2 - y1), 0, 0])
+        drawing.add(widget)
+        qr_row = Table(
+            [[Paragraph(
+                "<b>Scan to verify this certificate</b><br/>"
+                "The code opens a live page showing the crop, grade, place, validity, "
+                "grower class and geo-tagged photos, so a buyer can check it is genuine "
+                f"and not expired.<br/><font size=7 color='#666666'>{verify_url}</font>",
+                styles["BodyText"]), drawing]],
+            colWidths=[125 * mm, 40 * mm]
+        )
+        qr_row.setStyle(TableStyle([
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("BOX", (0, 0), (-1, -1), 0.5, colors.grey),
+            ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F6FFC2")),
+            ("PADDING", (0, 0), (-1, -1), 8),
+        ]))
+        story.append(Spacer(1, 5 * mm))
+        story.append(qr_row)
+
     story.append(
         Spacer(
             1,
@@ -366,7 +411,7 @@ def generate_quality_certificate(
 
     story.append(
         Paragraph(
-            "This certificate records the automatic GRAM AI "
+            "This certificate records the automatic PasumAI "
             "quality classification and the location linked "
             "to the produce image during inspection. "
             f"The grade is valid for {days} day(s) from the scan date, "

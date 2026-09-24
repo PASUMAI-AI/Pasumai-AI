@@ -131,6 +131,8 @@ class Register(BaseModel):
     role: str = Field(default="farmer", pattern="^(farmer|buyer)$")
     district: str = Field(default="", max_length=80)
     state: str = Field(default="", max_length=80)
+    buyer_type: str = Field(default="", max_length=30)
+    business_name: str = Field(default="", max_length=120)
 
 class ProfileIn(BaseModel):
     name:str
@@ -144,6 +146,8 @@ class ProfileIn(BaseModel):
     bank_account_last4:str=""
     bank_ifsc:str=""
     upi_id:str=""
+    buyer_type:str=""
+    business_name:str=""
 
 class PasswordIn(BaseModel):
     current_password:str=Field(min_length=8,max_length=128)
@@ -482,10 +486,12 @@ def register(x: Register):
             district,
             state,
             phone,
-            must_change_password
+            must_change_password,
+            buyer_type,
+            business_name
         )
         VALUES(
-            ?,?,?,?,?,?,?,1
+            ?,?,?,?,?,?,?,1,?,?
         )
         """,
         (
@@ -495,7 +501,9 @@ def register(x: Register):
             x.role,
             x.district,
             x.state,
-            phone
+            phone,
+            x.buyer_type if x.role == "buyer" and x.buyer_type in BUYER_TYPE_CODES else "",
+            x.business_name.strip() if x.role == "buyer" else ""
         )
     )
 
@@ -549,7 +557,7 @@ def register(x: Register):
 
 @app.get("/auth/me")
 def me(u=Depends(user)):
-    keys=["id","name","email","role","district","state","phone","address","farm_size_acres","preferred_language","bank_account_name","bank_account_last4","bank_ifsc","upi_id"]
+    keys=["id","name","email","role","district","state","phone","address","farm_size_acres","preferred_language","bank_account_name","bank_account_last4","bank_ifsc","upi_id","buyer_type","business_name"]
     return {k:u.get(k) for k in keys}
 
 @app.get("/api/profile")
@@ -563,6 +571,9 @@ def update_profile(x:ProfileIn,u=Depends(user)):
                  preferred_language=?,bank_account_name=?,bank_account_last4=?,bank_ifsc=?,upi_id=? where id=?""",
               (x.name,x.phone,x.district,x.state,x.address,x.farm_size_acres,x.preferred_language,
                x.bank_account_name,x.bank_account_last4[-4:],x.bank_ifsc,x.upi_id,u["id"]))
+    if u["role"]=="buyer":
+        c.execute("update users set buyer_type=?,business_name=? where id=?",
+                  (x.buyer_type if x.buyer_type in BUYER_TYPE_CODES else "",x.business_name.strip()[:120],u["id"]))
     c.commit();c.close();audit(u["id"],"profile_update","profile changed")
     return {"message":"Profile updated"}
 
@@ -930,6 +941,7 @@ def get_quality_certificate_photo(
 @app.get("/api/produce/certificate/{verification_id}")
 def get_quality_certificate(
     verification_id: int,
+    request: Request,
     u=Depends(user)
 ):
     """Rebuild the PDF from the stored record on every download, so the
@@ -938,7 +950,7 @@ def get_quality_certificate(
     c = db()
     row = c.execute(
         """
-        SELECT v.*, u.name farmer_name, q.certificate_number, q.scanned_at
+        SELECT v.*, u.name farmer_name, u.farm_size_acres, q.certificate_number, q.scanned_at
         FROM quality_verifications v
         LEFT JOIN users u ON u.id = v.user_id
         LEFT JOIN quality_certificates q ON q.verification_id = v.id
@@ -946,7 +958,14 @@ def get_quality_certificate(
         """,
         (verification_id,)
     ).fetchone()
+    hv = c.execute("SELECT id, location_text FROM harvests WHERE verification_id=? ORDER BY id DESC LIMIT 1",
+                   (verification_id,)).fetchone() if row else None
+    geo_photos = 1 + (photo_summary(c, hv["id"])["geo_verified_photos"] if hv else 0)
     c.close()
+    place = ""
+    if row:
+        place = (hv["location_text"] if hv and hv["location_text"] else "") or             resolve_place(row["latitude"], row["longitude"])["place"]
+    base_url = (os.environ.get("PUBLIC_BASE_URL") or str(request.base_url)).rstrip("/")
 
     if not row:
         raise HTTPException(
@@ -973,7 +992,11 @@ def get_quality_certificate(
             image_hash=image_hash,
             model_name=row["model_name"] or "YOLO",
             image_path=row["image_path"],
-            scanned_at=row["scanned_at"] or row["created_at"]
+            scanned_at=row["scanned_at"] or row["created_at"],
+            place=place,
+            verify_url=f"{base_url}/verify/{row['certificate_number'] or 'GRAMAI-QC-%06d' % verification_id}",
+            farmer_class=farmer_category(row["farm_size_acres"]),
+            geo_photos=geo_photos
         )
     except Exception:
         path = row["certificate_path"]
@@ -1322,6 +1345,12 @@ app.include_router(chatbot_router)
 from voice_api import router as voice_router
 app.include_router(voice_router)
 
+from geo_api import (router as geo_router, public_router as geo_public_router, init_geo_schema,
+                     BUYER_TYPE_CODES, farmer_category, resolve_place, photo_summary)
+init_geo_schema()
+app.include_router(geo_router)
+app.include_router(geo_public_router)
+
 # India-wide crop market price comparison, backed by live AGMARKNET data
 # (data.gov.in) - not the locally seeded demo prices used elsewhere.
 from market_price_api import router as market_price_router
@@ -1331,6 +1360,11 @@ app.include_router(market_price_router)
 from whatsapp_api import router as whatsapp_router, init_whatsapp_schema
 init_whatsapp_schema()
 app.include_router(whatsapp_router)
+
+# KISANSETU Telegram bridge: Telegram Bot API webhook -> YOLO -> certificate -> inventory.
+from telegram_api import router as telegram_router, init_telegram_schema
+init_telegram_schema()
+app.include_router(telegram_router)
 
 # Real Tamil Nadu Regulated Markets + Uzhavar Santhai (data/tn_markets.csv).
 from market_infra import init_market_infra

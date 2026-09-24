@@ -474,10 +474,47 @@ class GroupIn(BaseModel):
     state: str = Field(default=DEFAULT_STATE, max_length=80)
     district: str = Field(default="", max_length=80)
     crop: str = Field(default="", max_length=60)
+    area: str = Field(default="", max_length=80)
+    quantity_qtl: float = Field(default=0, ge=0)
+    target_quantity_qtl: float = Field(default=0, ge=0)
+    expected_price: float = Field(default=0, ge=0)
+    expected_harvest_date: Optional[str] = None
+    description: str = Field(default="", max_length=1000)
+    shared_transport: bool = Field(default=False)
+    max_members: int = Field(default=20, ge=2)
 
 
 class GroupJoinIn(BaseModel):
     quantity_qtl: float = Field(default=0, ge=0)
+
+
+class GroupJoinRequestIn(BaseModel):
+    join_code: str = Field(default="", max_length=40)
+    quantity_qtl: float = Field(default=0, ge=0)
+    message: str = Field(default="", max_length=500)
+
+
+class JoinRequestActionIn(BaseModel):
+    action: str = Field(pattern="^(ACCEPT|DECLINE)$")
+
+
+class TransportGroupIn(BaseModel):
+    route_from: str = Field(min_length=2, max_length=100)
+    route_to: str = Field(min_length=2, max_length=100)
+    distance_km: float = Field(default=0, ge=0)
+    vehicle_type: str = Field(default="Mini Truck", max_length=60)
+    capacity_qtl: float = Field(default=0, gt=0)
+    crop: str = Field(default="", max_length=60)
+    cost_per_qtl: float = Field(default=0, ge=0)
+    district: str = Field(default="", max_length=80)
+    state: str = Field(default=DEFAULT_STATE, max_length=80)
+    departure_date: Optional[str] = None
+    quantity_qtl: float = Field(default=0, ge=0)
+
+
+class TransportGroupJoinIn(BaseModel):
+    quantity_qtl: float = Field(gt=0)
+    crop: str = Field(default="", max_length=60)
 
 
 class PaymentCreate(BaseModel):
@@ -1038,15 +1075,84 @@ def decide_preorder(preorder_id:int,x:PreorderDecision,u=Depends(get_user_dep())
     c.commit(); c.close(); return {"id":preorder_id,"status":status,"counter_price":x.counter_price}
 
 
+def gen_group_code(district:str)->str:
+    tag = "".join(ch for ch in (district or "GRP").upper() if ch.isalpha())[:3] or "GRP"
+    return f"GT-{tag}-{secrets.randbelow(9000)+1000}"
+
+
+def group_row_out(c, g):
+    d = dict(g)
+    owner = c.execute("SELECT name FROM users WHERE id=?", (d["owner_id"],)).fetchone()
+    d["owner_name"] = owner["name"] if owner else "Group Owner"
+    members = c.execute(
+        """SELECT m.farmer_id user_id, coalesce(NULLIF(m.farmer_name,''),u.name,'Farmer') name,
+                  coalesce(NULLIF(m.farmer_district,''),u.district,'') district, m.quantity_qtl
+           FROM fpo_group_members m LEFT JOIN users u ON u.id=m.farmer_id
+           WHERE m.group_id=? ORDER BY m.id""",
+        (d["id"],)
+    ).fetchall()
+    d["members"] = [dict(r) for r in members]
+    d["member_count"] = len(d["members"])
+    d["current_quantity_qtl"] = round(sum(r["quantity_qtl"] or 0 for r in d["members"]), 2)
+    pending = c.execute("SELECT count(*) n FROM group_join_requests WHERE group_id=? AND status='PENDING'", (d["id"],)).fetchone()
+    d["pending_requests"] = pending["n"] if pending else 0
+    return d
+
+
 @router.post("/groups")
 def create_group(x:GroupIn,u=Depends(get_user_dep())):
-    require_role(u,"farmer","admin"); c=conn(); cur=c.execute("INSERT INTO fpo_groups(name,state,district,crop,owner_id,status,created_at) VALUES(?,?,?,?,?,'ACTIVE',?)",(x.name,x.state,x.district,x.crop,u["id"],now_iso())); gid=cur.lastrowid
-    c.execute("INSERT OR IGNORE INTO fpo_group_members(group_id,farmer_id,quantity_qtl,joined_at) VALUES(?,?,0,?)",(gid,u["id"],now_iso())); c.commit(); c.close(); return {"id":gid,"status":"ACTIVE"}
+    require_role(u,"farmer","admin"); c=conn()
+    code = gen_group_code(x.district)
+    cur=c.execute(
+        """INSERT INTO fpo_groups(name,state,district,crop,owner_id,status,created_at,
+                area,target_quantity_qtl,expected_price,expected_harvest_date,description,
+                shared_transport,max_members,join_code)
+           VALUES(?,?,?,?,?,'ACTIVE',?,?,?,?,?,?,?,?,?)""",
+        (x.name,x.state,x.district,x.crop,u["id"],now_iso(),x.area,x.target_quantity_qtl,
+         x.expected_price,x.expected_harvest_date or "",x.description,int(x.shared_transport),
+         x.max_members,code)
+    ); gid=cur.lastrowid
+    c.execute(
+        "INSERT INTO fpo_group_members(group_id,farmer_id,quantity_qtl,joined_at) VALUES(?,?,?,?)",
+        (gid,u["id"],x.quantity_qtl,now_iso())
+    )
+    c.commit()
+    row = c.execute("SELECT * FROM fpo_groups WHERE id=?", (gid,)).fetchone()
+    out = group_row_out(c, row); c.close(); return out
 
 
 @router.get("/groups")
 def list_groups(state:str=DEFAULT_STATE,u=Depends(get_user_dep())):
-    c=conn(); rows=c.execute("""SELECT g.*,count(m.id) members,round(coalesce(sum(m.quantity_qtl),0),2) committed_qtl FROM fpo_groups g LEFT JOIN fpo_group_members m ON m.group_id=g.id WHERE g.state=? AND g.status='ACTIVE' GROUP BY g.id ORDER BY committed_qtl DESC""",(state,)).fetchall(); c.close(); return [dict(r) for r in rows]
+    c=conn(); rows=c.execute("""SELECT g.*,count(m.id) members,round(coalesce(sum(m.quantity_qtl),0),2) committed_qtl FROM fpo_groups g LEFT JOIN fpo_group_members m ON m.group_id=g.id WHERE g.state=? AND g.status='ACTIVE' GROUP BY g.id ORDER BY committed_qtl DESC""",(state,)).fetchall()
+    out = [group_row_out(c, r) for r in rows]
+    c.close(); return out
+
+
+@router.get("/groups/my-groups")
+def my_groups(u=Depends(get_user_dep())):
+    c=conn()
+    rows=c.execute(
+        """SELECT g.* FROM fpo_groups g WHERE g.status='ACTIVE' AND
+             (g.owner_id=? OR EXISTS(SELECT 1 FROM fpo_group_members m WHERE m.group_id=g.id AND m.farmer_id=?))
+           ORDER BY g.id DESC""",
+        (u["id"], u["id"])
+    ).fetchall()
+    out = [group_row_out(c, r) for r in rows]
+    c.close(); return out
+
+
+@router.get("/groups/by-code/{code}")
+def group_by_code(code:str,u=Depends(get_user_dep())):
+    c=conn(); g=c.execute("SELECT * FROM fpo_groups WHERE join_code=? AND status='ACTIVE'",(code.strip().upper(),)).fetchone()
+    if not g: c.close(); raise HTTPException(404,"No group found for this code")
+    out = group_row_out(c, g); c.close(); return out
+
+
+@router.get("/groups/{group_id}")
+def group_detail(group_id:int,u=Depends(get_user_dep())):
+    c=conn(); g=c.execute("SELECT * FROM fpo_groups WHERE id=?",(group_id,)).fetchone()
+    if not g: c.close(); raise HTTPException(404,"Group not found")
+    out = group_row_out(c, g); c.close(); return out
 
 
 @router.post("/groups/{group_id}/join")
@@ -1054,6 +1160,118 @@ def join_group(group_id:int,x:GroupJoinIn,u=Depends(get_user_dep())):
     require_role(u,"farmer","admin"); c=conn(); g=c.execute("SELECT id FROM fpo_groups WHERE id=? AND status='ACTIVE'",(group_id,)).fetchone()
     if not g:c.close();raise HTTPException(404,"Group not found")
     c.execute("INSERT INTO fpo_group_members(group_id,farmer_id,quantity_qtl,joined_at) VALUES(?,?,?,?) ON CONFLICT(group_id,farmer_id) DO UPDATE SET quantity_qtl=excluded.quantity_qtl",(group_id,u["id"],x.quantity_qtl,now_iso()));c.commit();c.close();return {"group_id":group_id,"quantity_qtl":x.quantity_qtl}
+
+
+@router.post("/groups/{group_id}/join-request")
+def group_join_request(group_id:int,x:GroupJoinRequestIn,u=Depends(get_user_dep())):
+    require_role(u,"farmer","admin"); c=conn()
+    g=c.execute("SELECT * FROM fpo_groups WHERE id=? AND status='ACTIVE'",(group_id,)).fetchone()
+    if not g: c.close(); raise HTTPException(404,"Group not found")
+    if x.join_code and x.join_code.strip().upper()!=(g["join_code"] or "").upper():
+        c.close(); raise HTTPException(400,"Joining code does not match this group")
+    already=c.execute("SELECT 1 FROM fpo_group_members WHERE group_id=? AND farmer_id=?",(group_id,u["id"])).fetchone()
+    if already: c.close(); raise HTTPException(409,"You are already a member of this group")
+    cur=c.execute(
+        "INSERT INTO group_join_requests(group_id,farmer_id,farmer_name,district,quantity_qtl,message,status,created_at,updated_at) VALUES(?,?,?,?,?,?,'PENDING',?,?)",
+        (group_id,u["id"],u["name"],u["district"],x.quantity_qtl,x.message,now_iso(),now_iso())
+    ); c.commit(); rid=cur.lastrowid; c.close()
+    return {"id":rid,"status":"PENDING"}
+
+
+@router.get("/groups/{group_id}/join-requests")
+def list_join_requests(group_id:int,u=Depends(get_user_dep())):
+    c=conn(); g=c.execute("SELECT owner_id FROM fpo_groups WHERE id=?",(group_id,)).fetchone()
+    if not g: c.close(); raise HTTPException(404,"Group not found")
+    if g["owner_id"]!=u["id"] and u["role"]!="admin": c.close(); raise HTTPException(403,"Only the group owner can view join requests")
+    rows=c.execute("SELECT * FROM group_join_requests WHERE group_id=? ORDER BY (status='PENDING') DESC, id DESC",(group_id,)).fetchall()
+    c.close(); return [dict(r) for r in rows]
+
+
+@router.patch("/groups/join-requests/{request_id}")
+def respond_join_request(request_id:int,x:JoinRequestActionIn,u=Depends(get_user_dep())):
+    c=conn(); r=c.execute("SELECT * FROM group_join_requests WHERE id=?",(request_id,)).fetchone()
+    if not r: c.close(); raise HTTPException(404,"Join request not found")
+    g=c.execute("SELECT * FROM fpo_groups WHERE id=?",(r["group_id"],)).fetchone()
+    if not g or (g["owner_id"]!=u["id"] and u["role"]!="admin"): c.close(); raise HTTPException(403,"Only the group owner can respond to this request")
+    if r["status"]!="PENDING": c.close(); raise HTTPException(409,"This request was already handled")
+    status = "ACCEPTED" if x.action=="ACCEPT" else "DECLINED"
+    if x.action=="ACCEPT":
+        c.execute(
+            "INSERT INTO fpo_group_members(group_id,farmer_id,farmer_name,farmer_district,quantity_qtl,joined_at) VALUES(?,?,?,?,?,?) ON CONFLICT(group_id,farmer_id) DO UPDATE SET quantity_qtl=excluded.quantity_qtl",
+            (r["group_id"],r["farmer_id"],r["farmer_name"],r["district"],r["quantity_qtl"],now_iso())
+        )
+    c.execute("UPDATE group_join_requests SET status=?,updated_at=? WHERE id=?",(status,now_iso(),request_id))
+    c.commit(); c.close(); return {"id":request_id,"status":status}
+
+
+# =========================================================
+# TRANSPORT GROUPS — shared-lorry routes farmers can join
+# =========================================================
+
+def transport_group_row_out(c, g):
+    d = dict(g)
+    owner = c.execute("SELECT name FROM users WHERE id=?", (d["owner_id"],)).fetchone()
+    d["owner_name"] = owner["name"] if owner else "Route Owner"
+    members = c.execute(
+        """SELECT m.farmer_id user_id, coalesce(NULLIF(m.farmer_name,''),u.name,'Farmer') name,
+                  coalesce(NULLIF(m.farmer_district,''),u.district,'') district,
+                  coalesce(NULLIF(m.crop,''),?) crop, m.quantity_qtl
+           FROM transport_group_members m LEFT JOIN users u ON u.id=m.farmer_id
+           WHERE m.group_id=? ORDER BY m.id""",
+        (d["crop"], d["id"])
+    ).fetchall()
+    d["members"] = [dict(r) for r in members]
+    d["member_count"] = len(d["members"])
+    used = round(sum(r["quantity_qtl"] or 0 for r in d["members"]), 2)
+    d["used_qtl"] = used
+    d["space_left_qtl"] = max(round(d["capacity_qtl"] - used, 2), 0)
+    return d
+
+
+@router.post("/transport-groups")
+def create_transport_group(x:TransportGroupIn,u=Depends(get_user_dep())):
+    require_role(u,"farmer","admin"); c=conn()
+    cur=c.execute(
+        """INSERT INTO transport_groups(route_from,route_to,distance_km,vehicle_type,capacity_qtl,
+                crop,cost_per_qtl,owner_id,state,district,departure_date,status,created_at)
+           VALUES(?,?,?,?,?,?,?,?,?,?,?,'ACTIVE',?)""",
+        (x.route_from,x.route_to,x.distance_km,x.vehicle_type,x.capacity_qtl,x.crop,x.cost_per_qtl,
+         u["id"],x.state,x.district,x.departure_date or "",now_iso())
+    ); gid=cur.lastrowid
+    if x.quantity_qtl>0:
+        c.execute(
+            "INSERT INTO transport_group_members(group_id,farmer_id,crop,quantity_qtl,joined_at) VALUES(?,?,?,?,?)",
+            (gid,u["id"],x.crop,x.quantity_qtl,now_iso())
+        )
+    c.commit()
+    row=c.execute("SELECT * FROM transport_groups WHERE id=?",(gid,)).fetchone()
+    out=transport_group_row_out(c, row); c.close(); return out
+
+
+@router.get("/transport-groups")
+def list_transport_groups(state:str=DEFAULT_STATE,u=Depends(get_user_dep())):
+    c=conn()
+    rows=c.execute("SELECT * FROM transport_groups WHERE state=? AND status='ACTIVE' ORDER BY id DESC",(state,)).fetchall()
+    out=[transport_group_row_out(c, r) for r in rows]
+    c.close(); return out
+
+
+@router.post("/transport-groups/{group_id}/join")
+def join_transport_group(group_id:int,x:TransportGroupJoinIn,u=Depends(get_user_dep())):
+    require_role(u,"farmer","admin"); c=conn()
+    g=c.execute("SELECT * FROM transport_groups WHERE id=? AND status='ACTIVE'",(group_id,)).fetchone()
+    if not g: c.close(); raise HTTPException(404,"Transport group not found")
+    used=c.execute("SELECT coalesce(sum(quantity_qtl),0) s FROM transport_group_members WHERE group_id=?",(group_id,)).fetchone()["s"]
+    if used + x.quantity_qtl > g["capacity_qtl"] + 1e-6:
+        c.close(); raise HTTPException(409,f"Only {round(g['capacity_qtl']-used,2)} qtl of space left on this lorry")
+    c.execute(
+        "INSERT INTO transport_group_members(group_id,farmer_id,crop,quantity_qtl,joined_at) VALUES(?,?,?,?,?) ON CONFLICT(group_id,farmer_id) DO UPDATE SET quantity_qtl=excluded.quantity_qtl,crop=excluded.crop",
+        (group_id,u["id"],x.crop or g["crop"],x.quantity_qtl,now_iso())
+    )
+    c.commit()
+    row=c.execute("SELECT * FROM transport_groups WHERE id=?",(group_id,)).fetchone()
+    out=transport_group_row_out(c, row); c.close()
+    return {"group_id":group_id,"quantity_qtl":x.quantity_qtl,"cost":round(x.quantity_qtl*g["cost_per_qtl"],2),"group":out}
 
 
 def reference_amount_paise(c, ref_type, ref_id, user_id):
@@ -1842,7 +2060,14 @@ def v3_harvest_from_verification(verification_id:int,quantity_qtl:float,harvest_
     m=c.execute('SELECT *, ((lat-?)*(lat-?)+(lon-?)*(lon-?)) d FROM markets ORDER BY d LIMIT 1',(v['latitude'],v['latitude'],v['longitude'],v['longitude'])).fetchone()
     cur=c.execute('''INSERT INTO harvests(farmer_id,crop,variety,expected_quantity_qtl,available_quantity_qtl,expected_harvest_date,expected_price,district,state,grade_expected,status,created_at,verification_id,token_amount,latitude,longitude,photo_path,certificate_path,quality_confidence,buyer_visible,transport_rate_per_km,transport_radius_km)
       VALUES(?,?,?,?,?,?,?,?,?,?,'OPEN',?,?,?,?,?,?,?,?,?,?,?)''',(u['id'],v['crop'],variety,quantity_qtl,quantity_qtl,harvest_date,ask_price,m['district'] if m else u['district'],m['state'] if m else 'Tamil Nadu',v['predicted_grade'],now_iso(),verification_id,token_amount,v['latitude'],v['longitude'],v['image_path'],v['certificate_path'],v['confidence'],int(buyer_visible),transport_rate_per_km,transport_radius_km))
-    hid=cur.lastrowid;c.commit();c.close();return {'id':hid,'status':'OPEN','buyer_visible':buyer_visible,'grade':v['predicted_grade'],'certificate_url':f'/api/produce/certificate/{verification_id}'}
+    hid=cur.lastrowid
+    try:
+      from geo_api import resolve_place
+      place=resolve_place(v['latitude'],v['longitude'])['place']
+      c.execute('UPDATE harvests SET location_text=? WHERE id=?',(place,hid))
+    except Exception:
+      place=''
+    c.commit();c.close();return {'id':hid,'status':'OPEN','buyer_visible':buyer_visible,'grade':v['predicted_grade'],'certificate_url':f'/api/produce/certificate/{verification_id}','place':place}
 
 @router.get('/v3/harvests')
 def v3_harvests(state:str='Tamil Nadu',u=Depends(get_user_dep())):
@@ -1854,6 +2079,12 @@ def v3_harvests(state:str='Tamil Nadu',u=Depends(get_user_dep())):
     out=[]
     for r in rows:
       d=rowdict(r);d['certificate_url']=f"/api/produce/certificate/{d['verification_id']}" if d.get('verification_id') else ''
+      try:
+        from geo_api import resolve_place,photo_summary
+        if not d.get('location_text') and d.get('latitude') is not None:d['location_text']=resolve_place(d['latitude'],d['longitude'],network=False)['place']
+        ps=photo_summary(c,d['id']);d['photo_count']=ps['photo_count']+(1 if d.get('photo_path') else 0);d['geo_verified_photos']=ps['geo_verified_photos']+(1 if d.get('latitude') is not None and d.get('photo_path') else 0)
+      except Exception:
+        pass
       if d.get('verification_id'):attach_certificate(c,d,d['verification_id'])
       out.append(d)
     c.close();return out
@@ -1862,7 +2093,7 @@ def v3_harvests(state:str='Tamil Nadu',u=Depends(get_user_dep())):
 def v3_offers(u=Depends(get_user_dep())):
     c=conn()
     if u['role']=='farmer':
-      rows=c.execute('''SELECT o.*,l.crop,l.variety,l.grade,l.seller_id,bu.name buyer_name,bu.district buyer_district,bu.state buyer_state,ts.buyer_reliability,ts.instant_payment,ts.zero_cancel_streak
+      rows=c.execute('''SELECT o.*,l.crop,l.variety,l.grade,l.seller_id,bu.name buyer_name,bu.business_name buyer_business,bu.buyer_type buyer_type,bu.district buyer_district,bu.state buyer_state,ts.buyer_reliability,ts.instant_payment,ts.zero_cancel_streak
         FROM buyer_offers o JOIN listings l ON l.id=o.listing_id JOIN users bu ON bu.id=o.buyer_user_id LEFT JOIN trust_scores ts ON ts.user_id=o.buyer_user_id WHERE l.seller_id=? ORDER BY o.created_at DESC''',(u['id'],)).fetchall()
     else:
       rows=c.execute('''SELECT o.*,l.crop,l.variety,l.grade,fu.name farmer_name FROM buyer_offers o JOIN listings l ON l.id=o.listing_id JOIN users fu ON fu.id=l.seller_id WHERE o.buyer_user_id=? ORDER BY o.created_at DESC''',(u['id'],)).fetchall()
@@ -1984,6 +2215,137 @@ def v3_admin_state_analytics(state:str='Tamil Nadu',u=Depends(get_user_dep())):
 
 # initialize v3 on import
 init_v3_schema()
+
+# ============================================================
+# Group selling (fpo_groups) + shared transport groups
+# ============================================================
+
+def init_groups_v2_schema():
+    c = conn()
+    alters = {
+        'fpo_groups': [
+            ('area', "TEXT NOT NULL DEFAULT ''"),
+            ('target_quantity_qtl', "REAL NOT NULL DEFAULT 0"),
+            ('expected_price', "REAL NOT NULL DEFAULT 0"),
+            ('expected_harvest_date', "TEXT NOT NULL DEFAULT ''"),
+            ('description', "TEXT NOT NULL DEFAULT ''"),
+            ('shared_transport', "INTEGER NOT NULL DEFAULT 0"),
+            ('max_members', "INTEGER NOT NULL DEFAULT 20"),
+            ('join_code', "TEXT NOT NULL DEFAULT ''"),
+        ],
+        'fpo_group_members': [
+            ('farmer_name', "TEXT NOT NULL DEFAULT ''"),
+            ('farmer_district', "TEXT NOT NULL DEFAULT ''"),
+        ],
+    }
+    for table, cols in alters.items():
+        existing = {r['name'] for r in c.execute(f'PRAGMA table_info({table})').fetchall()}
+        for name, spec in cols:
+            if name not in existing:
+                c.execute(f'ALTER TABLE {table} ADD COLUMN {name} {spec}')
+
+    c.executescript("""
+        CREATE TABLE IF NOT EXISTS group_join_requests(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          group_id INTEGER NOT NULL,
+          farmer_id INTEGER NOT NULL,
+          farmer_name TEXT NOT NULL DEFAULT '',
+          district TEXT NOT NULL DEFAULT '',
+          quantity_qtl REAL NOT NULL DEFAULT 0,
+          message TEXT NOT NULL DEFAULT '',
+          status TEXT NOT NULL DEFAULT 'PENDING',
+          created_at TEXT NOT NULL,
+          updated_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS transport_groups(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          route_from TEXT NOT NULL,
+          route_to TEXT NOT NULL,
+          distance_km REAL NOT NULL DEFAULT 0,
+          vehicle_type TEXT NOT NULL DEFAULT 'Mini Truck',
+          capacity_qtl REAL NOT NULL DEFAULT 0,
+          crop TEXT NOT NULL DEFAULT '',
+          cost_per_qtl REAL NOT NULL DEFAULT 0,
+          owner_id INTEGER NOT NULL,
+          state TEXT NOT NULL DEFAULT 'Tamil Nadu',
+          district TEXT NOT NULL DEFAULT '',
+          departure_date TEXT NOT NULL DEFAULT '',
+          status TEXT NOT NULL DEFAULT 'ACTIVE',
+          created_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS transport_group_members(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          group_id INTEGER NOT NULL,
+          farmer_id INTEGER NOT NULL DEFAULT 0,
+          farmer_name TEXT NOT NULL DEFAULT '',
+          farmer_district TEXT NOT NULL DEFAULT '',
+          crop TEXT NOT NULL DEFAULT '',
+          quantity_qtl REAL NOT NULL DEFAULT 0,
+          joined_at TEXT NOT NULL,
+          UNIQUE(group_id, farmer_id)
+        );
+    """)
+    c.commit(); c.close()
+
+
+def seed_groups_v2_demo():
+    """Seed a couple of realistic, already-running groups so the pages are never empty."""
+    c = conn()
+
+    if c.execute("SELECT count(*) n FROM transport_groups").fetchone()['n'] == 0:
+        routes = [
+            ('Vandalur', 'Tambaram', 9.5, 'Tata 407 Mini Lorry', 60, 'Tomato', 45, 'Chengalpattu', '2026-09-24'),
+            ('Oddanchatram', 'Dindigul', 18, 'Ashok Leyland Truck', 120, 'Onion', 35, 'Dindigul', '2026-09-25'),
+            ('Pollachi', 'Coimbatore', 40, 'Eicher Mini Truck', 80, 'Banana', 40, 'Coimbatore', '2026-09-26'),
+        ]
+        for route_from, route_to, km, vehicle, cap, crop, cost, district, dep in routes:
+            cur = c.execute(
+                """INSERT INTO transport_groups(route_from,route_to,distance_km,vehicle_type,capacity_qtl,
+                        crop,cost_per_qtl,owner_id,state,district,departure_date,status,created_at)
+                   VALUES(?,?,?,?,?,?,?,1,'Tamil Nadu',?,?,'ACTIVE',?)""",
+                (route_from, route_to, km, vehicle, cap, crop, cost, district, dep, now_iso())
+            )
+            gid = cur.lastrowid
+            for seat, (name, district2, qty) in enumerate([
+                ('Ramesh Kumar', district, cap * 0.28),
+                ('Selvi Murugan', district, cap * 0.2),
+                ('Karthik Raja', district, cap * 0.15),
+            ], start=1):
+                c.execute(
+                    "INSERT INTO transport_group_members(group_id,farmer_id,farmer_name,farmer_district,crop,quantity_qtl,joined_at) VALUES(?,?,?,?,?,?,?)",
+                    (gid, -seat, name, district2, crop, round(qty, 1), now_iso())
+                )
+
+    if c.execute("SELECT count(*) n FROM fpo_groups").fetchone()['n'] == 0:
+        groups = [
+            ('Coimbatore Tomato Farmers', 'Coimbatore', 'Tomato', 100, 2400, '2026-10-02',
+             'Farmers combining Grade A tomato harvest for bulk buyers near Coimbatore APMC.'),
+            ('Dindigul Onion Collective', 'Dindigul', 'Onion', 150, 2150, '2026-10-05',
+             'Small onion growers pooling harvest to negotiate a better mandi rate together.'),
+        ]
+        for name, district, crop, target, price, date, desc in groups:
+            cur = c.execute(
+                """INSERT INTO fpo_groups(name,state,district,crop,owner_id,status,created_at,
+                        area,target_quantity_qtl,expected_price,expected_harvest_date,description,
+                        shared_transport,max_members,join_code)
+                   VALUES(?,'Tamil Nadu',?,?,1,'ACTIVE',?,?,?,?,?,?,1,20,?)""",
+                (name, district, crop, now_iso(), district, target, price, date, desc, gen_group_code(district))
+            )
+            gid = cur.lastrowid
+            for seat, (fname, qty) in enumerate([('Ramesh Kumar', target * 0.18), ('Lakshmi Devi', target * 0.12), ('Suresh Babu', target * 0.1)], start=1):
+                c.execute(
+                    "INSERT INTO fpo_group_members(group_id,farmer_id,farmer_name,farmer_district,quantity_qtl,joined_at) VALUES(?,?,?,?,?,?)",
+                    (gid, -seat, fname, district, round(qty, 1), now_iso())
+                )
+
+    c.commit(); c.close()
+
+
+init_groups_v2_schema()
+seed_groups_v2_demo()
+
 
 class BuyerDemandPreorderIn(BaseModel):
 

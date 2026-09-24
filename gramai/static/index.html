@@ -3,17 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>GRAM AI • KisanSetu</title>
+  <title>PasumAI</title>
+  <link rel="icon" href="/static/brand/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/brand/favicon-32.png">
+  <link rel="apple-touch-icon" href="/static/brand/logo-256.png">
+  <meta name="theme-color" content="#1f6b45">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Serif+Tamil:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="/static/style.css?v=v21">
+  <link rel="stylesheet" href="/static/style.css?v=v22">
   <link rel="stylesheet" href="/static/chatbot.css?v=v21">
   <link rel="stylesheet" href="/static/responsive.css?v=v21">
   <link rel="stylesheet" href="/static/landing.css?v=v21">
+  <link rel="stylesheet" href="/static/landing-v2.css?v=v10">
   <link rel="stylesheet" href="/static/kisan-theme.css?v=v21">
   <link rel="stylesheet" href="/static/voice-agent.css?v=v21">
+  <link rel="stylesheet" href="/static/app-v2.css?v=v5">
+  <link rel="stylesheet" href="/static/app-farm.css?v=v3">
+  <link rel="stylesheet" href="/static/geo-features.css?v=v1">
+  <script>try{document.documentElement.dataset.appTheme=localStorage.getItem("gram_app_theme")||"farm"}catch(e){document.documentElement.dataset.appTheme="farm"}</script>
 </head>
 <body>
 <div id="toast" class="toast hidden"></div>
@@ -22,12 +31,11 @@
 
   <!-- ============ TOP BAR ============ -->
   <div class="lp-nav" id="lpNav">
-    <a class="lp-logo" href="#lpTop" data-no-i18n><span class="lp-logo-mark">🌾</span><span><b>GRAM AI</b><small>KisanSetu</small></span></a>
+    <a class="lp-logo" href="#lpTop" data-no-i18n><img class="brand-img" src="/static/brand/logo-128.png" srcset="/static/brand/logo-128.png 1x, /static/brand/logo-256.png 2x" width="44" height="44" alt="PasumAI logo"><span>PasumAI<sup>®</sup></span></a>
     <div class="lp-links">
       <a href="#lpHow">How it works</a>
       <a href="#lpPrices">Mandi prices</a>
       <a href="#lpWhy">Why us</a>
-      <a href="#lpStories">Stories</a>
     </div>
     <div class="lp-nav-actions">
       <button class="lp-lang-btn" onclick="LP.openLangPicker()" aria-label="Change language"><span aria-hidden="true">🌐</span> <span id="lpLangName" data-no-i18n>English</span></button>
@@ -38,9 +46,12 @@
 
   <!-- ============ HERO ============ -->
   <div class="lp-hero" id="lpTop">
+    <video class="lp-hero-video" id="lpHeroVideo" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_083109_283f3553-e28f-428b-a723-d639c617eb2b.mp4" autoplay muted playsinline></video>
+    <video class="lp-hero-video" id="lpHeroVideo2" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_083109_283f3553-e28f-428b-a723-d639c617eb2b.mp4" muted playsinline></video>
+    <div class="lp-hero-fade"></div>
     <div class="lp-hero-copy">
       <span class="lp-tag light">MADE FOR INDIAN FARMERS • 24 LANGUAGES</span>
-      <h1>Sell your harvest at the right price.</h1>
+      <h1>Sell your harvest <em>at the right price.</em></h1>
       <p>Know tomorrow's mandi price, check crop quality with a photo and sell directly to trusted buyers.</p>
       <form class="lp-phone" onsubmit="event.preventDefault();LP.startWithPhone('lpHeroPhone')">
         <span aria-hidden="true">📱</span>
@@ -52,48 +63,7 @@
         <button class="lp-listen light" onclick="LP.openLangPicker()"><span aria-hidden="true">🗣️</span> <span>Change language</span></button>
       </div>
     </div>
-    <svg class="lp-hero-art" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-      <defs>
-        <linearGradient id="hSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe6f0" stop-opacity="0"/><stop offset="1" stop-color="#eaf7ee"/></linearGradient>
-        <linearGradient id="hField" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd14f"/><stop offset="1" stop-color="#4f9a2e"/></linearGradient>
-      </defs>
-      <rect width="1440" height="520" fill="url(#hSky)"/>
-      <circle cx="1180" cy="120" r="46" fill="#ffe7a3" opacity=".9"/>
-      <g fill="#fff" opacity=".95"><ellipse cx="200" cy="90" rx="70" ry="22"/><ellipse cx="250" cy="76" rx="46" ry="26"/><ellipse cx="1000" cy="60" rx="80" ry="20"/><ellipse cx="1050" cy="48" rx="44" ry="22"/></g>
-      <g class="lp-drone"><g transform="translate(1010 150)"><rect x="-34" y="-6" width="68" height="12" rx="6" fill="#f3b33d"/><rect x="-10" y="-16" width="20" height="14" rx="4" fill="#e0762f"/><line x1="-46" y1="-12" x2="-22" y2="-12" stroke="#2e3b33" stroke-width="3"/><line x1="22" y1="-12" x2="46" y2="-12" stroke="#2e3b33" stroke-width="3"/><circle cx="0" cy="10" r="4" fill="#2e3b33"/></g></g>
-      <path d="M0 300 L150 220 L290 270 L420 200 L560 262 L700 210 L860 268 L1010 196 L1160 258 L1300 214 L1440 250 L1440 360 L0 360Z" fill="#8fbfd0" opacity=".7"/>
-      <path d="M0 330 Q240 270 520 318 T1040 300 T1440 312 L1440 400 L0 400Z" fill="#7cbf4a"/>
-      <path d="M0 360 Q720 320 1440 360 L1440 520 L0 520Z" fill="url(#hField)"/>
-      <g opacity=".55" fill="#3f8a28">
-        <path d="M700 345 L520 520 L580 520 L710 345Z"/><path d="M690 345 L300 520 L360 520 L700 345Z"/><path d="M680 345 L60 520 L130 520 L690 345Z"/>
-        <path d="M760 345 L920 520 L980 520 L770 345Z"/><path d="M770 345 L1160 520 L1220 520 L780 345Z"/><path d="M780 345 L1390 520 L1440 510 L790 345Z"/>
-      </g>
-      <path d="M718 345 L736 345 L800 520 L650 520Z" fill="#e8d6ae"/>
-      <g><rect x="470" y="300" width="8" height="34" fill="#6b4a2d"/><circle cx="474" cy="292" r="26" fill="#3f8f3a"/><rect x="530" y="310" width="6" height="26" fill="#6b4a2d"/><circle cx="533" cy="302" r="18" fill="#58a845"/>
-      <rect x="930" y="300" width="8" height="34" fill="#6b4a2d"/><circle cx="934" cy="290" r="28" fill="#3f8f3a"/></g>
-      <g transform="translate(150 230)">
-        <rect x="170" y="10" width="46" height="120" fill="#cfd9df"/><ellipse cx="193" cy="10" rx="23" ry="12" fill="#9fb0b9"/>
-        <path d="M0 60 L90 0 L180 60 L180 140 L0 140Z" fill="#c8433a"/>
-        <path d="M-10 64 L90 -8 L190 64" fill="none" stroke="#7b2a28" stroke-width="12" stroke-linejoin="round"/>
-        <rect x="60" y="80" width="60" height="60" fill="#fff"/><rect x="65" y="85" width="50" height="55" fill="#a8342d"/>
-        <path d="M65 85 L115 140 M115 85 L65 140" stroke="#fff" stroke-width="5"/>
-        <rect x="78" y="30" width="24" height="22" fill="#fff"/><rect x="82" y="34" width="16" height="14" fill="#5b2320"/>
-      </g>
-      <g transform="translate(640 400)">
-        <rect x="0" y="10" width="70" height="34" rx="6" fill="#f2b32f"/><rect x="40" y="-18" width="34" height="34" rx="4" fill="#e79a1f"/><rect x="46" y="-12" width="22" height="16" fill="#cfeaf2"/>
-        <circle cx="58" cy="50" r="22" fill="#2e3b33"/><circle cx="58" cy="50" r="9" fill="#f2b32f"/><circle cx="12" cy="54" r="14" fill="#2e3b33"/><circle cx="12" cy="54" r="5" fill="#f2b32f"/>
-        <rect x="8" y="-4" width="6" height="16" fill="#555"/>
-      </g>
-      <g stroke="#2f7a2a" stroke-width="7" fill="none" stroke-linecap="round">
-        <path d="M1300 520 Q1296 400 1310 300"/><path d="M1360 520 Q1368 420 1350 330"/><path d="M1410 520 Q1404 430 1420 360"/>
-      </g>
-      <g fill="#4d9e36"><path d="M1302 420 Q1250 380 1230 330 Q1280 360 1306 400Z"/><path d="M1308 370 Q1360 330 1380 290 Q1350 350 1310 390Z"/><path d="M1360 440 Q1410 400 1440 380 Q1400 430 1364 460Z"/></g>
-      <g fill="#f4c542"><ellipse cx="1322" cy="360" rx="10" ry="26"/><ellipse cx="1346" cy="400" rx="9" ry="22"/></g>
-      <g><ellipse cx="120" cy="500" rx="46" ry="32" fill="#ef8a2f"/><path d="M100 474 Q120 490 140 474" stroke="#c9661c" stroke-width="3" fill="none"/><rect x="116" y="462" width="8" height="14" fill="#5b7a2a"/>
-      <ellipse cx="200" cy="510" rx="30" ry="20" fill="#e2472f"/><path d="M188 492 L200 498 L212 492" stroke="#3c8b2c" stroke-width="5" fill="none"/>
-      <path d="M1180 520 Q1160 470 1200 440 Q1210 490 1180 520Z" fill="#3f8f3a"/><path d="M1220 520 Q1250 460 1290 470 Q1250 500 1220 520Z" fill="#58a845"/></g>
-      <g transform="translate(300 400)" fill="#f59b3a"><ellipse cx="-8" cy="0" rx="9" ry="12" transform="rotate(-25)"/><ellipse cx="8" cy="0" rx="9" ry="12" transform="rotate(25)"/><rect x="-1.5" y="-8" width="3" height="16" fill="#3a2a1a"/></g>
-    </svg>
+    
   </div>
 
   <!-- ============ BIG "WHO ARE YOU" BUTTONS ============ -->
@@ -126,7 +96,7 @@
     <div class="lp-split-copy">
       <span class="lp-tag">PRICE FORECAST</span>
       <h2>Know the best price before you sell.</h2>
-      <p>GRAM AI checks prices in nearby mandis, subtracts transport cost and tells you in one word: sell now, wait, or go to another market.</p>
+      <p>PasumAI checks prices in nearby mandis, subtracts transport cost and tells you in one word: sell now, wait, or go to another market.</p>
       <ul class="lp-points"><li><i>📈</i><span>Prices for 1, 3 and 7 days ahead</span></li><li><i>🚚</i><span>Transport cost already counted</span></li><li><i>✅</i><span>Simple advice: Sell / Wait / Shift</span></li></ul>
       <button class="lp-listen" onclick="LP.speakSection('lpHow')"><span aria-hidden="true">🔊</span> <span>Listen</span></button>
     </div>
@@ -143,7 +113,7 @@
     </div>
     <div class="lp-phone-wrap" aria-hidden="true">
       <div class="lp-blob"></div>
-      <svg class="lp-vine" viewBox="0 0 120 220"><path d="M60 220 Q40 150 70 90 Q90 50 60 0" stroke="#5a8f3a" stroke-width="4" fill="none"/><g fill="#6fae45"><ellipse cx="46" cy="160" rx="20" ry="9" transform="rotate(-30 46 160)"/><ellipse cx="84" cy="110" rx="20" ry="9" transform="rotate(30 84 110)"/><ellipse cx="54" cy="60" rx="18" ry="8" transform="rotate(-35 54 60)"/></g><g fill="#f29a3a"><circle cx="72" cy="140" r="7"/><circle cx="48" cy="96" r="6"/><circle cx="76" cy="36" r="6"/></g></svg>
+      
       <div class="lp-device phone">
         <div class="ph-notch"></div>
         <div class="ph-top"><small>Namaste 🙏</small><b data-no-i18n>₹38,450</b><em>earned this season</em></div>
@@ -176,26 +146,10 @@
 
   <!-- ============ WHY (soil) ============ -->
   <section class="lp-soil" id="lpWhy">
-    <svg class="lp-soil-top" viewBox="0 0 1440 220" preserveAspectRatio="none" aria-hidden="true">
-      <rect width="1440" height="220" fill="#fbf8f1"/>
-      <path d="M0 40 Q360 10 720 40 T1440 30 L1440 120 L0 120Z" fill="#e3c95a"/>
-      <path d="M0 90 Q400 60 800 88 T1440 80 L1440 150 L0 150Z" fill="#7fb241"/>
-      <path d="M0 130 L1440 130 L1440 220 L0 220Z" fill="#6b3d27"/>
-      <g stroke="#3f8a28" stroke-width="5" stroke-linecap="round" fill="none">
-        <path d="M120 130 v-26 M120 112 q-14 -8 -20 -20 M120 112 q14 -8 20 -20"/><path d="M360 130 v-30 M360 112 q-16 -8 -22 -22 M360 112 q16 -8 22 -22"/>
-        <path d="M600 130 v-26 M600 112 q-14 -8 -20 -20 M600 112 q14 -8 20 -20"/><path d="M840 130 v-30 M840 112 q-16 -8 -22 -22 M840 112 q16 -8 22 -22"/>
-        <path d="M1080 130 v-26 M1080 112 q-14 -8 -20 -20 M1080 112 q14 -8 20 -20"/><path d="M1320 130 v-30 M1320 112 q-16 -8 -22 -22 M1320 112 q16 -8 22 -22"/>
-      </g>
-      <g stroke="#d9b98a" stroke-width="2" fill="none" opacity=".7">
-        <path d="M120 130 q-6 30 -24 50 M120 130 q4 34 18 60"/><path d="M360 130 q-8 36 -30 56 M360 130 q6 30 26 58"/><path d="M600 130 q-6 30 -24 50 M600 130 q4 34 18 60"/>
-        <path d="M840 130 q-8 36 -30 56 M840 130 q6 30 26 58"/><path d="M1080 130 q-6 30 -24 50 M1080 130 q4 34 18 60"/><path d="M1320 130 q-8 36 -30 56 M1320 130 q6 30 26 58"/>
-      </g>
-      <g fill="#ef8a2f"><path d="M234 140 l10 60 l10 -60Z"/><path d="M714 140 l10 60 l10 -60Z"/><path d="M1194 140 l10 60 l10 -60Z"/></g>
-      <g fill="#4d9e36"><path d="M244 140 l-8 -16 l8 6 l8 -6Z"/><path d="M724 140 l-8 -16 l8 6 l8 -6Z"/><path d="M1204 140 l-8 -16 l8 6 l8 -6Z"/></g>
-    </svg>
+    
     <div class="lp-soil-inner">
       <div class="lp-sec-head light">
-        <div><span class="lp-tag">WHY GRAM AI</span><h2>Why farmers choose GRAM AI</h2></div>
+        <div><span class="lp-tag">WHY PasumAI</span><h2>Why farmers choose PasumAI</h2></div>
         <p class="lp-sub">Less running to the mandi, fewer middlemen, more money in your hand.</p>
       </div>
       <div class="lp-why">
@@ -204,57 +158,25 @@
         <div class="lp-why-item"><div class="lp-why-ico">📷</div><h3>Quality from a photo</h3><p>Click a photo of your produce and get a quality certificate that buyers trust.</p><button class="lp-listen light" onclick="LP.speakEl(this.parentNode)" aria-label="Listen"><span aria-hidden="true">🔊</span> <span>Listen</span></button></div>
       </div>
     </div>
-    <svg class="lp-soil-bottom" viewBox="0 0 1440 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-      <g><ellipse cx="240" cy="96" rx="40" ry="10" fill="#e0a92a"/><rect x="200" y="70" width="80" height="26" fill="#f2c14a"/><ellipse cx="240" cy="70" rx="40" ry="10" fill="#f7d774"/>
-      <ellipse cx="300" cy="104" rx="30" ry="8" fill="#e0a92a"/><rect x="270" y="88" width="60" height="16" fill="#f2c14a"/><ellipse cx="300" cy="88" rx="30" ry="8" fill="#f7d774"/>
-      <ellipse cx="1180" cy="96" rx="40" ry="10" fill="#e0a92a"/><rect x="1140" y="56" width="80" height="40" fill="#f2c14a"/><ellipse cx="1180" cy="56" rx="40" ry="10" fill="#f7d774"/></g>
-      <g stroke="#6fb04a" stroke-width="5" stroke-linecap="round" fill="none"><path d="M720 120 v-40 M720 92 q-20 -8 -26 -26 M720 92 q20 -8 26 -26"/><path d="M1320 120 v-30 M1320 100 q-14 -6 -20 -20 M1320 100 q14 -6 20 -20"/><path d="M90 120 v-30 M90 100 q-14 -6 -20 -20 M90 100 q14 -6 20 -20"/></g>
-    </svg>
+    
   </section>
 
   <!-- ============ CALCULATOR (night) ============ -->
   <section class="lp-night" id="lpCalc">
-    <svg class="lp-night-art" viewBox="0 0 1440 620" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-      <defs><linearGradient id="nSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c2a6e"/><stop offset=".7" stop-color="#3b56a6"/><stop offset="1" stop-color="#5f7fc4"/></linearGradient></defs>
-      <rect width="1440" height="620" fill="url(#nSky)"/>
-      <g fill="#fff"><circle cx="120" cy="60" r="2"/><circle cx="340" cy="120" r="1.5"/><circle cx="560" cy="40" r="2"/><circle cx="880" cy="90" r="1.5"/><circle cx="1120" cy="50" r="2"/><circle cx="1320" cy="140" r="1.5"/><circle cx="760" cy="160" r="1.2"/><circle cx="60" cy="220" r="1.4"/><circle cx="1400" cy="260" r="1.6"/></g>
-      <circle cx="1260" cy="80" r="30" fill="#fdf0c2"/><circle cx="1274" cy="72" r="28" fill="#23337a"/>
-      <path d="M0 480 Q300 420 640 460 T1440 440 L1440 620 L0 620Z" fill="#2a3f86"/>
-      <path d="M0 530 Q400 490 820 520 T1440 510 L1440 620 L0 620Z" fill="#1c2f6a"/>
-      <g stroke="#dfe7ff" stroke-width="3"><line x1="420" y1="500" x2="420" y2="380"/><line x1="520" y1="500" x2="520" y2="400"/></g>
-      <g class="lp-blades" fill="#dfe7ff"><path d="M420 380 l-4 -56 l8 0Z"/><path d="M420 380 l50 26 l-4 7Z"/><path d="M420 380 l-50 26 l4 7Z"/></g>
-      <g fill="#dfe7ff"><path d="M520 400 l-3 -44 l6 0Z"/><path d="M520 400 l40 20 l-3 6Z"/><path d="M520 400 l-40 20 l3 6Z"/></g>
-      <g transform="translate(900 440)"><path d="M0 40 L60 0 L120 40 L120 90 L0 90Z" fill="#12205a"/><rect x="20" y="50" width="22" height="18" fill="#ffd66b"/><rect x="78" y="50" width="22" height="18" fill="#ffd66b"/></g>
-      <g class="lp-fireflies" fill="#ffe27a"><circle cx="500" cy="570" r="3"/><circle cx="640" cy="540" r="2.5"/><circle cx="880" cy="580" r="3"/><circle cx="980" cy="550" r="2"/><circle cx="400" cy="590" r="2"/></g>
-      <g stroke="#15244f" stroke-width="3" opacity=".8">
-        <path d="M0 620 v-40 M30 620 v-54 M60 620 v-44 M90 620 v-58 M120 620 v-40 M150 620 v-50 M1300 620 v-48 M1330 620 v-40 M1360 620 v-56 M1390 620 v-44 M1420 620 v-52"/>
-      </g>
-    </svg>
+    
     <div class="lp-night-inner">
       <span class="lp-tag">EARNINGS CALCULATOR</span>
-      <h2>If you sell through GRAM AI</h2>
+      <h2>If you sell through PasumAI</h2>
       <div class="lp-calc">
         <label class="lp-calc-field"><span>🌾 <span>Crop</span></span><select id="lpCalcCrop" onchange="LP.calc()"></select></label>
         <label class="lp-calc-field"><span>⚖️ <span>Quantity in quintals</span>: <b id="lpQtyOut" data-no-i18n>20</b></span><input type="range" id="lpCalcQty" min="1" max="200" value="20" oninput="LP.calc()"></label>
       </div>
       <div class="lp-calc-out">
         <div><small>Selling to a local trader</small><b id="lpLocal" data-no-i18n>—</b></div>
-        <div class="big"><small>With GRAM AI you could get</small><b id="lpGram" data-no-i18n>—</b><em id="lpGain" data-no-i18n></em></div>
+        <div class="big"><small>With PasumAI you could get</small><b id="lpGram" data-no-i18n>—</b><em id="lpGain" data-no-i18n></em></div>
       </div>
-      <p class="lp-note">Example estimate only. It assumes a local trader pays about 18% below the mandi average, and GRAM AI sells at the average after about 3% transport and fees.</p>
+      <p class="lp-note">Example estimate only. It assumes a local trader pays about 18% below the mandi average, and PasumAI sells at the average after about 3% transport and fees.</p>
       <button class="lp-listen light" onclick="LP.speakSection('lpCalc')"><span aria-hidden="true">🔊</span> <span>Listen</span></button>
-    </div>
-  </section>
-
-  <!-- ============ STORIES ============ -->
-  <section class="lp-stories" id="lpStories">
-    <div class="lp-sec-head">
-      <div><span class="lp-tag">FARMER STORIES</span><h2>How farmers use GRAM AI</h2><p class="lp-sub">Example stories from our pilot scenarios.</p></div>
-    </div>
-    <div class="lp-quotes">
-      <figure><blockquote>“I waited three days as the app said, and got ₹300 more per quintal for my onions.”</blockquote><figcaption><span class="av">👩‍🌾</span><span><b data-no-i18n>Selvi</b><small>Onion farmer, Dindigul</small></span></figcaption><button class="lp-listen round" onclick="LP.speakEl(this.parentNode)" aria-label="Listen"><span aria-hidden="true">🔊</span></button></figure>
-      <figure><blockquote>“I cannot read much, so I just speak to GRAM Saathi in Tamil. It tells me the price.”</blockquote><figcaption><span class="av">👨‍🌾</span><span><b data-no-i18n>Murugan</b><small>Turmeric farmer, Erode</small></span></figcaption><button class="lp-listen round" onclick="LP.speakEl(this.parentNode)" aria-label="Listen"><span aria-hidden="true">🔊</span></button></figure>
-      <figure><blockquote>“The photo certificate made the buyer trust my tomatoes. Payment came on time.”</blockquote><figcaption><span class="av">🧑‍🌾</span><span><b data-no-i18n>Ravi</b><small>Tomato farmer, Kolar</small></span></figcaption><button class="lp-listen round" onclick="LP.speakEl(this.parentNode)" aria-label="Listen"><span aria-hidden="true">🔊</span></button></figure>
     </div>
   </section>
 
@@ -269,25 +191,21 @@
         <button class="lp-cta" type="submit">Get started <span aria-hidden="true">→</span></button>
       </form>
     </div>
-    <svg class="lp-final-art" viewBox="0 0 520 220" aria-hidden="true">
-      <path d="M0 200 Q260 160 520 190 L520 220 L0 220Z" fill="#7cbf4a"/>
-      <g transform="translate(300 60)"><rect x="150" y="0" width="34" height="140" fill="#cfd9df"/><ellipse cx="167" cy="0" rx="17" ry="9" fill="#9fb0b9"/><path d="M0 50 L70 0 L140 50 L140 140 L0 140Z" fill="#c8433a"/><path d="M-8 54 L70 -6 L148 54" fill="none" stroke="#7b2a28" stroke-width="10" stroke-linejoin="round"/><rect x="45" y="70" width="50" height="70" fill="#fff"/><rect x="50" y="75" width="40" height="65" fill="#a8342d"/><path d="M50 75 L90 140 M90 75 L50 140" stroke="#fff" stroke-width="4"/></g>
-      <g transform="translate(40 150)"><rect x="0" y="0" width="60" height="28" rx="5" fill="#f2b32f"/><rect x="34" y="-22" width="28" height="28" rx="4" fill="#e79a1f"/><rect x="39" y="-17" width="18" height="13" fill="#cfeaf2"/><circle cx="50" cy="34" r="18" fill="#2e3b33"/><circle cx="50" cy="34" r="7" fill="#f2b32f"/><circle cx="10" cy="38" r="11" fill="#2e3b33"/></g>
-    </svg>
+    
   </section>
 
   <!-- ============ FOOTER ============ -->
   <footer class="lp-footer">
     <div class="lp-foot-grid">
       <div>
-        <div class="lp-logo light" data-no-i18n><span class="lp-logo-mark">🌾</span><span><b>GRAM AI</b><small>KisanSetu</small></span></div>
+        <div class="lp-logo light" data-no-i18n><img class="brand-img" src="/static/brand/logo-128.png" srcset="/static/brand/logo-128.png 1x, /static/brand/logo-256.png 2x" width="44" height="44" alt="PasumAI logo"><span>PasumAI<sup>®</sup></span></div>
         <p>Empowering the hands that feed our nation.</p>
       </div>
       <div><h4>Explore</h4><a href="#lpHow">How it works</a><a href="#lpPrices">Mandi prices</a><a href="#lpCalc">Calculator</a></div>
       <div><h4>Account</h4><a href="#" onclick="event.preventDefault();LP.openAuth('login','farmer')">Farmer login</a><a href="#" onclick="event.preventDefault();LP.openAuth('login','buyer')">Buyer login</a><a href="#" onclick="event.preventDefault();LP.openAuth('register')">Sign up</a></div>
       <div><h4>Help</h4><a href="#" onclick="event.preventDefault();LP.openLangPicker()">🌐 Change language</a><a href="#" onclick="event.preventDefault();LP.speakSection('lpTop')">🔊 Listen</a><a href="#" onclick="event.preventDefault();LP.openAuth('login','admin')">🛡️ Admin</a></div>
     </div>
-    <div class="lp-foot-bottom"><span data-no-i18n>© 2026 GRAM AI • KisanSetu</span><span>SIH prototype with demo data</span></div>
+    <div class="lp-foot-bottom"><span data-no-i18n>© 2026 PasumAI</span><span>SIH prototype with demo data</span></div>
   </footer>
 
   <!-- ============ LOGIN / REGISTER DIALOG ============ -->
@@ -295,7 +213,7 @@
     <div class="lp-dialog-scrim" onclick="LP.closeAuth()"></div>
     <div class="auth-panel">
       <button class="lp-close" onclick="LP.closeAuth()" aria-label="Close">×</button>
-      <div class="auth-top"><div><b data-no-i18n>GRAM AI</b><small data-i18n="secureAccess">Secure role-based access</small></div><select id="authLang" onchange="setLanguage(this.value)" data-no-i18n></select></div>
+      <div class="auth-top"><div class="auth-brand"><img class="brand-img" src="/static/brand/logo-128.png" srcset="/static/brand/logo-128.png 1x, /static/brand/logo-256.png 2x" width="40" height="40" alt="PasumAI logo"><div><b data-no-i18n>PasumAI</b><small data-i18n="secureAccess">Secure role-based access</small></div></div><select id="authLang" onchange="setLanguage(this.value)" data-no-i18n></select></div>
       <h2 data-i18n="loginAs">Login as whom?</h2>
       <div class="role-picker" id="rolePicker">
         <button onclick="selectRole('farmer')" data-role="farmer"><span>👨‍🌾</span><b data-i18n="farmer">Farmer</b><small data-i18n="farmerHint">Sell smarter</small></button>
@@ -329,6 +247,7 @@
         <label data-i18n="mobile">Mobile Number</label><input class="control" id="rPhone" inputmode="numeric" maxlength="10">
         <label data-i18n="district">District</label><input class="control" id="rDistrict" value="Coimbatore">
         <label data-i18n="state">State</label><input class="control" id="rState" value="Tamil Nadu">
+        <div id="rBuyerFields" class="hidden"><label>Business type</label><select class="control" id="rBuyerType"></select><label>Business / shop name</label><input class="control" id="rBizName" maxlength="120" placeholder="e.g. Sri Murugan Hotel"></div>
         <button class="primary" onclick="registerUser()" data-i18n="register">Register</button><div id="regMessage" class="form-msg"></div>
       </div>
 
@@ -336,6 +255,8 @@
     </div>
   </div>
 </section>
+
+<!-- ============ LANGUAGE PICKER (shown on first visit) ============ -->
 
 <!-- ============ LANGUAGE PICKER (shown on first visit) ============ -->
 <div id="lpLangPicker" class="lp-dialog hidden" role="dialog" aria-modal="true" aria-label="Choose language" data-no-i18n>
@@ -350,7 +271,7 @@
 <div id="navScrim" class="nav-scrim hidden"></div>
 <section id="appShell" class="app-shell hidden">
   <aside>
-    <div class="side-brand"><div class="brand-mark small">G</div><div><b>GRAM AI</b><small id="portalName">Farmer Portal</small></div></div>
+    <div class="side-brand"><img class="brand-img" src="/static/brand/logo-128.png" srcset="/static/brand/logo-128.png 1x, /static/brand/logo-256.png 2x" width="46" height="46" alt="PasumAI logo"><div><b>PasumAI</b><small id="portalName">Farmer Portal</small></div></div>
     <nav id="nav"></nav>
     <div class="side-foot"><button class="nav-btn" onclick="logout()">↪ <span data-i18n="logout">Logout</span></button></div>
   </aside>
@@ -406,10 +327,15 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="/static/i18n.js?v=v21"></script>
-<script src="/static/app.js?v=v21"></script>
-<script src="/static/chatbot.js?v=v21"></script>
-<script src="/static/landing.js?v=v21"></script>
+<script src="/static/app.js?v=v25"></script>
+<script src="/static/chatbot.js?v=v22"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="/static/splash-cursor.js?v=v1"></script>
+<script src="/static/scroll-reveal.js?v=v1"></script>
+<script src="/static/landing.js?v=v32"></script>
 <script src="/static/certificate.js?v=v21"></script>
+<script src="/static/geo-features.js?v=v5"></script>
 <script src="/static/voice-agent.js?v=v21"></script>
 </body>
 </html>

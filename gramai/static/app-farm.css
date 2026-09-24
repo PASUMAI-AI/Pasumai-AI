@@ -1,0 +1,147 @@
+/* PasumAI "Farm view": the default in-app theme.
+   Warm cream and leaf green, larger text, bigger tap targets and more breathing room.
+   Applies only while <html data-app-theme="farm">; the black and lime "Modern" look
+   (app-v2.css) is what you get when the toggle in the header switches this off. */
+
+html[data-app-theme="farm"] {
+  --green: #1f6b45;
+  --green2: #2f8f5c;
+  --green3: #e9f6ee;
+  --green4: #f4faf6;
+  --bg: #fbf8f1;
+  --ink: #1d2a22;
+  --muted: #56655c;
+  --line: #e4dfd0;
+  --accent: #e8663d;
+  --shadow: 0 8px 26px #1f6b4512;
+  --app-serif: 'Fraunces', 'Noto Serif Tamil', Georgia, serif;
+}
+html[data-app-theme="farm"], html[data-app-theme="farm"] body { background: #fbf8f1; font-size: 17px; line-height: 1.6; }
+html[data-app-theme="farm"] .app-shell, html[data-app-theme="farm"] .app-shell main { background: #fbf8f1; }
+
+/* ---------- sidebar ---------- */
+html[data-app-theme="farm"] .app-shell aside, html[data-app-theme="farm"] aside { background: linear-gradient(180deg, #1f6b45 0%, #17563a 100%); color: #fff; }
+html[data-app-theme="farm"] .side-brand .brand-mark { background: #fff; color: #1f6b45; }
+html[data-app-theme="farm"] .side-brand b { font-family: var(--app-serif); font-weight: 700; font-size: 24px; letter-spacing: -.01em; }
+html[data-app-theme="farm"] .side-brand small { color: #cfe8d9; }
+html[data-app-theme="farm"] .nav-btn { min-height: 58px; font-size: 17px; font-weight: 600; color: #f1faf4; margin: 5px 8px; padding: 12px 16px; gap: 14px; border-radius: 16px; }
+html[data-app-theme="farm"] .nav-btn:hover { background: #ffffff24; color: #fff; }
+html[data-app-theme="farm"] .nav-btn.active, html[data-app-theme="farm"] .nav-btn.active:hover { background: #fff; color: #1f6b45; box-shadow: 0 6px 16px #0003; font-weight: 700; }
+html[data-app-theme="farm"] .nav-btn > span:first-child { font-size: 24px; }
+
+/* ---------- header ---------- */
+html[data-app-theme="farm"] header { background: #fffdf8; border-bottom: 1px solid var(--line); min-height: 96px; padding-top: 12px; padding-bottom: 12px; }
+html[data-app-theme="farm"] header h1, html[data-app-theme="farm"] #pageTitle { font-family: var(--app-serif); font-weight: 700; font-size: 32px; letter-spacing: -.01em; color: #1d2a22; }
+html[data-app-theme="farm"] .user-chip > span { background: #e9f6ee; color: #1f6b45; }
+html[data-app-theme="farm"] .app-listen { background: #1f6b45; border-color: #1f6b45; color: #fff; min-height: 52px; font-size: 16px; font-weight: 700; }
+html[data-app-theme="farm"] .app-listen:hover { background: #17563a; }
+html[data-app-theme="farm"] .app-listen.speaking { background: #e8663d; border-color: #e8663d; color: #fff; }
+html[data-app-theme="farm"] .header-controls select { min-height: 52px; font-size: 16px; }
+
+/* ---------- content spacing ---------- */
+html[data-app-theme="farm"] #content { padding: 32px clamp(20px, 3vw, 44px) 80px; }
+html[data-app-theme="farm"] .grid, html[data-app-theme="farm"] .decision-strip { gap: 24px; }
+html[data-app-theme="farm"] .stats, html[data-app-theme="farm"] .stats-4 { margin: 24px 0; }
+html[data-app-theme="farm"] .card, html[data-app-theme="farm"] .stat-card, html[data-app-theme="farm"] .offer-card, html[data-app-theme="farm"] .preorder-card,
+html[data-app-theme="farm"] .order-card, html[data-app-theme="farm"] .harvest-card, html[data-app-theme="farm"] .listing-card, html[data-app-theme="farm"] .network-card,
+html[data-app-theme="farm"] .transport-card, html[data-app-theme="farm"] .reward-card, html[data-app-theme="farm"] .grievance-card, html[data-app-theme="farm"] .decision-card {
+  background: #fff; border: 1px solid var(--line); border-radius: 24px; padding: 26px; box-shadow: 0 8px 26px #1f6b4510;
+}
+html[data-app-theme="farm"] .card:hover, html[data-app-theme="farm"] .offer-card:hover, html[data-app-theme="farm"] .harvest-card:hover,
+html[data-app-theme="farm"] .listing-card:hover, html[data-app-theme="farm"] .decision-card:hover { border-color: #9bc9ad; }
+html[data-app-theme="farm"] .section-head { margin: 32px 0 16px; }
+html[data-app-theme="farm"] .list-item { padding: 18px 20px; border-radius: 18px; border-color: var(--line); }
+html[data-app-theme="farm"] .simple-list { gap: 14px; }
+html[data-app-theme="farm"] .table th, html[data-app-theme="farm"] .table td { padding: 14px 16px; font-size: 15px; }
+html[data-app-theme="farm"] .table th { background: #eef5ea; color: #3d4f44; }
+html[data-app-theme="farm"] .actions, html[data-app-theme="farm"] .action-row { gap: 12px; }
+
+/* ---------- headings and numbers ---------- */
+html[data-app-theme="farm"] #content h2, html[data-app-theme="farm"] .section-head h2 { font-family: var(--app-serif); font-weight: 700; font-size: 26px; letter-spacing: -.01em; }
+html[data-app-theme="farm"] #content h3 { font-weight: 700; font-size: 19px; }
+html[data-app-theme="farm"] .stat b, html[data-app-theme="farm"] .stat-card b { font-family: 'Inter', 'Noto Sans Tamil', sans-serif; font-weight: 800; font-size: 32px; color: #1f6b45; letter-spacing: -.01em; }
+html[data-app-theme="farm"] .metric { font-family: 'Inter', 'Noto Sans Tamil', sans-serif; font-weight: 800; font-size: 24px; color: #1f6b45; }
+html[data-app-theme="farm"] .stat small, html[data-app-theme="farm"] .stat-card small { color: var(--muted); font-size: 15px; font-weight: 600; }
+
+/* ---------- hero panels ---------- */
+html[data-app-theme="farm"] .welcome-card, html[data-app-theme="farm"] .farmer-hero, html[data-app-theme="farm"] .decision-result {
+  background: linear-gradient(125deg, #1f6b45, #2f8f5c 70%, #6fb04a); color: #fff; border-radius: 28px; padding: 32px;
+}
+html[data-app-theme="farm"] .welcome-card h2, html[data-app-theme="farm"] .farmer-hero h2, html[data-app-theme="farm"] .decision-result h2 { font-family: var(--app-serif); font-weight: 700; font-size: 34px; color: #fff; }
+html[data-app-theme="farm"] .welcome-card p, html[data-app-theme="farm"] .decision-result p { color: #e6f4ec; }
+html[data-app-theme="farm"] .recommendation, html[data-app-theme="farm"] .decision-result-market { background: #fff; color: #1d2a22; border-radius: 20px; }
+html[data-app-theme="farm"] .recommendation b.big, html[data-app-theme="farm"] .decision-result-market b { color: #1f6b45; font-family: var(--app-serif); font-weight: 700; }
+html[data-app-theme="farm"] .decision-result-market span { color: var(--muted); }
+html[data-app-theme="farm"] .hero-reco { background: #fff6dc; border-left: 8px solid #e8a33d; border-radius: 24px; padding: 28px 32px; }
+html[data-app-theme="farm"] .hero-reco h2 { font-size: 26px; line-height: 1.4; font-weight: 700; }
+html[data-app-theme="farm"] .hero-reco small, html[data-app-theme="farm"] .recommendation-main small { color: #8a5b00; }
+html[data-app-theme="farm"] .hero-reco p { color: #56655c; font-size: 17px; }
+html[data-app-theme="farm"] .decision-card.recommended { border: 3px solid #1f6b45; background: #f0faf3; }
+html[data-app-theme="farm"] .decision-card em { background: #1f6b45; }
+html[data-app-theme="farm"] .verified-badge, html[data-app-theme="farm"] .tag.success { background: #e3f4e8; color: #166534; }
+html[data-app-theme="farm"] .explain { background: #f2faf5; border-left-color: #1f6b45; }
+html[data-app-theme="farm"] .stat-card.green, html[data-app-theme="farm"] .gr-protection-card, html[data-app-theme="farm"] .fr-hero,
+html[data-app-theme="farm"] .fr-stat-card.primary, html[data-app-theme="farm"] .ff-impact-card {
+  background: linear-gradient(135deg, #1f6b45, #2f8f5c) !important; color: #fff;
+}
+html[data-app-theme="farm"] .stat-card.green b { color: #fff; }
+html[data-app-theme="farm"] .stat-card.green small, html[data-app-theme="farm"] .stat-card.green span { color: #e6f4ec; }
+
+/* ---------- buttons and forms: big and clear ---------- */
+html[data-app-theme="farm"] button.primary, html[data-app-theme="farm"] .primary { background: #1f6b45; color: #fff; min-height: 54px; font-size: 17px; font-weight: 700; border-radius: 16px; padding: 0 24px; }
+html[data-app-theme="farm"] button.primary:hover, html[data-app-theme="farm"] .primary:hover { background: #17563a; color: #fff; }
+html[data-app-theme="farm"] button.secondary, html[data-app-theme="farm"] .secondary { background: #fff; color: #1f6b45; border: 2px solid #cfe3d6; min-height: 50px; font-size: 16px; font-weight: 700; border-radius: 16px; padding: 0 20px; }
+html[data-app-theme="farm"] button.secondary:hover, html[data-app-theme="farm"] .secondary:hover { border-color: #1f6b45; }
+html[data-app-theme="farm"] .control, html[data-app-theme="farm"] #content select, html[data-app-theme="farm"] #content input:not([type=checkbox]):not([type=radio]):not([type=range]), html[data-app-theme="farm"] #content textarea {
+  min-height: 54px; font-size: 17px; border-radius: 14px; border: 2px solid #ddd8c6; padding: 10px 14px;
+}
+html[data-app-theme="farm"] .control:focus, html[data-app-theme="farm"] #content select:focus, html[data-app-theme="farm"] #content input:focus { border-color: #1f6b45; box-shadow: 0 0 0 4px #1f6b4526; }
+html[data-app-theme="farm"] .form-grid { gap: 18px; }
+html[data-app-theme="farm"] .field label, html[data-app-theme="farm"] #content label { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+html[data-app-theme="farm"] .tabs, html[data-app-theme="farm"] .method-tabs { background: #eef5ea; }
+html[data-app-theme="farm"] .tabs button.active, html[data-app-theme="farm"] .method-tabs button.active { background: #1f6b45; color: #fff; }
+html[data-app-theme="farm"] .progress span { background: #1f6b45; }
+html[data-app-theme="farm"] .tag { background: #e9f6ee; color: #1f6b45; font-size: 13px; padding: 6px 12px; }
+html[data-app-theme="farm"] .heat-cell { background: #f2f7ee; }
+html[data-app-theme="farm"] .mic { background: #e9f6ee; color: #1f6b45; }
+
+/* ---------- certificate, modal, chat ---------- */
+html[data-app-theme="farm"] .cert-grade { background: #1f6b45; }
+html[data-app-theme="farm"] .cert-strip { background: #f3f9f4; }
+html[data-app-theme="farm"] .modal-card { border-radius: 28px; padding: 30px; }
+html[data-app-theme="farm"] .toast { background: #17563a; }
+html[data-app-theme="farm"] .gs-fab { background: #e8663d; color: #fff; box-shadow: 0 12px 30px #e8663d55; }
+html[data-app-theme="farm"] .gs-head { background: linear-gradient(135deg, #1f6b45, #17563a); }
+html[data-app-theme="farm"] .gs-send { background: #1f6b45; border-color: #1f6b45; }
+html[data-app-theme="farm"] .gs-btn.gs-on, html[data-app-theme="farm"] .gs-btn.gs-speaking { background: #e9f6ee; border-color: #1f6b45; color: #1f6b45; }
+html[data-app-theme="farm"] .va-fab, html[data-app-theme="farm"] .va-type button { background: #1f6b45; color: #fff; }
+html[data-app-theme="farm"] .va-fab.va-live { background: #e8663d; color: #fff; }
+
+@media (max-width: 900px) {
+  html[data-app-theme="farm"] #content { padding: 20px 16px 80px; }
+  html[data-app-theme="farm"] .card { padding: 20px; }
+  html[data-app-theme="farm"] header h1, html[data-app-theme="farm"] #pageTitle { font-size: 26px; }
+}
+
+/* ---------- the toggle itself (shown in both themes) ---------- */
+.theme-toggle {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 16px; border-radius: 999px;
+  border: 2px solid #00000026; background: #fff; color: #111; font-weight: 700; font-size: 15px; cursor: pointer; white-space: nowrap;
+}
+.theme-toggle span[aria-hidden] { font-size: 20px; line-height: 1; }
+.theme-toggle:hover { border-color: #000; }
+html[data-app-theme="farm"] .theme-toggle { border-color: #cfe3d6; color: #1f6b45; min-height: 52px; }
+html[data-app-theme="farm"] .theme-toggle:hover { border-color: #1f6b45; }
+@media (max-width: 640px) { .theme-toggle > span:last-child { display: none; } .theme-toggle { padding: 0; width: 48px; justify-content: center; } }
+
+/* ---------- keep the landing page's login dialog on the landing look ---------- */
+html[data-app-theme="farm"] .lp-dialog .primary { background: #0A0A0A; color: #fff; border-radius: 14px; min-height: 54px; }
+html[data-app-theme="farm"] .lp-dialog .primary:hover { background: #DCFF00; color: #0A0A0A; }
+html[data-app-theme="farm"] .lp-dialog .tabs, html[data-app-theme="farm"] .lp-dialog .method-tabs { background: #f3f3ef; }
+html[data-app-theme="farm"] .lp-dialog .tabs button.active, html[data-app-theme="farm"] .lp-dialog .method-tabs button.active { background: #0A0A0A; color: #fff; }
+html[data-app-theme="farm"] .lp-dialog .control { min-height: 52px; font-size: 18px; border: 1px solid #dcdcd6; border-radius: 14px; }
+html[data-app-theme="farm"] .lp-dialog .control:focus { border-color: #0A0A0A; box-shadow: 0 0 0 3px #DCFF0066; }
+html[data-app-theme="farm"] .lp-dialog .secondary { border: 1px solid #00000033; color: #0A0A0A; border-radius: 14px; min-height: 54px; }
+html[data-app-theme="farm"] .lp-dialog label { font-size: 15px; font-weight: 700; }
+html[data-app-theme="farm"] .lp-dialog .role-picker button.selected { border-color: #0A0A0A; background: #f6ffc2; box-shadow: inset 0 0 0 1px #0A0A0A; }
+html[data-app-theme="farm"] .lp-dialog .role-picker button.selected b { color: #0A0A0A; }

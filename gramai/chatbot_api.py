@@ -446,11 +446,15 @@ def t_explain_platform(u, args):
 def chat_sender_key(u):
     """Identity used for produce declarations made inside the app.
 
-    Uses the farmer's phone so an in-app declaration and a WhatsApp message
-    from the same person land on the same record.
+    Uses the farmer's phone verbatim so a declaration made through this tool
+    lands on the same pending-produce row as a message on any other channel
+    for the same farmer: a plain digit string for a WhatsApp/app farmer
+    (phone IS the sender key there), "tg<chat_id>" for a Telegram farmer.
+    Stripping to digits here would silently create a second, unlinked row
+    for any non-numeric sender key.
     """
-    digits = "".join(ch for ch in str(u.get("phone") or "") if ch.isdigit())
-    return digits or f"app{u['id']}"
+    phone = (u.get("phone") or "").strip()
+    return phone or f"app{u['id']}"
 
 
 def t_add_produce(u, args):

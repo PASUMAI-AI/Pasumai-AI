@@ -1,0 +1,78 @@
+/* Styles for the geo features: place names, ranked "where to sell", extra photos, buyer discovery.
+   Uses the app theme variables, so it follows both Farm view and Modern look. */
+
+.geo-place, .geo-place-line { font-weight: 700; }
+.geo-place-line { margin: 10px 0 4px; }
+.geo-photo-line { color: var(--muted, #6F6F6F); margin: 0 0 12px; font-size: 14px; }
+.harvest-card .action-row { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* modal shell */
+.geo-modal { min-width: min(720px, 86vw); }
+.geo-modal h2 { margin: 0 0 6px; }
+.geo-modal h3 { margin: 22px 0 8px; }
+.geo-from { color: var(--muted, #6F6F6F); margin: 0 0 14px; }
+.geo-how { color: var(--muted, #6F6F6F); font-size: 13px; margin-top: 16px; }
+.geo-suggest { background: #f6ffc2; border-left: 6px solid #0A0A0A; border-radius: 16px; padding: 14px 18px; margin: 10px 0 16px; }
+.geo-suggest span { font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.geo-suggest p { margin: 4px 0 0; font-size: 17px; line-height: 1.5; }
+html[data-app-theme="farm"] .geo-suggest { background: #fff6dc; border-left-color: #e8a33d; }
+
+.geo-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.geo-filter button { border: 1px solid var(--line, #0000001a); background: #fff; border-radius: 999px; padding: 8px 16px; font-weight: 700; min-height: 40px; }
+.geo-filter button.on { background: var(--green, #0A0A0A); color: #fff; border-color: var(--green, #0A0A0A); }
+
+/* ranked cards */
+.geo-list { display: grid; gap: 14px; }
+.geo-opt, .geo-disc-card { display: flex; gap: 14px; background: #fff; border: 1px solid var(--line, #0000001a); border-radius: 20px; padding: 18px; }
+.geo-opt.top, .geo-disc-card.top { border: 2px solid var(--green, #0A0A0A); background: #fcfff0; }
+html[data-app-theme="farm"] .geo-opt.top, html[data-app-theme="farm"] .geo-disc-card.top { background: #f0faf3; }
+.geo-rank { flex: none; width: 38px; height: 38px; border-radius: 50%; background: var(--green, #0A0A0A); color: #fff; display: grid; place-items: center; font-weight: 800; }
+.geo-opt.top .geo-rank, .geo-disc-card.top .geo-rank { background: #DCFF00; color: #0A0A0A; }
+html[data-app-theme="farm"] .geo-opt.top .geo-rank, html[data-app-theme="farm"] .geo-disc-card.top .geo-rank { background: #e8663d; color: #fff; }
+.geo-opt-main, .geo-disc-body { flex: 1; min-width: 0; }
+.geo-opt-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.geo-opt-head b { font-size: 18px; }
+.geo-opt-sub, .geo-opt-note { color: var(--muted, #6F6F6F); font-size: 14px; margin-top: 2px; }
+.geo-opt-place { margin-top: 6px; }
+.geo-tag { font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 999px; background: #f3f3ef; }
+.geo-tag.best { background: #DCFF00; color: #0A0A0A; }
+html[data-app-theme="farm"] .geo-tag.best { background: #e8663d; color: #fff; }
+.geo-opt-nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 12px; }
+.geo-opt-nums span { background: #f7f7f4; border-radius: 14px; padding: 10px 12px; font-size: 13px; color: var(--muted, #6F6F6F); display: flex; flex-direction: column; }
+.geo-opt-nums b { font-size: 20px; color: var(--ink, #111); }
+.geo-opt-nums .keep { background: #f6ffc2; }
+html[data-app-theme="farm"] .geo-opt-nums .keep { background: #e3f4e8; }
+.geo-opt-actions { margin-top: 10px; }
+.geo-good { color: #166534; font-weight: 700; }
+.geo-warn { color: #a65f14; font-weight: 700; }
+
+/* photos and badges */
+.geo-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+.geo-photo { margin: 0; background: #fff; border: 1px solid var(--line, #0000001a); border-radius: 18px; overflow: hidden; }
+.geo-img { aspect-ratio: 4 / 3; background: #f3f3ef; display: grid; place-items: center; color: var(--muted, #6F6F6F); overflow: hidden; }
+.geo-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.geo-photo figcaption { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+.geo-photo small { color: var(--muted, #6F6F6F); }
+.geo-badge { display: inline-block; font-size: 12px; font-weight: 800; padding: 5px 10px; border-radius: 999px; text-decoration: none; margin: 2px 4px 2px 0; }
+.geo-badge.ok { background: #e3f4e8; color: #166534; }
+.geo-badge.warn { background: #fff4e5; color: #a65f14; }
+.geo-badge.bad { background: #fdecec; color: #b42318; }
+.geo-badges { margin: 8px 0 2px; }
+.geo-add { margin-top: 8px; display: grid; gap: 10px; }
+
+/* buyer discovery */
+.geo-disc-head { margin-bottom: 14px; }
+.geo-disc-head h2 { margin: 8px 0; }
+.geo-disc-head p { margin: 6px 0; }
+.geo-type { display: inline-block; background: #f6ffc2; border-radius: 999px; padding: 6px 14px; font-weight: 800; }
+.geo-type.none { background: #f3f3ef; font-weight: 600; }
+html[data-app-theme="farm"] .geo-type { background: #e3f4e8; }
+.geo-focus { color: var(--muted, #6F6F6F); margin-left: 8px; }
+.geo-controls { display: flex; gap: 14px; flex-wrap: wrap; margin: 14px 0; }
+.geo-controls label { display: grid; gap: 6px; font-weight: 700; font-size: 14px; min-width: 200px; }
+.geo-disc-card .geo-img { flex: none; width: 150px; height: 112px; border-radius: 14px; aspect-ratio: auto; font-size: 40px; }
+@media (max-width: 720px) {
+  .geo-opt, .geo-disc-card { flex-wrap: wrap; }
+  .geo-disc-card .geo-img { width: 100%; height: 170px; }
+  .geo-modal { min-width: 0; }
+}

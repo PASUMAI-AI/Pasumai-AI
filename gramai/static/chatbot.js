@@ -14,6 +14,7 @@
   var speakOn = localStorage.getItem('gram_tts') === '1';
   var handsFree = false;
   var lastAnswer = '';
+  var lastAnswerLang = '';
 
   // Voice recording (mic -> backend STT) and playback (backend TTS) state.
   var mediaRecorder = null, mediaChunks = [], mediaStream = null;
@@ -410,6 +411,7 @@
       setSendState(false);
       if (acc) {
         lastAnswer = acc;
+        lastAnswerLang = answeredIn;
         if (bubble) addMsgActions(bubble, acc, answeredIn);
         if (speakOn) speak(acc, answeredIn);
       }
@@ -620,6 +622,7 @@
       var p = ttsAudio.play();
       if (p && p.catch) p.catch(function () { speakBrowser(clean, speakLang); });
     }).catch(function () {
+      if (!w.speechSynthesis) { setSpeaking(false); setHint(T('Voice is not available right now')); return; }
       speakBrowser(clean, speakLang);
     });
   }
@@ -630,13 +633,34 @@
     setSpeaking(false);
   }
 
-  function toggleSpeak() {
-    speakOn = !speakOn;
-    localStorage.setItem('gram_tts', speakOn ? '1' : '0');
+  /* The speaker button reads the latest answer aloud right away, and keeps voice replies on
+     for the answers that follow. Clicking it while it is speaking stops the voice and turns
+     voice replies off again. */
+  function readableLastMessage() {
+    if (lastAnswer) return { text: lastAnswer, lang: lastAnswerLang || lang() };
+    var bots = document.querySelectorAll('#gsBody .gs-bot');
+    var el = bots.length ? bots[bots.length - 1] : null;
+    return el ? { text: el.innerText || el.textContent || '', lang: lang() } : null;
+  }
+
+  function setSpeakOn(on) {
+    speakOn = on;
+    localStorage.setItem('gram_tts', on ? '1' : '0');
     var b = $('gsSpeak');
-    b.classList.toggle('gs-on', speakOn);
-    b.title = speakOn ? T('Voice replies on') : T('Voice replies off');
-    if (!speakOn) stopSpeaking();
+    b.classList.toggle('gs-on', on);
+    b.title = on ? T('Voice replies on. Click to stop') : T('Read the answer aloud');
+  }
+
+  function toggleSpeak() {
+    var b = $('gsSpeak');
+    if (b.classList.contains('gs-speaking')) {
+      stopSpeaking();
+      setSpeakOn(false);
+      return;
+    }
+    setSpeakOn(true);
+    var m = readableLastMessage();
+    if (m && m.text.trim()) speak(m.text, m.lang);
   }
 
   function toggleHandsFree() {
@@ -650,7 +674,7 @@
     var b = $('gsHands');
     b.classList.toggle('gs-on', handsFree);
     if (handsFree) {
-      if (!speakOn) toggleSpeak();
+      if (!speakOn) setSpeakOn(true);
       $('gsHint').textContent = T('Hands-free mode on');
       startVoice();
     } else {

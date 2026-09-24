@@ -122,9 +122,10 @@
     if (g) g.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.lang === lang()); });
   }
 
-  function openLangPicker() { buildLangGrid(); $('lpLangPicker').classList.remove('hidden'); }
+  function openLangPicker() { var pk = $('lpLangPicker'); if (!pk) return; buildLangGrid(); pk.classList.remove('hidden'); }
   function closeLangPicker() {
-    $('lpLangPicker').classList.add('hidden');
+    var pk = $('lpLangPicker'); if (!pk) return;
+    pk.classList.add('hidden');
     // Remember that the choice was offered, even if English was kept.
     // (app.js always stores gram_lang on load, so a separate flag is needed.)
     localStorage.setItem('gram_lang_chosen', '1');
@@ -246,6 +247,33 @@
     controls.insertBefore(b, controls.firstChild);
   }
 
+
+  /* Farm view (default: warm, larger, roomier) or Modern (black and lime). Remembered per browser. */
+  function addThemeToggle() {
+    var controls = document.querySelector('.header-controls');
+    if (!controls || $('themeToggle')) return;
+    var b = document.createElement('button');
+    b.id = 'themeToggle';
+    b.className = 'theme-toggle';
+    b.type = 'button';
+    function paint() {
+      var farm = document.documentElement.dataset.appTheme !== 'modern';
+      b.innerHTML = farm ? '<span aria-hidden="true">🖤</span><span>Modern look</span>'
+                         : '<span aria-hidden="true">🌿</span><span>Farm view</span>';
+      b.title = farm ? 'Switch to the black and lime look' : 'Switch to the simple farm view';
+      b.setAttribute('aria-label', b.title);
+    }
+    b.onclick = function () {
+      var next = document.documentElement.dataset.appTheme === 'modern' ? 'farm' : 'modern';
+      document.documentElement.dataset.appTheme = next;
+      try { localStorage.setItem('gram_app_theme', next); } catch (e) { /* private mode */ }
+      paint();
+    };
+    paint();
+    var listen = $('appListen');
+    controls.insertBefore(b, listen ? listen.nextSibling : controls.firstChild);
+  }
+
   /* ---------------- wiring ---------------- */
 
   function wrap(name, after) {
@@ -261,6 +289,7 @@
   function init() {
     // Keep the header label and picker in step with every language change.
     wrap('setLanguage', syncLangLabel);
+    wrap('setLanguage', function () { if (w.ScrollReveal) w.ScrollReveal.refresh(); });
     // Leaving or entering the app must never leave a dialog or voice hanging.
     wrap('logout', function () { closeAuth(); stop(); });
     wrap('boot', function () { closeAuth(); closeLangPicker(); stop(); });
@@ -269,6 +298,7 @@
     syncLangLabel();
     loadPrices();
     addAppListenButton();
+    addThemeToggle();
 
     var nav = $('lpNav');
     addEventListener('scroll', function () { if (nav) nav.classList.toggle('scrolled', scrollY > 10); }, { passive: true });
@@ -276,7 +306,7 @@
     document.addEventListener('keydown', function (e) {
       if (e.key !== 'Escape') return;
       closeAuth();
-      if (!$('lpLangPicker').classList.contains('hidden')) closeLangPicker();
+      var lpk = $('lpLangPicker'); if (lpk && !lpk.classList.contains('hidden')) closeLangPicker();
       stop();
     });
 
@@ -289,6 +319,70 @@
 
     // First visit: ask for a language before anything else.
     if (!localStorage.getItem('gram_lang_chosen') && !localStorage.getItem('gram_token')) openLangPicker();
+
+
+    // Splash cursor + scroll-reveal text (React Bits effects, vanilla ports).
+    if (w.SplashCursor && !(w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+      try { w.SplashCursor({ RAINBOW_MODE: true, parent: $('auth'), DENSITY_DISSIPATION: 6, VELOCITY_DISSIPATION: 3, SPLAT_RADIUS: 0.12 }); } catch (e) { /* no WebGL: skip */ }
+    }
+    if (w.ScrollReveal) {
+      w.ScrollReveal.refresh();
+      addEventListener('load', w.ScrollReveal.refresh);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(w.ScrollReveal.refresh);
+    }
+    // Hero video: two stacked copies leapfrog each other so the loop never dips to blank.
+    // The next copy starts ~1s before the current one ends and fades in over it.
+    var vids = [$('lpHeroVideo'), $('lpHeroVideo2')];
+    if (vids[0] && vids[1]) {
+      var FADE_IN = 0.5, OVERLAP = 1, cur = 0, firstPlay = true;
+      var RATE = 1.25; // hero video playback speed
+      vids.forEach(function (v) { v.defaultPlaybackRate = RATE; v.playbackRate = RATE; v.addEventListener('loadedmetadata', function () { v.playbackRate = RATE; }); });
+      var play = function (v) { v.playbackRate = RATE; var pl = v.play(); if (pl && pl.catch) pl.catch(function () {}); };
+      vids[1].style.opacity = 0;
+      (function tick() {
+        var a = vids[cur], b = vids[1 - cur], d = a.duration, t = a.currentTime;
+        if (d && isFinite(d) && !a.paused) {
+          if (firstPlay) a.style.opacity = Math.min(t / FADE_IN, 1);
+          var rem = d - t;
+          if (rem < OVERLAP) {
+            if (b.paused) { b.currentTime = 0; b.style.zIndex = 1; a.style.zIndex = 0; play(b); }
+            b.style.opacity = Math.min(1, Math.max(0, 1 - rem / OVERLAP));
+          }
+          if (a.ended || rem < 0.04) {
+            firstPlay = false;
+            b.style.opacity = 1;
+            a.pause(); a.style.opacity = 0;
+            cur = 1 - cur;
+          }
+        } else if (a.ended) {
+          b.currentTime = 0; b.style.opacity = 1; play(b); a.style.opacity = 0; cur = 1 - cur; firstPlay = false;
+        }
+        requestAnimationFrame(tick);
+      })();
+      var kick = function () { if (vids[cur].paused) play(vids[cur]); };
+      kick();
+      vids[0].addEventListener('canplay', kick);
+      ['pointerdown', 'scroll', 'keydown', 'touchstart'].forEach(function (ev) { addEventListener(ev, kick, { once: true, passive: true }); });
+    }
+
+    // Scroll reveal for the sections below the hero.
+    var rv = document.querySelectorAll('.lp-who, .lp-split, .lp-prices, .lp-soil-inner, .lp-night-inner, .lp-final');
+    if ('IntersectionObserver' in w) {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      }, { threshold: 0.12 });
+      rv.forEach(function (el) { el.classList.add('lp-rv'); io.observe(el); });
+      document.querySelectorAll('.lp-why').forEach(function (el) { el.classList.add('lp-rv-stagger'); io.observe(el); });
+    }
+
+    // Phone mock drifts a little as you scroll.
+    var phoneMock = document.querySelector('.lp-device.phone');
+    if (phoneMock) addEventListener('scroll', function () {
+      var r = phoneMock.getBoundingClientRect();
+      if (r.top < innerHeight && r.bottom > 0) phoneMock.style.transform = 'rotate(-4deg) translateY(' + ((r.top - innerHeight / 2) * -0.06).toFixed(1) + 'px)';
+    }, { passive: true });
+
+    // First visit: ask for a language before anything else.
   }
 
   w.LP = {
